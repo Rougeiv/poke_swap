@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Page</title>
+</head>
+<body>
+    <h1>Welcome to the Game!</h1>
+    <button id="gacha-button">Gacha</button>
+    <button onclick="window.location='/logout'">Log Out</button>
+    <script>
+        // Add click sound to the Gacha button
+        document.getElementById('gacha-button').addEventListener('click', function() {
+            var audio = new Audio('/static/Click.mp3');
+            audio.play();
+        });
+    
+        // Check if user is logged in
+        if (!{{ logged_in|tojson }}) {
+            window.location.href = '/';  // Redirect to login page
+        }
+    
+        // Add event listener for beforeunload event
+        window.onbeforeunload = function() {
+            // Perform logout action when user leaves the page
+            fetch('/logout', { method: 'GET' });
+            localStorage.setItem('logged_in', 'false');
+        };
+
+        // Add event listener for the Gacha button
+        document.getElementById('gacha-button').addEventListener('click', function() {
+            fetch('/gacha', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    // Clear previous Pokemon info
+                    document.getElementById('pokemon-info').innerHTML = '';
+
+                    // Display information about the 10 random Pokemon
+                    data.forEach(pokemon => {
+                        const pokemonInfo = document.createElement('p');
+                        pokemonInfo.textContent = `${pokemon[0]}: ${pokemon[1]}`;
+                        document.getElementById('pokemon-info').appendChild(pokemonInfo);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+    <h2>One-Pull Gacha</h2>
+    <button id="gacha-one-pull-button">1 Pull</button>
+    <div id="one-pull-result"></div>
+    
+    <script>
+        //click audio
+        document.getElementById('gacha-one-pull-button').addEventListener('click', function() {
+            var audio = new Audio('/static/Click.mp3');
+            audio.play();
+        });
+        // Add event listener for one-pull gacha button
+        document.getElementById('gacha-one-pull-button').addEventListener('click', function() {
+            fetch('/gacha_one_pull', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    //clear previous pull
+                    document.getElementById('one-pull-result').innerHTML = '';
+                    // Display the result of the one-pull gacha
+                    document.getElementById('one-pull-result').textContent = `You obtained: ${data[0]}: ${data[1]}`;
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+    <div id="pokemon-info"></div>
+</body>
+</html>
