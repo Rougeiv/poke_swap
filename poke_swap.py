@@ -2,8 +2,8 @@ from app import app
 import sqlite3
 import os
 import random
+from flask import g
 
-# app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 # Function to connect to the SQLite database
@@ -23,5 +23,6 @@ def get_db():
 def close_db(error):
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
+
 if __name__ == '__main__':
     app.run(debug=True)

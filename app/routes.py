@@ -1,5 +1,5 @@
 from app import app
-from flask import Flask, render_template, request, redirect, session, g, jsonify
+from flask import Flask, render_template, request, redirect, session, jsonify
 
 @app.route('/')
 @app.route('/index')
@@ -15,14 +15,9 @@ def index():
             'body': 'The Avengers movie was so cool!'
         }
     ]
-    return render_template('index.html', title='Home', user=user, posts=posts)
-
-# Routes
-@app.route('/')
-def index():
     signup_success = session.pop('signup_success', False)
     logged_in = session.get('logged_in', False)
-    return render_template('login.html', signup_success=signup_success, logged_in=logged_in)
+    return render_template('index.html', title='Home', user=user, posts=posts, signup_success=signup_success, logged_in=logged_in)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
