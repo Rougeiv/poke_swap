@@ -1,8 +1,11 @@
 from app import app
 import sqlite3
 import os
-import random
 from flask import g
+import sqlalchemy as sa
+import sqlalchemy.orm as so
+from app import app, db
+from app.models import User, Post
 
 app.secret_key = os.urandom(24)
 
@@ -26,3 +29,7 @@ def close_db(error):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+@app.shell_context_processor
+def make_shell_context():
+    return {'sa': sa, 'so': so, 'db': db, 'User': User, 'Post': Post}
