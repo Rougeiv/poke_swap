@@ -4,20 +4,9 @@ from flask import Flask, render_template, request, redirect, session, jsonify
 @app.route('/')
 @app.route('/index')
 def index():
-    user = {'username': 'Miguel'}
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
     signup_success = session.pop('signup_success', False)
     logged_in = session.get('logged_in', False)
-    return render_template('index.html', title='Home', user=user, posts=posts, signup_success=signup_success, logged_in=logged_in)
+    return render_template('index.html', title='Home', signup_success=signup_success, logged_in=logged_in)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
