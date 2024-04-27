@@ -9,6 +9,14 @@
     <h1>Welcome to the Game!</h1>
     <button id="gacha-button">Gacha</button>
     <button onclick="window.location='/logout'">Log Out</button>
+
+    <button id="trade-button">Trade</button> <!-- Added Trade button -->
+    <div id="trade-form" style="display: none;"> <!-- Trade form initially hidden -->
+        <input type="text" id="offered-pokemon" placeholder="Offered Pokémon"><br>
+        <input type="text" id="desired-pokemon" placeholder="Desired Pokémon"><br>
+        <button id="post-button">Post</button> <!-- Added Post button -->
+    </div>
+
     <script>
         // Add click sound to the Gacha button
         document.getElementById('gacha-button').addEventListener('click', function() {
@@ -28,6 +36,8 @@
             localStorage.setItem('logged_in', 'false');
         };
 
+        
+
         // Add event listener for the Gacha button
         document.getElementById('gacha-button').addEventListener('click', function() {
             fetch('/gacha', { method: 'POST' })
@@ -45,6 +55,42 @@
                 })
                 .catch(error => console.error('Error:', error));
         });
+
+
+        // Add event listener for Trade button
+        document.getElementById('trade-button').addEventListener('click', function() {
+            document.getElementById('trade-form').style.display = 'block'; // Show trade form
+        });
+
+        // Add event listener for Post button
+        document.getElementById('post-button').addEventListener('click', function() {
+            var offeredPokemon = document.getElementById('offered-pokemon').value;
+            var desiredPokemon = document.getElementById('desired-pokemon').value;
+            // Send AJAX request to post the trade offer
+            fetch('/post_trade', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    offered_pokemon: offeredPokemon,
+                    desired_pokemon: desiredPokemon
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Trade offer posted successfully!');
+                    window.location.reload(); // Refresh the page after posting
+                } else {
+                    throw new Error('Failed to post trade offer');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to post trade offer');
+            });
+        });
+
     </script>
     <h2>One-Pull Gacha</h2>
     <button id="gacha-one-pull-button">1 Pull</button>
@@ -68,7 +114,63 @@
                 })
                 .catch(error => console.error('Error:', error));
         });
+    
     </script>
-    <div id="pokemon-info"></div>
+
+
+    <!-- Marketplace section -->
+    <h2>Marketplace</h2>
+    <div id="marketplace">
+        <!-- Trade offers will be fetched and displayed here -->
+
+    </div>
+
+    <script>
+        // Fetch trade offers from the server and display them in the marketplace
+        fetch('/get_trade_offers')
+            .then(response => response.json())
+            .then(data => {
+                const marketplaceDiv = document.getElementById('marketplace');
+                data.forEach(tradeOffer => {
+                    const tradeOfferDiv = document.createElement('div');
+                    tradeOfferDiv.innerHTML = `
+                    <p>${tradeOffer.trade_id}: ${tradeOffer.user_offered} offers ${tradeOffer.offered_pokemon} for ${tradeOffer.received_pokemon}</p>
+                    <button onclick="acceptTrade(${tradeOffer.trade_id}, '${tradeOffer.offered_pokemon}', '${tradeOffer.received_pokemon}', '${tradeOffer.user_offered}')">Accept Trade</button>
+                    `;
+                    marketplaceDiv.appendChild(tradeOfferDiv);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+
+        function acceptTrade(tradeId, offeredPokemon, desiredPokemon, user_Offered) {
+            // Send AJAX request to accept the trade offer
+            fetch('/accept_trade', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    trade_id: tradeId,
+                    offered_pokemon: offeredPokemon,
+                    desired_pokemon: desiredPokemon,
+                    user_offered: user_Offered
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Trade offer accepted successfully!');
+                    window.location.reload(); // Refresh the page after accepting the trade
+                } else {
+                    throw new Error('Failed to accept trade offer');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to accept trade offer');
+            });
+        }
+    </script>
+
+
 </body>
 </html>
