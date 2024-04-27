@@ -1,28 +1,6 @@
-from flask import Flask, render_template, request, redirect, session, g, jsonify
+from flask import Flask, render_template, request, redirect, session, jsonify
 import sqlite3
-import os
-import random
-
-app = Flask(__name__)
-app.secret_key = os.urandom(24)
-
-# Function to connect to the SQLite database
-def connect_db():
-    db = sqlite3.connect('users.db')
-    db.row_factory = sqlite3.Row
-    return db
-
-# Function to get the database connection
-def get_db():
-    if not hasattr(g, 'sqlite_db'):
-        g.sqlite_db = connect_db()
-    return g.sqlite_db
-
-# Close the database connection at the end of each request
-@app.teardown_appcontext
-def close_db(error):
-    if hasattr(g, 'sqlite_db'):
-        g.sqlite_db.close()
+from app import app
 
 # Routes
 @app.route('/')
