@@ -1,14 +1,14 @@
-from app import app
+from app import flaskApp
 from flask import render_template, request, redirect, session, jsonify
 
-@app.route('/')
-@app.route('/index')
+@flaskApp.route('/')
+@flaskApp.route('/index')
 def index():
     signup_success = session.pop('signup_success', False)
     logged_in = session.get('logged_in', False)
     return render_template('index.html', title='Home', signup_success=signup_success, logged_in=logged_in)
 
-@app.route('/signup', methods=['GET', 'POST'])
+@flaskApp.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         try:
@@ -38,7 +38,7 @@ def signup():
     else:
         return render_template('signup.html')
 
-@app.route('/login', methods=['POST'])
+@flaskApp.route('/login', methods=['POST'])
 def login():
     username = request.form['username']
     password = request.form['password']
@@ -59,18 +59,18 @@ def login():
         error_message = "Invalid username or password!"
         return render_template('login.html', error_message=error_message)
 
-@app.route('/main')
+@flaskApp.route('/main')
 def main():
     return redirect('/')
 
-@app.route('/logout')
+@flaskApp.route('/logout')
 def logout():
     # Remove user information from session
     session.pop('logged_in', None)
     return redirect('/')
 
 # Add a new route for the game page
-@app.route('/game')
+@flaskApp.route('/game')
 def game():
     # Check if user is logged in
     if session.get('logged_in', False):
@@ -78,7 +78,7 @@ def game():
     else:
         return redirect('/')
 
-@app.route('/gacha', methods=['POST'])
+@flaskApp.route('/gacha', methods=['POST'])
 def gacha():
     try:
         # Connect to the Pokemon database
@@ -97,7 +97,7 @@ def gacha():
     except Exception as e:
         return jsonify({'error': str(e)})
 
-@app.route('/gacha_one_pull', methods=['POST'])
+@flaskApp.route('/gacha_one_pull', methods=['POST'])
 def gacha_one_pull():
     try:
         # Connect to the Pokemon database
