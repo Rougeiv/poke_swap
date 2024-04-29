@@ -1,5 +1,6 @@
-from app import flaskApp
+from app import flaskApp, db
 from flask import render_template, request, redirect, session, jsonify
+import sqlite3
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
