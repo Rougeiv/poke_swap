@@ -4,14 +4,6 @@ import sqlalchemy as sa
 import sqlalchemy.orm as so
 from app import db
 
-# # Define association table for the many-to-many relationship
-# trade_association_table = db.Table(
-#     'trade_association',
-#     db.Column('user_id', db.ForeignKey('user.id'), primary_key=True),
-#     db.Column('trade_id', db.ForeignKey('trade.id'), primary_key=True),
-#     sa.UniqueConstraint('trade_id', 'user_id')  # Constraint for exactly 2 users per trade
-# )
-
 class User(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True,
@@ -19,11 +11,12 @@ class User(db.Model):
     email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True,
                                              unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
-
-    inventory: so.Mapped[List['Pokemon']] = so.relationship()
-
+    
     trades: so.WriteOnlyMapped[List['Trade']] = so.relationship(
-        back_populates='user_id1')
+        backref='user', lazy=True)
+    
+    inventory: so.Mapped[List['Pokemon']] = so.relationship(
+        'Pokemon', backref='owner', lazy=True)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -39,12 +32,8 @@ class Trade(db.Model):
     user_id1: so.Mapped[int] = so.mapped_column(sa.ForeignKey('user.id'), index=True)
     user_id2: so.Mapped[int] = so.mapped_column(sa.ForeignKey('user.id'), index=True)
 
-    # Define relationships with the User table
-    user1: so.Mapped[User] = so.relationship('User', foreign_keys=[user_id1], back_populates='trades')
-    user2: so.Mapped[User] = so.relationship('User', foreign_keys=[user_id2], back_populates='trades')
-
     def __repr__(self):
-        return '<Trade {} <-> {}>'.format(self.gave).format(self.received)
+        return '<Trade {} gave {} <-> {} given by {}>'.format(self.user_id1).format(self.pokemon1).format(self.pokemon2).format(self.user_id2)
 
 # one User can have many pokemon and each pokemon is unique to a user
 class Pokemon(db.Model):
@@ -52,5 +41,6 @@ class Pokemon(db.Model):
     pokedex_num: so.Mapped[int] = so.mapped_column(sa.Integer)
     name: so.Mapped[str] = so.mapped_column(sa.String(32), index=True,
                                                 unique=True)
+    shiny = so.Mapped[bool] = so.mapped_column(sa.Boolean)
     owner_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey("user.id"))
 
