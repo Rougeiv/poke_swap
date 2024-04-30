@@ -41,6 +41,6 @@ class Pokemon(db.Model):
     pokedex_num: so.Mapped[int] = so.mapped_column(sa.Integer)
     name: so.Mapped[str] = so.mapped_column(sa.String(32), index=True,
                                                 unique=True)
-    shiny = so.Mapped[bool] = so.mapped_column(sa.Boolean)
+    shiny: so.Mapped[bool] = so.mapped_column(sa.Boolean)
     owner_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey("user.id"))
 
