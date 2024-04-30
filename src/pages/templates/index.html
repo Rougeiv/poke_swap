@@ -11,20 +11,13 @@
 </head>
 <body>
 
-<!-- Navbar placeholder here-->
-<div id="navbar-placeholder"></div>
+{% extends 'base.html' %}
+
 <!-- Main Content here -->
+{% block content %}
+<div class="container text-center mt-5">
 
 
-<!-- Include the full jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-$(function() {
-  $("#navbar-placeholder").load("/navigationbar");
-  $("#footer-placeholder").load("/footer");
-});
-
-</script>
 
     <div class="container text-center mt-5">
         <h2>Gotta catch em' all!</h2>
@@ -151,36 +144,36 @@ $(function() {
             </ul>
         </nav>
     </div>
+    </div>
+    {% endblock %}
         
-
-    <!-- Footer place holder-->
-    <div id="footer-placeholder"></div>
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <!-- Script to handle pagination (for demo purposes only) -->
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const paginate = (page) => {
-                // Hide all pages
-                document.querySelectorAll('.list-group').forEach((group) => {
-                    group.classList.add('d-none');
-                });
-                // Show the selected page
-                document.querySelector(page).classList.remove('d-none');
-            };
-            // Handle click on pagination links
-            document.querySelectorAll('.pagination a.page-link').forEach((link) => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const page = link.getAttribute('href');
-                    paginate(page);
-                });
+    {% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const paginate = (page) => {
+            document.querySelectorAll('.list-group').forEach(group => {
+                group.classList.add('d-none');
             });
-            // Initialize page 1
-            paginate('#tradeOffersPage1');
+            document.querySelector(page).classList.remove('d-none');
+        };
+
+        document.querySelectorAll('.pagination a.page-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                paginate(this.getAttribute('href'));
+            });
         });
-    </script>
+
+        // Initialize first page
+        paginate('#tradeOffersPage1');
+    });
+</script>
+{% endblock %}
 
 </body>
 </html>
