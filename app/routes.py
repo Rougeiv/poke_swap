@@ -39,7 +39,7 @@ def signup():
     else:
         return render_template('signup.html')
 
-@flaskApp.route('/login', methods=['POST'])
+@flaskApp.route('/login', methods=['GET', 'POST'])
 def login():
     username = request.form['username']
     password = request.form['password']

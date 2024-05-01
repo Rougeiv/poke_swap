@@ -43,4 +43,3 @@ class Pokemon(db.Model):
                                                 unique=True)
     shiny: so.Mapped[bool] = so.mapped_column(sa.Boolean)
     owner_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey("user.id"))
-
