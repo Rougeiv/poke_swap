@@ -8,32 +8,45 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <!-- Additional head elements can be included here -->
     {% block head %}{% endblock %}
+
+    <style>
+    .navbar-brand {
+        display: flex;
+        align-items: center; /* Vertically centers the image and text */
+    }
+    .navbar-brand p, .nav-link p {  /* Corrected to target <p> inside .nav-link correctly */
+        font-family: 'Comic Sans MS', cursive;
+        color: #e8372d;
+        margin: 0; /* Removes the default margin */
+    }
+</style>
+
+</style>
 </head>
 <body>
 
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.html">
-        <img src="{{ url_for('static', filename='images/premierball.png') }}" width="30" height="30" alt="PokeSwap Logo" class="d-inline-block align-top">
-        PokeSwap
-    </a>
+        <p><img src="{{ url_for('static', filename='images/pokeswap.png') }}" width="120" height="40" alt="PokeSwap Logo" class="d-inline-block align-top"></p>
+     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="how-to-play.html">How to Play</a>
+                <a class="nav-link" href="how-to-play.html"><p>How to Play</p></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="catch.html">Catch</a>
+                <a class="nav-link" href="catch.html"><p>Catch</p></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="traderequest.html">Trade Request</a>
+                <a class="nav-link" href="traderequest.html"><p>Trade Request</p></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="login.html">
-                    <img src="{{ url_for('static', filename='images/user.png') }}" width="30" height="30" alt="Login">
+                    <img src="{{ url_for('static', filename='images/user.png') }}" width="40" height="40" alt="Login">
                 </a>
             </li>
         </ul>

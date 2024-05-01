@@ -8,6 +8,33 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <!-- Include the full jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        /* General styles for headings and specific texts */
+        .h2, .card-title, .text-center.h2 {
+            font-family: 'Comic Sans MS', cursive;
+            color: lightblue; /* Red color hint */
+        }
+        
+        /* Specific class for the "Gotta catch 'em all!" heading */
+        .gotta-catch, .trade-offer {
+            font-family: 'Comic Sans MS', cursive;
+            color: lightslategray;
+            text-align: center; /* Ensuring center alignment if needed */
+            margin-top: 20px; /* Additional spacing */
+        }
+        
+        /* Styles for pagination links */
+        .pagination a {
+            font-family: 'Comic Sans MS', cursive;
+            color: #e8372d; /* Applying red color to pagination links */
+        }
+        
+        /* Ensuring all buttons use Comic Sans MS */
+        .btn {
+            font-family: 'Comic Sans MS', cursive; /* Making button text Comic Sans */
+        }
+        </style>
+        
 </head>
 <body>
 
@@ -20,14 +47,14 @@
 
 
     <div class="container text-center mt-5">
-        <h2>Gotta catch em' all!</h2>
+        <h2 class="gotta-catch">Gotta catch 'em all!</h2>
         <div class="row mt-4">
             <div class="col-6">
                 <div class="card bg-dark text-white">
                     <div class="card-body">
                         <h5 class="card-title">Catch Pokemon</h5>
-                        <a href="catch-pokemon.html" class="btn btn-primary">
-                            <img src="https://s3-alpha-sig.figma.com/img/3cf9/ce8e/fc4a702a19a44aeaf15e51440b444623?Expires=1714953600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=DyrpMjMXBPDYgoFyJDHxCvA5VfZY35N0L278N9AfjoMWN0GeqqJmOeW-zpCSHIGKPVmBdkTFKx1-isaQ8-z9qUxXJlyVwqMqdtXZkRXfSnmN68z7IcFX7oY3eeBxVgvG928yEIgzqWaX40RPAVd4LJH3DxVv~E~yY0MTl4Pfh~h0ESuFzJiBzeImEkTcaGWuoqcyZvunGFkaQyFgASluus7hPKu3H8Jm4s0MaHgZeqRF4gEKEgeh76WJ-xyFlqle-Ya3OrNuhEhZyRI8XUiLvplejGm0iJ3hbNK9Jp2wyXajB0BNrPhYI9Y15K6lql~WkbDtZ3tj77AuTmmQW5aInQ__" Width = "100" Height = "100" class="card-img-top" alt="Catch Pokemon">
+                        <a href="catch-pokemon.html" class="btn btn-custom" style="background-color: transparent;">
+                            <img src="{{ url_for('static', filename='images/tallgrass.png') }}" width="100" height="100" class="card-img-top" alt="Catch Pokemon">
                         </a>
                     </div>
                 </div>
@@ -36,11 +63,10 @@
                 <div class="card bg-dark text-white">
                     <div class="card-body">
                         <h5 class="card-title">Make a trade offer</h5>
-                        <a href="trade-offer.html" class="btn btn-secondary">
-                            <img src="https://s3-alpha-sig.figma.com/img/702d/609f/191381a3ccd706abd40c72a9ec86f62e?Expires=1714953600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=i-bJurQhxg7m3i6rO3BEdqOsfkZtoG9r~n~MrZjXS4MRP13SzBk5IM8cYNbRK8EV-qDrnXuHeo3DVFjY32qSoAkZHwfvQY2izXXPg5hSg47FPCW0pDveF9JPPfo83FkT2bRsi6XvvXyCNZppiCX20PudPxTz1HMC8vfSLTrOXIgxW~00sSYinGwTuzI5neQqNXOYWiEWwqqokGMe-ewpP6ppNz1iOlz3TgKc18NZ40GMjkcNj4JKfsZdbD6ioExohMDlcwJKuX6LIYG82kUgERLylkGqwjv4JlJiVBlgpsV8UJiRH3XN8kao-Tc~IcowcpM1svZaXGThsZeca7CA-Q__" Width = "100" Height = "100" alt="Pokeball">
-                            ←
-                            →
-                            <img src="https://s3-alpha-sig.figma.com/img/702d/609f/191381a3ccd706abd40c72a9ec86f62e?Expires=1714953600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=i-bJurQhxg7m3i6rO3BEdqOsfkZtoG9r~n~MrZjXS4MRP13SzBk5IM8cYNbRK8EV-qDrnXuHeo3DVFjY32qSoAkZHwfvQY2izXXPg5hSg47FPCW0pDveF9JPPfo83FkT2bRsi6XvvXyCNZppiCX20PudPxTz1HMC8vfSLTrOXIgxW~00sSYinGwTuzI5neQqNXOYWiEWwqqokGMe-ewpP6ppNz1iOlz3TgKc18NZ40GMjkcNj4JKfsZdbD6ioExohMDlcwJKuX6LIYG82kUgERLylkGqwjv4JlJiVBlgpsV8UJiRH3XN8kao-Tc~IcowcpM1svZaXGThsZeca7CA-Q__" Width = "100" Height = "100" alt="Pokeball">
+                        <a href="trade-offer.html" class="btn btn-secondary" >
+                            <img src="{{ url_for('static', filename='images/Pokeball.png') }}" Width = "100" Height = "100" alt="Pokeball">
+                            ↔️
+                            <img src="{{ url_for('static', filename='images/Pokeball.png') }}" Width = "100" Height = "100" alt="Pokeball">
                         </a>
                     </div>
                 </div>
@@ -50,7 +76,7 @@
 
     <!-- Trade Offers Section -->
     <div class="container mt-5">
-        <h2 class="text-center">Trade offers</h2>
+        <h2 class="trade-offer">Trade offers</h2>
         
         <!-- First Page Trade Offers -->
         <div id="tradeOffersPage1" class="list-group mt-3">
@@ -61,9 +87,9 @@
                     <small>Expires in 2 days</small>
                 </div>
                 <p class="mb-1">
-                    <img src="https://img.pokemondb.net/artwork/avif/ditto.avif" alt="Pokemon 1">
+                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
                     ← →
-                    <img src="https://img.pokemondb.net/artwork/avif/blaziken.avif" alt="Pokemon 2">
+                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
                 </p>
             </a>
             <!-- Mock trade offer 2 -->
@@ -73,9 +99,9 @@
                     <small>Expires in 2 days</small>
                 </div>
                 <p class="mb-1">
-                    <img src="https://img.pokemondb.net/artwork/avif/ditto.avif" alt="Pokemon 1">
+                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
                     ← →
-                    <img src="https://img.pokemondb.net/artwork/avif/blaziken.avif" alt="Pokemon 2">
+                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
                 </p>
             </a>
             <!-- Mock trade offer 3 -->
@@ -85,9 +111,9 @@
                     <small>Expires in 2 days</small>
                 </div>
                 <p class="mb-1">
-                    <img src="https://img.pokemondb.net/artwork/avif/ditto.avif" alt="Pokemon 1">
+                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
                     ← →
-                    <img src="https://img.pokemondb.net/artwork/avif/blaziken.avif" alt="Pokemon 2">
+                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
                 </p>
             </a>
             <!-- Mock trade offer 4 -->
@@ -97,9 +123,9 @@
                     <small>Expires in 2 days</small>
                 </div>
                 <p class="mb-1">
-                    <img src="https://img.pokemondb.net/artwork/avif/ditto.avif" alt="Pokemon 1">
+                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
                     ← →
-                    <img src="https://img.pokemondb.net/artwork/avif/blaziken.avif" alt="Pokemon 2">
+                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
                 </p>
             </a>
             <!-- ... -->
@@ -114,9 +140,9 @@
                     <small>Expires in 3 days</small>
                 </div>
                 <p class="mb-1">
-                    <img src="https://img.pokemondb.net/artwork/avif/ditto.avif" alt="Pokemon 5">
+                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 5">
                     ← →
-                    <img src="https://img.pokemondb.net/artwork/avif/blaziken.avif" alt="Pokemon 6">
+                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 6">
                 </p>
             </a>
             <!-- Mock trade offer 6 -->
@@ -126,9 +152,9 @@
                     <small>Expires in 2 days</small>
                 </div>
                 <p class="mb-1">
-                    <img src="https://img.pokemondb.net/artwork/avif/ditto.avif" alt="Pokemon 1">
+                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
                     ← →
-                    <img src="https://img.pokemondb.net/artwork/avif/blaziken.avif" alt="Pokemon 2">
+                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
                 </p>
             </a>
             <!-- ... -->
