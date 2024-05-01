@@ -1,13 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="static/style.css">
-</head>
-<body>
-    <div class="container">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login</title>
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+        <!-- <link rel="stylesheet" href="static/style.css"> -->
+        <!--.-->
+    </head>
+
+    <body>
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="HomePage.html">
+                <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/10324630-3bf7-4d5b-831a-c931da9b6de5/d68qhko-073b6da3-7e9f-42dd-8499-613c4062a984.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzEwMzI0NjMwLTNiZjctNGQ1Yi04MzFhLWM5MzFkYTliNmRlNVwvZDY4cWhrby0wNzNiNmRhMy03ZTlmLTQyZGQtODQ5OS02MTNjNDA2MmE5ODQucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.GbZrjNlo7UOQNLUXjXi1UogIvVoSLjoTXiBoH_Gr1nE" width="30" height="30" alt="PokeSwap Logo" class="d-inline-block align-top">
+                PokeSwap
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" justify-content-end id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="catch.html">Catch</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="trade-request.html">Trade Request</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="how-to-play.html">How to Play</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="faq.html">FAQ</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+    <!-- <div class="container">
         <h1>Login</h1>
         {% if error_message %}
         <p style="color: red;">{{ error_message }}</p>
@@ -21,6 +52,40 @@
             <button type="submit">Login</button>
         </form>
         <p>Don't have an account? <a href="/signup">Signup</a></p>
-    </div>
-</body>
+    </div> -->
+
+        <!-- Login Section -->
+        <div class="container mt-4">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card border rounded-lg border-dark" style="background-image: url('https://github.com/Rougeiv/poke_swap/blob/main/images/login_gradient.png?raw=true'); background-size: 100% 100%; background-repeat: no-repeat;">
+                        <div class = "card-header text-center">
+                            <div class="card-body text-center">
+                                <h1 class="text-center pb-3 bg-dark text-white border rounded">Log-in</h1>
+                                <div class="text-center" style="padding-top: 20rem;">
+                                    <form>
+                                        <label for="email">Email/Username</label>
+                                        <input type="text" id="email" name="email" class="form-control"><br>
+                                        <label for="password">Password:</label>
+                                        <input type="password" id="password" name="password" class="form-control mb-2">
+                                    </form>
+                                </div>
+                                <p class="text-center font-size-1">Don't have an account? <a href="signup.html" class="text-dark">Sign up here!</a></p>
+                                
+                                <button class="btn btn-md btn-primary mt-3 bg-dark">Continue</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+        <!-- Footer -->
+        <footer class="bg-dark text-center fixed-bottom">
+            <div= class="container p-4">
+                
+            </div>
+        </footer>
+        
+    </body>
 </html>
