@@ -20,6 +20,9 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
+    
+    def get_trades(self):
+        return Trade.query.filter((Trade.user_id1 == self.id) | (Trade.user_id2 == self.id)).all()
 
 class Trade(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -47,6 +50,6 @@ class Pokemon(db.Model):
 
 # association table to track which pokemon belong to which users
 user_pokemon: so.Mapped[sa.Table] = db.Table('user_pokemon',
-    so.Column('user_id', so.Integer, so.ForeignKey('user.id'), primary_key=True),
-    so.Column('pokemon_id', so.Integer, so.ForeignKey('pokemon.id'), primary_key=True)
+    sa.Column('user_id', sa.Integer, sa.ForeignKey('user.id'), primary_key=True),
+    sa.Column('pokemon_id', sa.Integer, sa.ForeignKey('pokemon.id'), primary_key=True)
 )
