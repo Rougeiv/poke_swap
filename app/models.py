@@ -3,6 +3,7 @@ from typing import List, Optional
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from app import db
+from hashlib import md5
 
 class User(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -23,6 +24,11 @@ class User(db.Model):
     
     def get_trades(self):
         return Trade.query.filter((Trade.user_id1 == self.id) | (Trade.user_id2 == self.id)).all()
+    
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
+            digest, size)
 
 class Trade(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)

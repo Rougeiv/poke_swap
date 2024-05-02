@@ -1,7 +1,7 @@
 from app import flaskApp, db
 from flask import render_template, request, redirect, session, jsonify
 import sqlite3
-from app.auth import login_required
+from flask_login import login_required
 import sqlalchemy as sa
 
 @flaskApp.route('/')
