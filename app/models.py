@@ -12,9 +12,12 @@ class User(db.Model):
                                              unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
     
-    trades: so.Mapped[List['Trade']] = so.relationship(
-        'Trade', back_populates='user', lazy=True)
+    user_id1_trades: so.Mapped[List['Trade']] = so.relationship(
+        'Trade', foreign_keys="[Trade.user_id1]", back_populates='user', lazy=True)
     
+    user_id2_trades: so.Mapped[List['Trade']] = so.relationship(
+        'Trade', foreign_keys="[Trade.user_id2]", back_populates='user', lazy=True)
+
     inventory = so.relationship(
         'Pokemon', secondary='user_pokemon', back_populates='owners', lazy=True)
 
