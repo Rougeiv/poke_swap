@@ -23,6 +23,10 @@ class User(UserMixin, db.Model):
     inventory = so.relationship(
         'Pokemon', secondary='user_pokemon', back_populates='owners', lazy=True)
 
+    about_me: so.Mapped[Optional[str]] = so.mapped_column(sa.String(140))
+    last_seen: so.Mapped[Optional[datetime]] = so.mapped_column(
+        default=lambda: datetime.now(timezone.utc))
+    
     def __repr__(self):
         return '<User {}>'.format(self.username)
     

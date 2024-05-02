@@ -4,11 +4,30 @@
     <table>
         <tr valign="top">
             <td><img src="{{ user.avatar(128) }}"></td>
-            <td><h1>User: {{ user.username }}</h1></td>
+            <td>
+                <h1>User: {{ user.username }}</h1>
+                {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+                {% if user.last_seen %}<p>Last seen: {{ user.last_seen }}</p>{% endif %}
+                <!-- {% if user.is_authenticated %}
+                    <p><a href="{{ url_for('edit_profile') }}">Edit profile</a></p>
+                {% endif %}
+                {% if user.can(Permission.ADMINISTER) %}
+                    <p><a href="{{ url_for('admin.index') }}">Admin</a></p>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <p><a href="{{ url_for('follow', username=user.username) }}">
+                        {% if user.is_following(user) %}
+                            Unfollow
+                        {% else %}
+                            Follow
+                        {% endif %}
+                    </a></p>
+                {% endif %} -->
+            </td>
         </tr>
     </table>
     <hr>
-    {% for mon in user.inventory %}
-    <p>{{ mon }} </p>
+    {% for pokemon in user.inventory %}
+        {% include '_inventory_pokemon.html' %}
     {% endfor %}
 {% endblock %}
