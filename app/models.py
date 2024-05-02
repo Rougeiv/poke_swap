@@ -1,11 +1,12 @@
 from datetime import datetime, timezone
 from typing import List, Optional
+from flask_login import UserMixin
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from app import db
 from hashlib import md5
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True,
                                                 unique=True)
