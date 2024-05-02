@@ -12,11 +12,11 @@ class User(db.Model):
                                              unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
     
-    trades: so.WriteOnlyMapped[List['Trade']] = so.relationship(
-        backref='user', lazy=True)
+    trades: so.Mapped[List['Trade']] = so.relationship(
+        'Trade', back_populates='user', lazy=True)
     
-    inventory: so.Mapped[List['Pokemon']] = so.relationship(
-        'Pokemon', backref='owner', lazy=True)
+    inventory = so.relationship(
+        'Pokemon', secondary='user_pokemon', back_populates='owners', lazy=True)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -33,13 +33,20 @@ class Trade(db.Model):
     user_id2: so.Mapped[int] = so.mapped_column(sa.ForeignKey('user.id'), index=True)
 
     def __repr__(self):
-        return '<Trade {} gave {} <-> {} given by {}>'.format(self.user_id1).format(self.pokemon1).format(self.pokemon2).format(self.user_id2)
+        return '<Trade: {} gave {} <-> {} given by {}>'.format(self.user_id1, self.pokemon1, self.pokemon2, self.user_id2)
 
-# one User can have many pokemon and each pokemon is unique to a user
 class Pokemon(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     pokedex_num: so.Mapped[int] = so.mapped_column(sa.Integer)
     name: so.Mapped[str] = so.mapped_column(sa.String(32), index=True,
                                                 unique=True)
     shiny: so.Mapped[bool] = so.mapped_column(sa.Boolean)
-    owner_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey("user.id"))
+    owners = so.relationship('User', secondary='user_pokemon', back_populates='inventory', lazy=True)
+    def __repr__(self):
+        return '<Pokemon {} {}>'.format(self.pokedex_num, self.name)
+
+# association table to track which pokemon belong to which users
+user_pokemon: so.Mapped[sa.Table] = db.Table('user_pokemon',
+    so.Column('user_id', so.Integer, so.ForeignKey('user.id'), primary_key=True),
+    so.Column('pokemon_id', so.Integer, so.ForeignKey('pokemon.id'), primary_key=True)
+)
