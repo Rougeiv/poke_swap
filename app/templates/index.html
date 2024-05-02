@@ -1,86 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeSwap - Home</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <!-- Include the full jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <style>
-        /* General styles for headings and specific texts */
-        .h2, .card-title, .text-center.h2 {
-            font-family: 'Comic Sans MS', cursive;
-            color: lightblue; /* Red color hint */
-        }
-        
-        /* Specific class for the "Gotta catch 'em all!" heading */
-        .gotta-catch, .trade-offer {
-            font-family: 'Comic Sans MS', cursive;
-            color: lightslategray;
-            text-align: center; /* Ensuring center alignment if needed */
-            margin-top: 20px; /* Additional spacing */
-        }
-        
-        /* Styles for pagination links */
-        .pagination a {
-            font-family: 'Comic Sans MS', cursive;
-            color: #e8372d; /* Applying red color to pagination links */
-        }
-        
-        /* Ensuring all buttons use Comic Sans MS */
-        .btn {
-            font-family: 'Comic Sans MS', cursive; /* Making button text Comic Sans */
-        }
-        </style>
-        
-</head>
-<body>
-
 {% extends 'base.html' %}
 
-<!-- Main Content here -->
+{% block title %}PokeSwap - Home{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Custom styles specific to the Home page */
+    .gotta-catch, .trade-offer {
+        font-family: 'Comic Sans MS', cursive;
+        color: lightslategray;
+        text-align: center;
+        margin-top: 20px;
+    }
+    .card-title, .text-center.h2 {
+        font-family: 'Comic Sans MS', cursive;
+        color: lightblue;
+    }
+    .pagination a {
+        font-family: 'Comic Sans MS', cursive;
+
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container text-center mt-5">
-
-
-
-    <div class="container text-center mt-5">
-        <h2 class="gotta-catch">Gotta catch 'em all!</h2>
-        <div class="row mt-4">
-            <div class="col-6">
-                <div class="card bg-dark text-white">
-                    <div class="card-body">
-                        <h5 class="card-title">Catch Pokemon</h5>
-                        <a href="catch-pokemon.html" class="btn btn-custom" style="background-color: transparent;">
-                            <img src="{{ url_for('static', filename='images/tallgrass.png') }}" width="100" height="100" class="card-img-top" alt="Catch Pokemon">
-                        </a>
-                    </div>
+    <h2 class="gotta-catch">Gotta catch 'em all!</h2>
+    <div class="row mt-4">
+        <div class="col-6">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Catch Pokemon</h5>
+                    <a href="catch-pokemon.html" class="btn btn-custom" style="background-color: transparent;">
+                        <img src="{{ url_for('static', filename='images/tallgrass.png') }}" width="100" height="100" alt="Catch Pokemon">
+                    </a>
                 </div>
             </div>
-            <div class="col-6">
-                <div class="card bg-dark text-white">
-                    <div class="card-body">
-                        <h5 class="card-title">Make a trade offer</h5>
-                        <a href="trade-offer.html" class="btn btn-secondary" >
-                            <img src="{{ url_for('static', filename='images/Pokeball.png') }}" Width = "100" Height = "100" alt="Pokeball">
-                            ↔️
-                            <img src="{{ url_for('static', filename='images/Pokeball.png') }}" Width = "100" Height = "100" alt="Pokeball">
-                        </a>
-                    </div>
+        </div>
+        <div class="col-6">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Make a trade offer</h5>
+                    <a href="trade-offer.html" class="btn btn-secondary">
+                        <img src="{{ url_for('static', filename='images/Pokeball.png') }}" width="100" height="100" alt="Pokeball">
+                        ↔
+                        <img src="{{ url_for('static', filename='images/Pokeball.png') }}" width="100" height="100" alt="Pokeball">
+                    </a>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Trade Offers Section -->
     <div class="container mt-5">
         <h2 class="trade-offer">Trade offers</h2>
-        
-        <!-- First Page Trade Offers -->
         <div id="tradeOffersPage1" class="list-group mt-3">
-            <!-- Mock trade offer 1 -->
+            <!-- Dynamically generated trade offers could be listed here -->
+            <!-- This is a placeholder for demonstration -->
             <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1">Trade #0001</h5>
@@ -170,16 +144,13 @@
             </ul>
         </nav>
     </div>
-    </div>
-    {% endblock %}
-        
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <!-- Script to handle pagination (for demo purposes only) -->
-    {% block scripts %}
+</div>
+{% endblock %}
+
+{% block scripts %}
 {{ super() }}
 <script>
+    // Script for managing pagination or any additional functionality
     document.addEventListener('DOMContentLoaded', function () {
         const paginate = (page) => {
             document.querySelectorAll('.list-group').forEach(group => {
@@ -195,11 +166,8 @@
             });
         });
 
-        // Initialize first page
+        // Initialize the first page
         paginate('#tradeOffersPage1');
     });
 </script>
 {% endblock %}
-
-</body>
-</html>
