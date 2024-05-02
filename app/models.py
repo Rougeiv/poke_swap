@@ -44,6 +44,10 @@ class Trade(db.Model):
     user_id1: so.Mapped[int] = so.mapped_column(sa.ForeignKey('user.id'), index=True)
     user_id2: so.Mapped[int] = so.mapped_column(sa.ForeignKey('user.id'), index=True)
 
+    # Define the relationship with User for user_id1 and user_id2
+    user1 = so.relationship('User', foreign_keys=[user_id1], back_populates='user_id1_trades')
+    user2 = so.relationship('User', foreign_keys=[user_id2], back_populates='user_id2_trades')
+    
     def __repr__(self):
         return '<Trade: {} gave {} <-> {} given by {}>'.format(self.user_id1, self.pokemon1, self.pokemon2, self.user_id2)
 
