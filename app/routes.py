@@ -1,6 +1,8 @@
 from app import flaskApp, db
 from flask import render_template, request, redirect, session, jsonify
 import sqlite3
+from app.auth import login_required
+import sqlalchemy as sa
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
@@ -116,3 +118,14 @@ def gacha_one_pull():
         return jsonify(pokemon)
     except Exception as e:
         return f"An error occurred: {str(e)}"
+
+# user profile page route
+@flaskApp.route('/user/<username>')
+@login_required
+def user(username):
+    user = db.first_or404(sa.select(User).where(User.username == username))
+    trades = [
+        {'pokemon1': 'Pikachu', 'pokemon2': 'Charmander', 'timestamp': '2021-01-01', 'user_id1': 1, 'user_id2': 2},
+        {'pokemon1': 'Bulbasaur', 'pokemon2': 'Squirtle', 'timestamp': '2021-01-02', 'user_id1': 1, 'user_id2': 2}
+        ]
+    return render_template('user.html', user=user, trades=trades)
