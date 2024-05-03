@@ -4,7 +4,7 @@ import sqlite3
 from flask_login import current_user, login_required
 import sqlalchemy as sa
 from datetime import datetime, timezone
-from app.forms import EditProfileForm
+# from app.forms import EditProfileForm
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
