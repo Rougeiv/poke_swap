@@ -1,89 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeSwap - Home</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-</head>
-<body>
+{% extends 'base.html' %}
 
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="index.html">
-            <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/10324630-3bf7-4d5b-831a-c931da9b6de5/d68qhko-073b6da3-7e9f-42dd-8499-613c4062a984.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzEwMzI0NjMwLTNiZjctNGQ1Yi04MzFhLWM5MzFkYTliNmRlNVwvZDY4cWhrby0wNzNiNmRhMy03ZTlmLTQyZGQtODQ5OS02MTNjNDA2MmE5ODQucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.GbZrjNlo7UOQNLUXjXi1UogIvVoSLjoTXiBoH_Gr1nE" width="30" height="30" alt="PokeSwap Logo" class="d-inline-block align-top">
-            PokeSwap
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="how-to-play.html">How to Play</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="faq.html">FAQ</a>
-                </li>
-                <!-- Placeholder for additional navigation items -->
-            </ul>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="login.html">
-                        <img src="https://banner2.cleanpng.com/20180516/zq/kisspng-computer-icons-google-account-icon-design-login-5afc02dab4a218.0950785215264652427399.jpg" width="30" height="30" alt="Login">
+{% block title %}PokeSwap - Home{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Custom styles specific to the Home page */
+    .gotta-catch, .trade-offer {
+        font-family: 'Comic Sans MS', cursive;
+        color: lightslategray;
+        text-align: center;
+        margin-top: 20px;
+    }
+    .card-title, .text-center.h2 {
+        font-family: 'Comic Sans MS', cursive;
+        color: lightblue;
+    }
+    .pagination a {
+        font-family: 'Comic Sans MS', cursive;
+
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h2 class="gotta-catch">Gotta catch 'em all!</h2>
+    <div class="row mt-4">
+        <div class="col-6">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Catch Pokemon</h5>
+                    <a href="{{ url_for('catch') }}" class="btn btn-custom" style="background-color: transparent;">
+                        <img src="{{ url_for('static', filename='images/tallgrass.png') }}" width="100" height="100" alt="Catch Pokemon">
                     </a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container text-center mt-5">
-        <h2>Gotta catch em' all!</h2>
-        <div class="row mt-4">
-            <div class="col-6">
-                <div class="card bg-dark text-white">
-                    <div class="card-body">
-                        <h5 class="card-title">Catch Pokemon</h5>
-                        <a href="catch-pokemon.html" class="btn btn-primary">
-                            <img src="https://s3-alpha-sig.figma.com/img/3cf9/ce8e/fc4a702a19a44aeaf15e51440b444623?Expires=1714953600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=DyrpMjMXBPDYgoFyJDHxCvA5VfZY35N0L278N9AfjoMWN0GeqqJmOeW-zpCSHIGKPVmBdkTFKx1-isaQ8-z9qUxXJlyVwqMqdtXZkRXfSnmN68z7IcFX7oY3eeBxVgvG928yEIgzqWaX40RPAVd4LJH3DxVv~E~yY0MTl4Pfh~h0ESuFzJiBzeImEkTcaGWuoqcyZvunGFkaQyFgASluus7hPKu3H8Jm4s0MaHgZeqRF4gEKEgeh76WJ-xyFlqle-Ya3OrNuhEhZyRI8XUiLvplejGm0iJ3hbNK9Jp2wyXajB0BNrPhYI9Y15K6lql~WkbDtZ3tj77AuTmmQW5aInQ__" Width = "100" Height = "100" class="card-img-top" alt="Catch Pokemon">
-                        </a>
-                    </div>
                 </div>
             </div>
-            <div class="col-6">
-                <div class="card bg-dark text-white">
-                    <div class="card-body">
-                        <h5 class="card-title">Make a trade offer</h5>
-                        <a href="trade-offer.html" class="btn btn-secondary">
-                            <img src="https://s3-alpha-sig.figma.com/img/702d/609f/191381a3ccd706abd40c72a9ec86f62e?Expires=1714953600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=i-bJurQhxg7m3i6rO3BEdqOsfkZtoG9r~n~MrZjXS4MRP13SzBk5IM8cYNbRK8EV-qDrnXuHeo3DVFjY32qSoAkZHwfvQY2izXXPg5hSg47FPCW0pDveF9JPPfo83FkT2bRsi6XvvXyCNZppiCX20PudPxTz1HMC8vfSLTrOXIgxW~00sSYinGwTuzI5neQqNXOYWiEWwqqokGMe-ewpP6ppNz1iOlz3TgKc18NZ40GMjkcNj4JKfsZdbD6ioExohMDlcwJKuX6LIYG82kUgERLylkGqwjv4JlJiVBlgpsV8UJiRH3XN8kao-Tc~IcowcpM1svZaXGThsZeca7CA-Q__" Width = "100" Height = "100" alt="Pokeball">
-                            ←
-                            →
-                            <img src="https://s3-alpha-sig.figma.com/img/702d/609f/191381a3ccd706abd40c72a9ec86f62e?Expires=1714953600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=i-bJurQhxg7m3i6rO3BEdqOsfkZtoG9r~n~MrZjXS4MRP13SzBk5IM8cYNbRK8EV-qDrnXuHeo3DVFjY32qSoAkZHwfvQY2izXXPg5hSg47FPCW0pDveF9JPPfo83FkT2bRsi6XvvXyCNZppiCX20PudPxTz1HMC8vfSLTrOXIgxW~00sSYinGwTuzI5neQqNXOYWiEWwqqokGMe-ewpP6ppNz1iOlz3TgKc18NZ40GMjkcNj4JKfsZdbD6ioExohMDlcwJKuX6LIYG82kUgERLylkGqwjv4JlJiVBlgpsV8UJiRH3XN8kao-Tc~IcowcpM1svZaXGThsZeca7CA-Q__" Width = "100" Height = "100" alt="Pokeball">
-                        </a>
-                    </div>
+        </div>
+        <div class="col-6">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Make a trade offer</h5>
+                    <a href="{{ url_for('trade_offer') }}" class="btn btn-secondary">
+                        <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball">
+                        ↔
+                        <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball">
+                    </a>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Trade Offers Section -->
     <div class="container mt-5">
-        <h2 class="text-center">Trade offers</h2>
-        
-        <!-- First Page Trade Offers -->
+        <h2 class="trade-offer">Trade offers</h2>
         <div id="tradeOffersPage1" class="list-group mt-3">
-            <!-- Mock trade offer 1 -->
+            <!-- Dynamically generated trade offers could be listed here -->
+            <!-- This is a placeholder for demonstration -->
             <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1">Trade #0001</h5>
                     <small>Expires in 2 days</small>
                 </div>
                 <p class="mb-1">
-                    <img src="https://img.pokemondb.net/artwork/avif/ditto.avif" alt="Pokemon 1">
+                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
                     ← →
-                    <img src="https://img.pokemondb.net/artwork/avif/blaziken.avif" alt="Pokemon 2">
+                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
                 </p>
             </a>
             <!-- Mock trade offer 2 -->
@@ -93,9 +73,9 @@
                     <small>Expires in 2 days</small>
                 </div>
                 <p class="mb-1">
-                    <img src="https://img.pokemondb.net/artwork/avif/ditto.avif" alt="Pokemon 1">
+                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
                     ← →
-                    <img src="https://img.pokemondb.net/artwork/avif/blaziken.avif" alt="Pokemon 2">
+                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
                 </p>
             </a>
             <!-- Mock trade offer 3 -->
@@ -105,9 +85,9 @@
                     <small>Expires in 2 days</small>
                 </div>
                 <p class="mb-1">
-                    <img src="https://img.pokemondb.net/artwork/avif/ditto.avif" alt="Pokemon 1">
+                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
                     ← →
-                    <img src="https://img.pokemondb.net/artwork/avif/blaziken.avif" alt="Pokemon 2">
+                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
                 </p>
             </a>
             <!-- Mock trade offer 4 -->
@@ -117,9 +97,9 @@
                     <small>Expires in 2 days</small>
                 </div>
                 <p class="mb-1">
-                    <img src="https://img.pokemondb.net/artwork/avif/ditto.avif" alt="Pokemon 1">
+                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
                     ← →
-                    <img src="https://img.pokemondb.net/artwork/avif/blaziken.avif" alt="Pokemon 2">
+                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
                 </p>
             </a>
             <!-- ... -->
@@ -134,9 +114,9 @@
                     <small>Expires in 3 days</small>
                 </div>
                 <p class="mb-1">
-                    <img src="https://img.pokemondb.net/artwork/avif/ditto.avif" alt="Pokemon 5">
+                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 5">
                     ← →
-                    <img src="https://img.pokemondb.net/artwork/avif/blaziken.avif" alt="Pokemon 6">
+                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 6">
                 </p>
             </a>
             <!-- Mock trade offer 6 -->
@@ -146,9 +126,9 @@
                     <small>Expires in 2 days</small>
                 </div>
                 <p class="mb-1">
-                    <img src="https://img.pokemondb.net/artwork/avif/ditto.avif" alt="Pokemon 1">
+                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
                     ← →
-                    <img src="https://img.pokemondb.net/artwork/avif/blaziken.avif" alt="Pokemon 2">
+                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
                 </p>
             </a>
             <!-- ... -->
@@ -164,34 +144,30 @@
             </ul>
         </nav>
     </div>
-        
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <!-- Script to handle pagination (for demo purposes only) -->
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const paginate = (page) => {
-                // Hide all pages
-                document.querySelectorAll('.list-group').forEach((group) => {
-                    group.classList.add('d-none');
-                });
-                // Show the selected page
-                document.querySelector(page).classList.remove('d-none');
-            };
-            // Handle click on pagination links
-            document.querySelectorAll('.pagination a.page-link').forEach((link) => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const page = link.getAttribute('href');
-                    paginate(page);
-                });
-            });
-            // Initialize page 1
-            paginate('#tradeOffersPage1');
-        });
-    </script>
+</div>
+{% endblock %}
 
-</body>
-</html>
+{% block scripts %}
+{{ super() }}
+<script>
+    // Script for managing pagination or any additional functionality
+    document.addEventListener('DOMContentLoaded', function () {
+        const paginate = (page) => {
+            document.querySelectorAll('.list-group').forEach(group => {
+                group.classList.add('d-none');
+            });
+            document.querySelector(page).classList.remove('d-none');
+        };
+
+        document.querySelectorAll('.pagination a.page-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                paginate(this.getAttribute('href'));
+            });
+        });
+
+        // Initialize the first page
+        paginate('#tradeOffersPage1');
+    });
+</script>
+{% endblock %}
