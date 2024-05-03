@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Trade Offer
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+        <div class="card" style="border-radius: 10px;">
+            <div class="card-header text-center bg-dark text-white">
+                Trade Offer
+            </div>
+            <div class="card-body" style="background: linear-gradient(to bottom, #d1f1f1, #306060);">
+                <div class="row text-center">
+                    <div class="col">
+                        <h5>Offering</h5>
+                        <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Offering" class="img-thumbnail">
+                    </div>
+                    <div class="col d-flex align-items-center justify-content-center">
+                        <span class="mx-3">⇆</span>
+                    </div>
+                    <div class="col">
+                        <h5>Requesting</h5>
+                        <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Requesting" class="img-thumbnail">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col text-center">
+                        <button class="btn btn-dark">Post</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
