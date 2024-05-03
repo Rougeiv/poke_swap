@@ -30,7 +30,7 @@
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Catch Pokemon</h5>
-                    <a href="catch-pokemon.html" class="btn btn-custom" style="background-color: transparent;">
+                    <a href="{{ url_for('catch') }}" class="btn btn-custom" style="background-color: transparent;">
                         <img src="{{ url_for('static', filename='images/tallgrass.png') }}" width="100" height="100" alt="Catch Pokemon">
                     </a>
                 </div>
@@ -40,10 +40,10 @@
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Make a trade offer</h5>
-                    <a href="trade-offer.html" class="btn btn-secondary">
-                        <img src="{{ url_for('static', filename='images/Pokeball.png') }}" width="100" height="100" alt="Pokeball">
+                    <a href="{{ url_for('trade_offer') }}" class="btn btn-secondary">
+                        <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball">
                         ↔
-                        <img src="{{ url_for('static', filename='images/Pokeball.png') }}" width="100" height="100" alt="Pokeball">
+                        <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball">
                     </a>
                 </div>
             </div>
