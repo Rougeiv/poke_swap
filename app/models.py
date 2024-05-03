@@ -30,7 +30,7 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
     
-    def get_trades(self):
+    def get_trades(self):   
         return Trade.query.filter((Trade.user_id1 == self.id) | (Trade.user_id2 == self.id)).all()
     
     def avatar(self, size):
