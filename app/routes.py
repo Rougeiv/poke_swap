@@ -1,7 +1,8 @@
+from urllib.parse import urlsplit
 from app import flaskApp, db
 from flask import flash, render_template, request, redirect, session, jsonify, url_for
 import sqlite3
-from flask_login import current_user, login_required, login_user
+from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
 from app.models import User
@@ -9,6 +10,7 @@ from app.forms import EditProfileForm
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
+# @login_required
 def index():
     # signup_success = session.pop('signup_success', False)
     # logged_in = session.get('logged_in', False)
@@ -75,8 +77,12 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
+        next_page = request.args.get('next')
+        if not next_page or urlsplit(next_page).netloc != '':
+            next_page = url_for('index')
         return redirect(url_for('index'))
     return render_template('login.html', title='Sign In', form=form)
+
 @flaskApp.route('/main')
 def main():
     return redirect(url_for('index'))
@@ -84,7 +90,8 @@ def main():
 @flaskApp.route('/logout')
 def logout():
     # Remove user information from session
-    session.pop('logged_in', None)
+    # session.pop('logged_in', None)
+    logout_user()
     return redirect(url_for('index'))
 
 # Add a new route for the game page

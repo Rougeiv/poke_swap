@@ -45,12 +45,15 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('my_trades') }}"><p>My Trades</p></a>
                 </li>
+                {% if current_user.is_anonymous %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('login') }}"><p>Login</p></a>
                 </li>
+                {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('logout') }}"><p>Logout</p></a>
                 </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('profile') }}">
                         <img src="{{ url_for('static', filename='images/user.png') }}" width="40" height="40" alt="Login">
