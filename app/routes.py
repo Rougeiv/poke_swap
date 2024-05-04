@@ -6,7 +6,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
 from app.models import User
-from app.forms import EditProfileForm
+from app.forms import EditProfileForm, LoginForm
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
