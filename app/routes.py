@@ -6,7 +6,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
 from app.models import User
-from app.forms import EditProfileForm, LoginForm
+from app.forms import EditProfileForm, LoginForm, SignUpForm
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
@@ -19,54 +19,46 @@ def index():
 
 @flaskApp.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if request.method == 'POST':
-        try:
-            username = request.form['username']
-            password = request.form['password']
+    # if request.method == 'POST':
+    #     try:
+    #         username = request.form['username']
+    #         password = request.form['password']
 
-            # Get the database connection
-            db = get_db()
-            c = db.cursor()
+    #         # Get the database connection
+    #         db = get_db()
+    #         c = db.cursor()
 
-            # Check if username already exists
-            c.execute("SELECT * FROM users WHERE username=?", (username,))
-            existing_user = c.fetchone()
+    #         # Check if username already exists
+    #         c.execute("SELECT * FROM users WHERE username=?", (username,))
+    #         existing_user = c.fetchone()
 
-            if existing_user:
-                error_message = "Username already exists!"
-                return render_template('signup.html', error_message=error_message)
-            else:
-                # Insert new user into the database
-                c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
-                db.commit()
-                # Set success message in session
-                session['signup_success'] = True
-                return redirect('/')
-        except Exception as e:
-            return f"An error occurred: {str(e)}"
-    else:
-        return render_template('signup.html')
+    #         if existing_user:
+    #             error_message = "Username already exists!"
+    #             return render_template('signup.html', error_message=error_message)
+    #         else:
+    #             # Insert new user into the database
+    #             c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+    #             db.commit()
+    #             # Set success message in session
+    #             session['signup_success'] = True
+    #             return redirect('/')
+    #     except Exception as e:
+    #         return f"An error occurred: {str(e)}"
+    # else:
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = SignUpForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Congratulations, you are now a registered user!')
+        return redirect(url_for('login'))
+    return render_template('signup.html', title='SignUp', form=form)
 
 @flaskApp.route('/login', methods=['GET', 'POST'])
 def login():
-    # username = request.form['username']
-    # password = request.form['password']
-
-    # # Get the database connection
-    # db = get_db()
-    # c = db.cursor()
-
-    # # Check if username and password match
-    # c.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
-    # user = c.fetchone()
-
-    # if user:
-    #     # Set logged in flag in session
-    #     session['logged_in'] = True
-    #     return redirect('/game')
-    # else:
-    #     error_message = "Invalid username or password!"
-    #     return render_template('login.html', error_message=error_message)
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
