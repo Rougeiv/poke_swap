@@ -6,30 +6,87 @@
 
 {% block content %}
 <div class="container mt-5 mb-5">
-        <div class="card" style="border-radius: 10px;">
-            <div class="card-header text-center bg-dark text-white">
-                Trade Offer
-            </div>
-            <div class="card-body" style="background: linear-gradient(to bottom, #d1f1f1, #306060);">
-                <div class="row text-center">
-                    <div class="col">
-                        <h5>Offering</h5>
-                        <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Offering" class="img-thumbnail">
-                    </div>
-                    <div class="col d-flex align-items-center justify-content-center">
-                        <span class="mx-3">⇆</span>
-                    </div>
-                    <div class="col">
-                        <h5>Requesting</h5>
-                        <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Requesting" class="img-thumbnail">
-                    </div>
+    <div class="card" style="border-radius: 10px;">
+        <div class="card-header text-center bg-dark text-white">
+            Trade Offer
+        </div>
+        <div class="card-body" style="background: linear-gradient(to bottom, #d1f1f1, #306060);">
+            <div class="row text-center">
+                <div class="col">
+                    <h5>Offering</h5>
+                    <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Offering" class="img-thumbnail">
+                    <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#pokemonPCModal">
+                        Select Pokémon
+                    </button>
                 </div>
-                <div class="row mt-3">
-                    <div class="col text-center">
-                        <button class="btn btn-dark">Post</button>
-                    </div>
+                <div class="col d-flex align-items-center justify-content-center">
+                    <span class="mx-3">⇆</span>
+                </div>
+                <div class="col">
+                    <h5>Requesting</h5>
+                    <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Requesting" class="img-thumbnail">
+                    <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#pokemonPCModal">
+                        Select Pokémon
+                    </button>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col text-center">
+                    <button class="btn btn-dark">Post</button>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<!-- Pokémon PC Modal -->
+<div class="modal fade" id="pokemonPCModal" tabindex="-1" role="dialog" aria-labelledby="pokemonPCModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pokemonPCModalLabel">Pokémon PC</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="pokemon-pc">
+                    <div class="row">
+                        <div class="col">
+                            <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Pokémon" class="img-thumbnail">
+                            <p>Pikachu</p>
+                        </div>
+                        <!-- Repeat for other Pokémon as needed -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
+
+<style>
+    .pokemon-pc {
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .pokemon-pc .row {
+        margin-bottom: 10px;
+    }
+
+    .pokemon-pc img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .pokemon-pc p {
+        text-align: center;
+    }
+</style>
