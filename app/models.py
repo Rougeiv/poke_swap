@@ -69,7 +69,7 @@ class Trade(db.Model):
 
     # Define user_id1 and user_id2 as foreign keys
     user_id1: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id, name='fk_trade_user_id1'), index=True)
-    user_id2: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id, name='fk_trade_user_id2'), index=True)
+    user_id2: so.Mapped[Optional[int]] = so.mapped_column(sa.ForeignKey(User.id, name='fk_trade_user_id2'), index=True)
 
     # Define the relationship with User for user_id1 and user_id2
     user1 = so.relationship('User', foreign_keys=[user_id1], back_populates='user_id1_trades')
