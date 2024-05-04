@@ -48,7 +48,7 @@ class User(UserMixin, db.Model):
 
 @login.user_loader
 def load_user(id):
-    return User.query.get(int(id))
+    return db.session.get(User, int(id))
 
 class Pokemon(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
