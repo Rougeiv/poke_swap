@@ -1,7 +1,7 @@
 from app import flaskApp, db
-from flask import flash, render_template, request, redirect, session, jsonify
+from flask import flash, render_template, request, redirect, session, jsonify, url_for
 import sqlite3
-from flask_login import current_user, login_required
+from flask_login import current_user, login_required, login_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
 from app.models import User
@@ -65,16 +65,27 @@ def login():
     # else:
     #     error_message = "Invalid username or password!"
     #     return render_template('login.html', error_message=error_message)
-
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = db.session.scalar(
+            sa.select(User).where(User.username == form.username.data))
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        return redirect(url_for('index'))
+    return render_template('login.html', title='Sign In', form=form)
 @flaskApp.route('/main')
 def main():
-    return redirect('/')
+    return redirect(url_for('index'))
 
 @flaskApp.route('/logout')
 def logout():
     # Remove user information from session
     session.pop('logged_in', None)
-    return redirect('/')
+    return redirect(url_for('index'))
 
 # Add a new route for the game page
 @flaskApp.route('/catch')
@@ -83,7 +94,7 @@ def catch():
     if session.get('logged_in', False):
         return render_template('catch.html', logged_in=True)
     else:
-        return redirect('/')
+        return redirect(url_for('index'))
 
 @flaskApp.route('/gacha', methods=['POST'])
 def gacha():
