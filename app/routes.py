@@ -4,9 +4,8 @@ import sqlite3
 from flask_login import current_user, login_required
 import sqlalchemy as sa
 from datetime import datetime, timezone
-
 from app.models import User
-# from app.forms import EditProfileForm
+from app.forms import EditProfileForm
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
@@ -48,24 +47,24 @@ def signup():
 
 @flaskApp.route('/login', methods=['GET', 'POST'])
 def login():
-    username = request.form['username']
-    password = request.form['password']
+    # username = request.form['username']
+    # password = request.form['password']
 
-    # Get the database connection
-    db = get_db()
-    c = db.cursor()
+    # # Get the database connection
+    # db = get_db()
+    # c = db.cursor()
 
-    # Check if username and password match
-    c.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
-    user = c.fetchone()
+    # # Check if username and password match
+    # c.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
+    # user = c.fetchone()
 
-    if user:
-        # Set logged in flag in session
-        session['logged_in'] = True
-        return redirect('/game')
-    else:
-        error_message = "Invalid username or password!"
-        return render_template('login.html', error_message=error_message)
+    # if user:
+    #     # Set logged in flag in session
+    #     session['logged_in'] = True
+    #     return redirect('/game')
+    # else:
+    #     error_message = "Invalid username or password!"
+    #     return render_template('login.html', error_message=error_message)
 
 @flaskApp.route('/main')
 def main():
