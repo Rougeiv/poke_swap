@@ -72,11 +72,11 @@ def logout():
     return redirect('/')
 
 # Add a new route for the game page
-@flaskApp.route('/game')
-def game():
+@flaskApp.route('/catch')
+def catch():
     # Check if user is logged in
     if session.get('logged_in', False):
-        return render_template('game.html', logged_in=True)
+        return render_template('catch.html', logged_in=True)
     else:
         return redirect('/')
 
@@ -117,3 +117,34 @@ def gacha_one_pull():
         return jsonify(pokemon)
     except Exception as e:
         return f"An error occurred: {str(e)}"
+
+@flaskApp.route('/my_trades', methods=['GET'])
+def my_trades():
+    try:
+        # Connect to the Pokemon database
+        conn = sqlite3.connect('pokemon.db')
+        c = conn.cursor()
+
+        # Retrieve all trades from the database
+        c.execute("SELECT * FROM trades")
+        trades = c.fetchall()
+
+        # Close the database connection
+        conn.close()
+
+        # Return the trades data as JSON
+        return jsonify(trades)
+    except Exception as e:
+        return jsonify({'error': str(e)})
+    
+@flaskApp.route('/trade_offer', methods=['POST', 'GET'])
+def trade_offer():
+    return render_template('trade_offer.html')
+
+@flaskApp.route('/profile', methods=['GET'])
+def profile():
+    return render_template('profile.html')
+
+@flaskApp.route('/how_to_play')
+def how_to_play():
+    return render_template('how_to_play.html')
