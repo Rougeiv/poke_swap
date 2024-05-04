@@ -5,9 +5,10 @@ import sqlite3
 @flaskApp.route('/')
 @flaskApp.route('/index')
 def index():
-    signup_success = session.pop('signup_success', False)
-    logged_in = session.get('logged_in', False)
-    return render_template('index.html', title='Home', signup_success=signup_success, logged_in=logged_in)
+    # signup_success = session.pop('signup_success', False)
+    # logged_in = session.get('logged_in', False)
+    # , signup_success=signup_success, logged_in=logged_in
+    return render_template('index.html', title='Home')
 
 @flaskApp.route('/signup', methods=['GET', 'POST'])
 def signup():
