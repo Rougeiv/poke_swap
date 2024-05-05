@@ -19,7 +19,7 @@
                 {% endif %}
             </p>
             <p>
-                {{ form.about_me.label }}
+                {{ form.about_me.label(class="form-control") }}
                 {% if form.about_me.errors %}
                     {{ form.about_me(class="form-control is-invalid") }}
                     <div class="invalid-feedback">
@@ -28,7 +28,6 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    {{ form.about_me.label(class="form-control") }}
                     {{ form.about_me(cols=50, rows=4) }}
                 {% endif %}
         </table>
