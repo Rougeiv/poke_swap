@@ -29,7 +29,7 @@
                     </div>
                 {% else %}
                     {{ form.about_me.label(class="form-control") }}
-                    {{ for.about_me(cols=50, rows=4) }}
+                    {{ form.about_me(cols=50, rows=4) }}
                 {% endif %}
         </table>
         <p>{{ form.submit() }}</p>
