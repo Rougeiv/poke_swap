@@ -8,21 +8,6 @@
                 <h1>User: {{ user.username }}</h1>
                 {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
                 {% if user.last_seen %}<p>Last seen: {{ user.last_seen }}</p>{% endif %}
-                <!-- {% if user.is_authenticated %}
-                    <p><a href="{{ url_for('edit_profile') }}">Edit profile</a></p>
-                {% endif %}
-                {% if user.can(Permission.ADMINISTER) %}
-                    <p><a href="{{ url_for('admin.index') }}">Admin</a></p>
-                {% endif %}
-                {% if user.is_authenticated %}
-                    <p><a href="{{ url_for('follow', username=user.username) }}">
-                        {% if user.is_following(user) %}
-                            Unfollow
-                        {% else %}
-                            Follow
-                        {% endif %}
-                    </a></p>
-                {% endif %} -->
             </td>
             <td>
                 {% if user == current_user %}
@@ -32,7 +17,10 @@
         </tr>
     </table>
     <hr>
-    {% for pokemon in user.inventory %}
+    {% if user.inventory %}
+        <h2>Inventory</h2>
+        {% for pokemon in user.inventory %}
         {% include '_inventory_pokemon.html' %}
     {% endfor %}
+    {% endif %}
 {% endblock %}

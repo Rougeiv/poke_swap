@@ -72,7 +72,7 @@ def login():
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('index')
-        return redirect(url_for('index'))
+        return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
 @flaskApp.route('/main')
@@ -156,10 +156,6 @@ def my_trades():
 def trade_offer():
     return render_template('trade_offer.html')
 
-@flaskApp.route('/profile', methods=['GET'])
-def profile():
-    return render_template('profile.html')
-
 @flaskApp.route('/how_to_play')
 def how_to_play():
     return render_template('how_to_play.html')
@@ -167,7 +163,7 @@ def how_to_play():
 @flaskApp.route('/user/<username>')
 @login_required
 def user(username):
-    user = db.first_or404(sa.select(User).where(User.username == username))
+    user = db.first_or_404(sa.select(User).where(User.username == username))
     trades = [
         {'pokemon1': 'Pikachu', 'pokemon2': 'Charmander', 'timestamp': '2021-01-01', 'user_id1': 1, 'user_id2': 2},
         {'pokemon1': 'Bulbasaur', 'pokemon2': 'Squirtle', 'timestamp': '2021-01-02', 'user_id1': 1, 'user_id2': 2}
