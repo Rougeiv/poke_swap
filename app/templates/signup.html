@@ -62,7 +62,7 @@
                                 <div class="text-center" style="padding-top: 24.8rem;">
                                     <form action="" method="post">
                                         {{ form.hidden_tag() }}
-                                        <p>
+                                        <p style="color:white">
                                             {{ form.username.label }}
                                             {{ form.username(size=32) }}
                                             {% for error in form.username.errors %}
@@ -72,14 +72,14 @@
                                         <!-- <label for="username" class="h4">Username</label> -->
                                         <!-- <input type="text" id="username" name="username" class="text-white form-control"> -->
                                         <!-- <br> -->
-                                        <p>
+                                        <p style="color:white">
                                             {{ form.email.label }}
                                             {{ form.email(size=32) }}
                                             {% for error in form.email.errors %}
                                                 <span style="color: red;">[{{ error }}]</span>
                                             {% endfor %}
                                         </p>
-                                        <p>
+                                        <p style="color:white">
                                             {{ form.password.label }}
                                             {{ form.password(size=32) }}
                                             {% for error in form.password.errors %}
@@ -87,14 +87,14 @@
                                             {% endfor %}                                        </p>
                                         <!-- <label for="password" class="h4">Password:</label> -->
                                         <!-- <input type="password" id="password" name="password" class="form-control mb-2"> -->
-                                        <p>
+                                        <p style="color:white">
                                             {{ form.password2.label }}
                                             {{ form.password2(size=32) }}
                                             {% for error in form.password2.errors %}
                                                 <span style="color: red;">[{{ error }}]</span>
                                             {% endfor %}
                                         </p>
-                                        <p class="text-center font-size-1">Already have an account? <a href = "{{ url_for('login') }}" class="text-dark">Log-in here!</a></p>
+                                        <p class="text-center font-size-1 text-light">Already have an account? <a href = "{{ url_for('login') }}" class="text-light">Log-in here!</a></p>
                                         <p>{{ form.submit() }}</p>
                                     </form>
                                 </div>                                
