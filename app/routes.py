@@ -13,39 +13,10 @@ import random
 @flaskApp.route('/index')
 # @login_required
 def index():
-    # signup_success = session.pop('signup_success', False)
-    # logged_in = session.get('logged_in', False)
-    # , signup_success=signup_success, logged_in=logged_in
     return render_template('index.html', title='Home')
 
 @flaskApp.route('/signup', methods=['GET', 'POST'])
 def signup():
-    # if request.method == 'POST':
-    #     try:
-    #         username = request.form['username']
-    #         password = request.form['password']
-
-    #         # Get the database connection
-    #         db = get_db()
-    #         c = db.cursor()
-
-    #         # Check if username already exists
-    #         c.execute("SELECT * FROM users WHERE username=?", (username,))
-    #         existing_user = c.fetchone()
-
-    #         if existing_user:
-    #             error_message = "Username already exists!"
-    #             return render_template('signup.html', error_message=error_message)
-    #         else:
-    #             # Insert new user into the database
-    #             c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
-    #             db.commit()
-    #             # Set success message in session
-    #             session['signup_success'] = True
-    #             return redirect('/')
-    #     except Exception as e:
-    #         return f"An error occurred: {str(e)}"
-    # else:
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = SignUpForm()
@@ -83,7 +54,6 @@ def main():
 @flaskApp.route('/logout')
 def logout():
     # Remove user information from session
-    # session.pop('logged_in', None)
     logout_user()
     return redirect(url_for('index'))
 
@@ -92,11 +62,10 @@ def logout():
 @flaskApp.route('/catch')
 def catch():
     # Check if user is logged in
-    # if session.get('logged_in', False):
-    #     return render_template('catch.html', logged_in=True)
-    if current_user.is_anonymous():
+
+    if current_user.is_anonymous:
         return redirect(url_for('login'))
-    return render_template(url_for('catch'))
+    return render_template('catch.html')
 
 @flaskApp.route('/gacha', methods=['POST'])
 def gacha():
@@ -117,8 +86,8 @@ def gacha():
     except Exception as e:
         return jsonify({'error': str(e)})
 
-# @flaskApp.route('/gacha_one_pull', methods=['POST'])
-# def gacha_one_pull():
+@flaskApp.route('/gacha_one_pull', methods=['POST'])
+def gacha_one_pull():
 #     # try:
 #         # # Connect to the Pokemon database
 #         # conn_pokemon = sqlite3.connect('pokemon.db')
@@ -136,14 +105,16 @@ def gacha():
 #     #     return jsonify(pokemon)
 #     # except Exception as e:
 #     #     return f"An error occurred: {str(e)}"
-#     total_pokemon_count = Pokemon.query.count()
-#     random_pokemon = Pokemon.query.offset(int(random.random() * total_pokemon_count)).first()
+    try:
+        total_pokemon_count = Pokemon.query.count()
+        random_pokemon = Pokemon.query.offset(int(random.random() * total_pokemon_count)).first()
 
-#     # now assign the pokemon to the user
-#     current_user.inventory.append(random_pokemon)
-
-    # return random_pokemon so it's name field can be accessed to create the path to the corresponding sprite image
-    # return random_pokemon
+    # now assign the pokemon to the user
+        current_user.inventory.append(random_pokemon)
+        # return random_pokemon so it's name field can be accessed to create the path to the corresponding sprite image
+        return jsonify(random_pokemon)
+    except Exception as e:
+        return f"An error occurred: {str(e)}"
 
 @flaskApp.route('/my_trades', methods=['GET'])
 def my_trades():
