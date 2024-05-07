@@ -143,7 +143,7 @@ def gacha():
 #     current_user.inventory.append(random_pokemon)
 
     # return random_pokemon so it's name field can be accessed to create the path to the corresponding sprite image
-    return random_pokemon
+    # return random_pokemon
 
 @flaskApp.route('/my_trades', methods=['GET'])
 def my_trades():
@@ -197,7 +197,7 @@ def edit_profile():
         current_user.about_me = form.about_me.data
         db.session.commit()
         flash('Your changes have been saved.')
-        return redirect(url_for('edit_profile'))
+        return redirect(url_for('user', username=form.username.data))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
