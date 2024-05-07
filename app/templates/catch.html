@@ -25,27 +25,24 @@
 {% block content %}
 <div class="container text-center mt-5">
     <h1>Catch Pokemon</h1>
-    <button id="gacha-button"><img src="../static/images/pokeball-pixel-closed.png"></button>
+    <button id="pokeball-button">
+        <img src="../static/images/pokeball-pixel-closed.png" alt="pokeball-button">
+    </button>
     <h2>Catch One Pokemon</h2>
     <button id="gacha-one-pull-button">1 Pull</button>
     <div id="one-pull-result"></div>
-    <div id="pokemon-info"></div>
+    <div id="pokemon-img-container"></div>
 </div>
 
 {% endblock content %}
 
 {% block scripts %}
 <script>
-    // Add click sound to the Gacha button
-    document.getElementById('gacha-button').addEventListener('click', function() {
+    // Add click sound to the pokeball button
+    document.getElementById('pokeball-button').addEventListener('click', function() {
         var audio = new Audio('/static/Click.mp3');
         audio.play();
     });
-
-    // Check if user is logged in
-    if ( logged_in|tojson ) {
-        window.location.href = '/';  // Redirect to login page
-    }
 
     // Add event listener for beforeunload event
     window.onbeforeunload = function() {
@@ -55,18 +52,19 @@
     };
 
     // Add event listener for the Gacha button
-    document.getElementById('gacha-button').addEventListener('click', function() {
+    document.getElementById('pokeball-button').addEventListener('click', function() {
         fetch('/gacha', { method: 'POST' })
             .then(response => response.json())
             .then(data => {
                 // Clear previous Pokemon info
-                document.getElementById('pokemon-info').innerHTML = '';
+                document.getElementById('pokemon-image-container').innerHTML = '';
 
                 // Display information about the 10 random Pokemon
                 data.forEach(pokemon => {
-                    const pokemonInfo = document.createElement('p');
-                    pokemonInfo.textContent = `${pokemon[0]}: ${pokemon[1]}`;
-                    document.getElementById('pokemon-info').appendChild(pokemonInfo);
+                    let pokemonImg = document.createElement('img');
+                    // pokemonInfo.textContent = `${pokemon[0]}: ${pokemon[1]}`;
+                    pokemonImg.src = '../static/images/' + pokemon.name + '.png';
+                    document.getElementById('pokemon-image-container').appendChild(pokemonImg);
                 });
             })
             .catch(error => console.error('Error:', error));
@@ -92,6 +90,14 @@
             })
             .catch(error => console.error('Error:', error));
     });
+</script>
+<!-- function to execute when a user clicks the pokeball button -->
+<script>
+    
+    total_pokemon_count = Pokemon.query.count()
+    random_pokemon = Pokemon.query.offset(int(random.random() * total_pokemon_count)).first()
+
+    current_user.inventory.append(random_pokemon)
 </script>
 {% endblock %}
 

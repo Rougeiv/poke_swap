@@ -5,8 +5,9 @@ import sqlite3
 from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
-from app.models import User
+from app.models import Pokemon, User
 from app.forms import EditProfileForm, LoginForm, SignUpForm
+import random
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
@@ -87,13 +88,15 @@ def logout():
     return redirect(url_for('index'))
 
 # Add a new route for the game page
+@login_required
 @flaskApp.route('/catch')
 def catch():
     # Check if user is logged in
-    if session.get('logged_in', False):
-        return render_template('catch.html', logged_in=True)
-    else:
-        return redirect(url_for('index'))
+    # if session.get('logged_in', False):
+    #     return render_template('catch.html', logged_in=True)
+    if current_user.is_anonymous():
+        return redirect(url_for('login'))
+    return render_template(url_for('catch'))
 
 @flaskApp.route('/gacha', methods=['POST'])
 def gacha():
@@ -114,24 +117,33 @@ def gacha():
     except Exception as e:
         return jsonify({'error': str(e)})
 
-@flaskApp.route('/gacha_one_pull', methods=['POST'])
-def gacha_one_pull():
-    try:
-        # Connect to the Pokemon database
-        conn_pokemon = sqlite3.connect('pokemon.db')
-        c_pokemon = conn_pokemon.cursor()
+# @flaskApp.route('/gacha_one_pull', methods=['POST'])
+# def gacha_one_pull():
+#     # try:
+#         # # Connect to the Pokemon database
+#         # conn_pokemon = sqlite3.connect('pokemon.db')
+#         # c_pokemon = conn_pokemon.cursor()
 
-        # Retrieve a single random Pokemon from the database
-        c_pokemon.execute("SELECT id, name FROM pokemon ORDER BY RANDOM() LIMIT 1")
-        pokemon = c_pokemon.fetchone()
+#         # Retrieve a single random Pokemon from the database
+#         # c_pokemon.execute("SELECT id, name FROM pokemon ORDER BY RANDOM() LIMIT 1")
 
-        # Close the Pokemon database connection
-        conn_pokemon.close()
+#         # pokemon = c_pokemon.fetchone()
 
-        # Pass the retrieved Pokemon to the game.html template
-        return jsonify(pokemon)
-    except Exception as e:
-        return f"An error occurred: {str(e)}"
+#         # Close the Pokemon database connection
+#         # conn_pokemon.close()
+
+#         # Pass the retrieved Pokemon to the game.html template
+#     #     return jsonify(pokemon)
+#     # except Exception as e:
+#     #     return f"An error occurred: {str(e)}"
+#     total_pokemon_count = Pokemon.query.count()
+#     random_pokemon = Pokemon.query.offset(int(random.random() * total_pokemon_count)).first()
+
+#     # now assign the pokemon to the user
+#     current_user.inventory.append(random_pokemon)
+
+    # return random_pokemon so it's name field can be accessed to create the path to the corresponding sprite image
+    return random_pokemon
 
 @flaskApp.route('/my_trades', methods=['GET'])
 def my_trades():
