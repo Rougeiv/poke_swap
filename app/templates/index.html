@@ -24,6 +24,11 @@
 
 {% block content %}
 <div class="container text-center mt-5">
+    {% if current_user.is_anonymous %}
+    <h1>Welcome to Pokeswap</h1>
+    {% else %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+    {% endif %}
     <h2 class="gotta-catch">Gotta catch 'em all!</h2>
     <div class="row mt-4">
         <div class="col-6">

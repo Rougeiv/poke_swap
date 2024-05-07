@@ -58,21 +58,32 @@
         <div class="container mt-4">
             <div class="row justify-content-center">
                 <div class="col-md-6">
-                    <div class="card border rounded-lg border-dark" style="background-image: url('https://github.com/Rougeiv/poke_swap/blob/main/images/sprites1.png?raw=true'); background-size: 100% 100%; background-repeat: no-repeat;">
+                    <div class="card border rounded-lg border-dark" style="background-image: url('https://github.com/Rougeiv/poke_swap/blob/main/app/static/images/sprites1.png?raw=true'); background-size: 100% 100%; background-repeat: no-repeat;">
                         <div class = "card-header text-center">
                             <div class="card-body text-center">
                                 <h1 class="text-center pb-3 bg-dark text-white border rounded">Log-in</h1>
                                 <div class="text-center" style="padding-top: 24.8rem;">
-                                    <form>
-                                        <label for="username" class="h4">Username</label>
-                                        <input type="text" id="username" name="username" class="text-white form-control"><br>
-                                        <label for="password" class="h4">Password:</label>
-                                        <input type="password" id="password" name="password" class="form-control mb-2">
+                                    <form action="" method="post" novalidate>
+                                        {{ form.hidden_tag() }}
+                                        <!-- <label for="username" class="h4">Username</label> -->
+                                        <!-- <input type="text" id="username" name="username" class="text-white form-control"><br> -->
+                                        <p style="color:white">
+                                            {{ form.username.label }}
+                                            {{ form.username(size=32) }}
+                                        </p>
+                                        <!-- <label for="password" class="h4">Password:</label> -->
+                                        <!-- <input type="password" id="password" name="password" class="form-control mb-2"> -->
+                                        <p style="color:white">
+                                            {{ form.password.label }}
+                                            {{ form.password(size=32) }}
+                                        </p>
+                                        <p style="color:white">{{ form.remember_me() }}  {{ form.remember_me.label }}</p>
+                                        <p class="text-center font-size-1 text-light">Don't have an account? <a href="{{ url_for('signup') }}" class="text-light">Sign up here!</a></p>
+                                        {{ form.submit() }}
                                     </form>
                                 </div>
-                                <p class="text-center font-size-1">Don't have an account? <a href="signup.html" class="text-dark">Sign up here!</a></p>
                                 
-                                <button class="btn btn-md btn-primary mt-3 bg-dark">Continue</button>
+                                <!-- <button class="btn btn-md btn-primary mt-3 bg-dark">Continue</button> -->
                             </div>
                         </div>
                     </div>
