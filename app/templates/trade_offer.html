@@ -25,7 +25,7 @@
                 <div class="col">
                     <h5>Requesting</h5>
                     <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Requesting" class="img-thumbnail">
-                    <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#pokemonPCModal">
+                    <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#requestPokemonModal">
                         Select Pokémon
                     </button>
                 </div>
@@ -49,15 +49,23 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="pokemon-pc">
+            <div class="modal-body pokepc-background">
+                <div class="pokemon-pc page" id="page1">
                     <div class="row">
-                        <div class="col">
-                            <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Pokémon" class="img-thumbnail">
-                            <p>Pikachu</p>
-                        </div>
-                        <!-- Repeat for other Pokémon as needed -->
+                        <!-- Display Pokémon from the first page -->
                     </div>
+                </div>
+                <div class="pokemon-pc page" id="page2" style="display: none;">
+                    <div class="row">
+                        <!-- Display Pokémon from the second page -->
+                    </div>
+                </div>
+                <!-- Add more pages as needed -->
+
+                <!-- Pagination -->
+                <div class="text-center mt-3">
+                    <button type="button" class="btn btn-primary mr-2" id="prevPageBtn" disabled>Previous</button>
+                    <button type="button" class="btn btn-primary" id="nextPageBtn">Next</button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -67,26 +75,78 @@
         </div>
     </div>
 </div>
-{% endblock content %}
+
+<!-- Request Pokémon Modal -->
+<div class="modal fade" id="requestPokemonModal" tabindex="-1" role="dialog" aria-labelledby="requestPokemonModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="requestPokemonModalLabel">Select Requested Pokémon</h5>
+                <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    {% for sprite in pokemon_sprites %}
+                    <div class="col-md-3 text-center">
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}" alt="{{ sprite }}" class="img-thumbnail">
+                        <p>{{ sprite.capitalize().replace('_', ' ') }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn btn-primary">Select</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Initialize page index
+        let currentPage = 1;
+        const maxPages = 3; // Set maximum number of pages
+
+        // Function to show/hide pages based on currentPage
+        function showPage(pageNumber) {
+            $(".page").hide();
+            $(`#page${pageNumber}`).show();
+
+            // Disable/Enable Previous/Next buttons based on currentPage
+            $("#prevPageBtn").prop("disabled", pageNumber === 1);
+            $("#nextPageBtn").prop("disabled", pageNumber === maxPages);
+        }
+
+        // Show initial page
+        showPage(currentPage);
+
+        // Previous page button click event
+        $("#prevPageBtn").click(function() {
+            if (currentPage > 1) {
+                currentPage--;
+                showPage(currentPage);
+            }
+        });
+
+        // Next page button click event
+        $("#nextPageBtn").click(function() {
+            if (currentPage < maxPages) {
+                currentPage++;
+                showPage(currentPage);
+            }
+        });
+    });
+</script>
 
 <style>
-    .pokemon-pc {
-        background-color: #f0f0f0;
-        border: 1px solid #ccc;
-        padding: 10px;
-        border-radius: 5px;
-    }
-
-    .pokemon-pc .row {
-        margin-bottom: 10px;
-    }
-
-    .pokemon-pc img {
-        width: 50px;
-        height: 50px;
-    }
-
-    .pokemon-pc p {
-        text-align: center;
+    .pokepc-background {
+        background-image: url("{{ url_for('static', filename='images/pikachubg.png') }}");
+        background-size: cover; /* Cover the entire container, maintaining aspect ratio */
+        background-position: center;
     }
 </style>
+
+{% endblock content %}
