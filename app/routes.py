@@ -5,7 +5,7 @@ import sqlite3
 from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
-from app.models import User
+from app.models import User, Pokemon
 from app.forms import EditProfileForm, LoginForm, SignUpForm
 import random
 from sqlalchemy.sql.expression import func
