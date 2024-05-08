@@ -19,8 +19,27 @@
         font-family: 'Comic Sans MS', cursive;
 
     }
-    #pokemon-textbox {
-        background-image: url('../static/images/pokemon_emerald_textbox.png')
+    #textbox-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+    #textbox {
+        background-image: url('../static/images/pokemon_emerald_textbox.png');
+        width: 476px; /* 476px * 3 */
+        height: 84px;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    #textbox-txt {
+        /* font-family: 'Comic Sans MS', cursive; */
+        font-size: 24px;
+        color: black;
+        text-align: center;
+        padding: 10px;
+    
     }
 </style>
 {% endblock %}
@@ -30,8 +49,10 @@
     <h1>Catch Pokemon</h1>
     <img id="pokeball-img" class="closed" src="../static/images/pokeball-pixel-closed.png" alt="pokeball-button" width="200" height="">
     <div id="pull-result"></div>
-    <div id="textbox" alt="pokemon-textbox">
-        <p>Click a button to catch a Pokemon!</p>
+    <div id="textbox-container">
+        <div id="textbox" alt="pokemon-textbox">
+            <p id="textbox-txt">Click a button to catch a Pokemon!</p>
+        </div>
     </div>
     <h2>Pull One Pokemon</h2>
     <button id="gacha-one-pull-button">1 Pull</button>
@@ -53,14 +74,21 @@
                 while (pullContainer.firstChild) {
                     pullContainer.firstChild.remove();
                 }
-
+                let pokeball = document.getElementById('pokeball-img');
+                if (pokeball.classList.contains('closed')) {
+                    pokeball.src = '../static/images/pokeball-pixel-opened-fully.png';
+                    pokeball.classList.remove('closed');
+                }
                 // Display information about the 10 random Pokemon
                 data.forEach(pokemon => {
+                    console.log(pokemon);
                     let pokemonDiv = document.createElement("div");
                     pokemonDiv.classList.add("pokemon-img-container");
 
                     let pokemonImg = document.createElement('img');
-                    pokemonImg.src = '../static/images/pokemon_gen4_sprites/' + pokemon.name + '.png';
+                    pokemonImg.src = '../static/images/pokemon_gen4_sprites/' + pokemon[1].toLowerCase() + '.png';
+                    pokemonImg.width = 200;
+                    pokemonImg.height = 200;
 
                     let cardImg = document.createElement("img");
                     pokemonDiv.appendChild(pokemonImg);
@@ -74,19 +102,27 @@
 <script>
     //click audio
     document.getElementById('gacha-one-pull-button').addEventListener('click', function() {
-        var audio = new Audio('/static/Click.mp3');
+        var audio = new Audio('../static/audio/Click.mp3');
         audio.play();
     });
     // Add event listener for one-pull gacha button
     document.getElementById('gacha-one-pull-button').addEventListener('click', function() {
         fetch('/gacha_one_pull', { method: 'POST' })
-            .then(response => response.json())
+            .then(response => {
+                console.log(response);
+                return response.json();
+            })
             .then(data => {
+                console.log(data);
                 //clear previous pull
-                
                 pullContainer = document.getElementById('pull-result');
                 while (pullContainer.firstChild) {
                     pullContainer.firstChild.remove();
+                }
+                let pokeball = document.getElementById('pokeball-img');
+                if (pokeball.classList.contains('closed')) {
+                    pokeball.src = '../static/images/pokeball-pixel-opened-fully.png';
+                    pokeball.classList.remove('closed');
                 }
                 // Display the result of the one-pull gacha
                 // document.getElementById('pull-result').textContent = `You obtained: ${data[0]}: ${data[1]}`;
@@ -94,7 +130,9 @@
                 pokemonDiv.classList.add("pokemon-img-container");
 
                 let pokemonImg = document.createElement("img");
-                pokemonImg.src = '../static/images/pokemon_gen4_sprites/' + pokemon.name + '.png';
+                pokemonImg.src = '../static/images/pokemon_gen4_sprites/' + data.name.toLowerCase() + '.png';
+                pokemonImg.width = 200;
+                pokemonImg.height = 200;
 
                 let cardImg = document.createElement("img");
                 pokemonDiv.appendChild(pokemonImg);
@@ -102,14 +140,6 @@
             })
             .catch(error => console.error('Error:', error));
     });
-</script>
-<!-- function to execute when a user clicks the pokeball button -->
-<script>
-    
-    total_pokemon_count = Pokemon.query.count()
-    random_pokemon = Pokemon.query.offset(int(random.random() * total_pokemon_count)).first()
-
-    current_user.inventory.append(random_pokemon)
 </script>
 {% endblock %}
 

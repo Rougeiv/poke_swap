@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from app.models import Pokemon, User
 from app.forms import EditProfileForm, LoginForm, SignUpForm
 import random
+from sqlalchemy.sql.expression import func
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
@@ -106,15 +107,24 @@ def gacha_one_pull():
 #     # except Exception as e:
 #     #     return f"An error occurred: {str(e)}"
     try:
-        total_pokemon_count = Pokemon.query.count()
-        random_pokemon = Pokemon.query.offset(int(random.random() * total_pokemon_count)).first()
+        # total_pokemon_count = Pokemon.query.count()
+        # random_pokemon = Pokemon.query.offset(int(random.random() * total_pokemon_count)).first()
+        random_pokemon = db.session.scalar(sa.select(Pokemon).order_by(func.random()).limit(1))
+        if random_pokemon is None:
+            return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
 
-    # now assign the pokemon to the user
+        pokemon_data = {
+            'id': random_pokemon.id,
+            'pokemon_id': random_pokemon.pokedex_num,
+            'name': random_pokemon.name
+        }
+
+        # now assign the pokemon to the user
         current_user.inventory.append(random_pokemon)
         # return random_pokemon so it's name field can be accessed to create the path to the corresponding sprite image
-        return jsonify(random_pokemon)
+        return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
     except Exception as e:
-        return f"An error occurred: {str(e)}"
+        return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}
 
 @flaskApp.route('/my_trades', methods=['GET'])
 def my_trades():
