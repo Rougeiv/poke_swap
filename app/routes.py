@@ -103,7 +103,7 @@ def gacha_one_pull():
 
         return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
     except Exception as e:
-        return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}pokemon
+        return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}
     
 @flaskApp.route('/gacha_ten_pull', methods=['POST'])
 def gacha_ten_pull():
