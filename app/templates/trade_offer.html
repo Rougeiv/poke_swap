@@ -24,7 +24,7 @@
                 </div>
                 <div class="col">
                     <h5>Requesting</h5>
-                    <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Requesting" class="img-thumbnail">
+                    <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Requesting" class="img-thumbnail pokemon-image" id="requestingPlaceholder">
                     <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#requestPokemonModal">
                         Select Pokémon
                     </button>
@@ -90,11 +90,13 @@
                 <div class="row">
                     {% for sprite in pokemon_sprites %}
                     <div class="col-md-3 text-center">
-                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}" alt="{{ sprite }}" class="img-thumbnail">
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}" 
+                             alt="{{ sprite }}" class="img-thumbnail pokemon-image selectable-sprite" 
+                             data-sprite="{{ sprite }}">
                         <p>{{ sprite.capitalize().replace('_', ' ') }}</p>
                     </div>
                     {% endfor %}
-                </div>
+                </div>                
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close">
@@ -109,6 +111,19 @@
         // Initialize page index
         let currentPage = 1;
         const maxPages = 3; // Set maximum number of pages
+
+        $('.selectable-sprite').on('click', function() {
+            const selectedSpriteSrc = $(this).attr('src');
+            $('#requestingPlaceholder').attr('src', selectedSpriteSrc); // Update src
+            // No need to update the class because it's already set correctly
+            $('#requestPokemonModal').modal('hide'); // Assuming this is the ID of your modal
+        });
+
+        // Save selection (if needed)
+        $('#saveSelection').on('click', function() {
+            const selectedSrc = $('#requestingPlaceholder').attr('src');
+            // Optionally send this information back to the server or handle it further
+        });
 
         // Function to show/hide pages based on currentPage
         function showPage(pageNumber) {
@@ -142,6 +157,13 @@
 </script>
 
 <style>
+    .pokemon-image {
+        width: 200px; /* Adjust this width as needed to match the pikachusil.png */
+        height: 200px; /* Adjust this height as needed */
+        object-fit: cover; /* This will cover the area without distorting the ratio */
+        border-radius: 10px; /* Optional, for rounded corners */
+    }
+    
     .pokepc-background {
         background-image: url("{{ url_for('static', filename='images/pikachubg.png') }}");
         background-size: cover; /* Cover the entire container, maintaining aspect ratio */

@@ -166,6 +166,14 @@ def trade_offer():
 
     return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites)
 
+@flaskApp.route('/update_sprite_selection', methods=['POST'])
+def update_sprite_selection():
+    sprite_src = request.form['sprite']
+    # Update session or database with the new sprite selection
+    # e.g., session['selected_sprite'] = sprite_src
+    return jsonify(success=True)
+
+
 @flaskApp.route('/how_to_play')
 def how_to_play():
     return render_template('how_to_play.html')
