@@ -61,7 +61,7 @@ def logout():
 @flaskApp.route('/catch')
 def catch():
     # Check if user is logged in
-    if current_user.isanonymous:
+    if current_user.is_anonymous:
         return redirect(url_for('login'))
     return render_template('catch.html')
 
