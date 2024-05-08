@@ -1,74 +1,143 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Page</title>
-</head>
-<body>
-    <h1>Welcome to the Game!</h1>
-    <button id="gacha-button">Gacha</button>
-    <button onclick="window.location='/logout'">Log Out</button>
-    <script>
-        // Add click sound to the Gacha button
-        document.getElementById('gacha-button').addEventListener('click', function() {
-            var audio = new Audio('/static/Click.mp3');
-            audio.play();
-        });
-    
-        // Check if user is logged in
-        if ( logged_in|tojson ) {
-            window.location.href = '/';  // Redirect to login page
-        }
-    
-        // Add event listener for beforeunload event
-        window.onbeforeunload = function() {
-            // Perform logout action when user leaves the page
-            fetch('/logout', { method: 'GET' });
-            localStorage.setItem('logged_in', 'false');
-        };
+{% extends 'base.html' %}
 
-        // Add event listener for the Gacha button
-        document.getElementById('gacha-button').addEventListener('click', function() {
-            fetch('/gacha', { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    // Clear previous Pokemon info
-                    document.getElementById('pokemon-info').innerHTML = '';
+{% block title %}PokeSwap - Trade Offer{% endblock %}
 
-                    // Display information about the 10 random Pokemon
-                    data.forEach(pokemon => {
-                        const pokemonInfo = document.createElement('p');
-                        pokemonInfo.textContent = `${pokemon[0]}: ${pokemon[1]}`;
-                        document.getElementById('pokemon-info').appendChild(pokemonInfo);
-                    });
-                })
-                .catch(error => console.error('Error:', error));
-        });
-    </script>
-    <h2>One-Pull Gacha</h2>
+{% block extra_head %}
+<style>
+    /* Custom styles specific to the Home page */
+    .gotta-catch, .trade-offer {
+        font-family: 'Comic Sans MS', cursive;
+        color: lightslategray;
+        text-align: center;
+        margin-top: 20px;
+    }
+    .card-title, .text-center.h2 {
+        font-family: 'Comic Sans MS', cursive;
+        color: lightblue;
+    }
+    .pagination a {
+        font-family: 'Comic Sans MS', cursive;
+
+    }
+    #textbox-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+    #textbox {
+        background-image: url('../static/images/pokemon_emerald_textbox.png');
+        width: 476px; /* 476px * 3 */
+        height: 84px;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    #textbox-txt {
+        /* font-family: 'Comic Sans MS', cursive; */
+        font-size: 24px;
+        color: black;
+        text-align: center;
+        padding: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1>Catch Pokemon</h1>
+    <img id="pokeball-img" class="closed" src="../static/images/pokeball-pixel-closed.png" alt="pokeball-button" width="200" height="">
+    <div id="pull-result"></div>
+    <div id="textbox-container">
+        <div id="textbox" alt="pokemon-textbox">
+            <p id="textbox-txt">Click a button to catch a Pokemon!</p>
+        </div>
+    </div>
+    <h2>Pull One Pokemon</h2>
     <button id="gacha-one-pull-button">1 Pull</button>
-    <div id="one-pull-result"></div>
-    
-    <script>
-        //click audio
-        document.getElementById('gacha-one-pull-button').addEventListener('click', function() {
-            var audio = new Audio('/static/Click.mp3');
-            audio.play();
-        });
-        // Add event listener for one-pull gacha button
-        document.getElementById('gacha-one-pull-button').addEventListener('click', function() {
-            fetch('/gacha_one_pull', { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    //clear previous pull
-                    document.getElementById('one-pull-result').innerHTML = '';
-                    // Display the result of the one-pull gacha
-                    document.getElementById('one-pull-result').textContent = `You obtained: ${data[0]}: ${data[1]}`;
-                })
-                .catch(error => console.error('Error:', error));
-        });
-    </script>
-    <div id="pokemon-info"></div>
-</body>
-</html>
+    <h2>Pull Ten Pokemon</h2>
+    <button id="gacha-ten-pull-button">10 Pull</button>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    // Add event listener for the Gacha button
+    document.getElementById('gacha-ten-pull-button').addEventListener('click', function() {
+        fetch('/gacha', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+             // Clear previous Pokemon info
+            pullContainer = document.getElementById('pull-result');
+            while (pullContainer.firstChild) {
+                pullContainer.firstChild.remove();
+            }
+            let pokeball = document.getElementById('pokeball-img');
+            if (pokeball.classList.contains('closed')) {
+                pokeball.src = '../static/images/pokeball-pixel-opened-fully.png';
+                pokeball.classList.remove('closed');
+            }
+            // Display information about the 10 random Pokemon
+            data.forEach(pokemon => {
+                console.log(pokemon);
+                let pokemonDiv = document.createElement("div");
+                pokemonDiv.classList.add("pokemon-img-container");
+
+                let pokemonImg = document.createElement('img');
+                pokemonImg.src = '../static/images/pokemon_gen4_sprites/' + pokemon[1].toLowerCase() + '.png';
+                pokemonImg.width = 200;
+                pokemonImg.height = 200;
+
+                let cardImg = document.createElement("img");
+                pokemonDiv.appendChild(pokemonImg);
+                document.getElementById('pull-result').appendChild(pokemonDiv);
+            });
+            })
+            .catch(error => console.error('Error:', error));
+            });
+</script>
+<script>
+    //click audio
+    document.getElementById('gacha-one-pull-button').addEventListener('click', function() {
+        var audio = new Audio('../static/audio/Click.mp3');
+        audio.play();
+    });
+    // Add event listener for one-pull gacha button
+    document.getElementById('gacha-one-pull-button').addEventListener('click', function() {
+        fetch('/gacha_one_pull', { method: 'POST' })
+        .then(response => {
+            console.log(response);
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            //clear previous pull
+            pullContainer = document.getElementById('pull-result');
+            while (pullContainer.firstChild) {
+                pullContainer.firstChild.remove();
+            }
+            let pokeball = document.getElementById('pokeball-img');
+            if (pokeball.classList.contains('closed')) {
+                pokeball.src = '../static/images/pokeball-pixel-opened-fully.png';
+                pokeball.classList.remove('closed');
+            }
+            // Display the result of the one-pull gacha
+            // document.getElementById('pull-result').textContent = `You obtained: ${data[0]}: ${data[1]}`;
+            let pokemonDiv = document.createElement("div");
+            pokemonDiv.classList.add("pokemon-img-container");
+
+            let pokemonImg = document.createElement("img");
+            pokemonImg.src = '../static/images/pokemon_gen4_sprites/' + data.name.toLowerCase() + '.png';
+            pokemonImg.width = 200;
+            pokemonImg.height = 200;
+
+            let cardImg = document.createElement("img");
+            pokemonDiv.appendChild(pokemonImg);
+            document.getElementById("pull-result").append(pokemonDiv)
+            })
+            .catch(error => console.error('Error:', error));
+            });
+</script>
+{% endblock %}
