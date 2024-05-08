@@ -7,44 +7,17 @@ import sqlalchemy as sa
 from datetime import datetime, timezone
 from app.models import User
 from app.forms import EditProfileForm, LoginForm, SignUpForm
+import random
+from sqlalchemy.sql.expression import func
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
 # @login_required
 def index():
-    # signup_success = session.pop('signup_success', False)
-    # logged_in = session.get('logged_in', False)
-    # , signup_success=signup_success, logged_in=logged_in
     return render_template('index.html', title='Home')
 
 @flaskApp.route('/signup', methods=['GET', 'POST'])
 def signup():
-    # if request.method == 'POST':
-    #     try:
-    #         username = request.form['username']
-    #         password = request.form['password']
-
-    #         # Get the database connection
-    #         db = get_db()
-    #         c = db.cursor()
-
-    #         # Check if username already exists
-    #         c.execute("SELECT * FROM users WHERE username=?", (username,))
-    #         existing_user = c.fetchone()
-
-    #         if existing_user:
-    #             error_message = "Username already exists!"
-    #             return render_template('signup.html', error_message=error_message)
-    #         else:
-    #             # Insert new user into the database
-    #             c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
-    #             db.commit()
-    #             # Set success message in session
-    #             session['signup_success'] = True
-    #             return redirect('/')
-    #     except Exception as e:
-    #         return f"An error occurred: {str(e)}"
-    # else:
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = SignUpForm()
@@ -81,8 +54,6 @@ def main():
 
 @flaskApp.route('/logout')
 def logout():
-    # Remove user information from session
-    # session.pop('logged_in', None)
     logout_user()
     return redirect(url_for('index'))
 
