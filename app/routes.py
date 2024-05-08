@@ -61,10 +61,9 @@ def logout():
 @flaskApp.route('/catch')
 def catch():
     # Check if user is logged in
-    if session.get('logged_in', False):
-        return render_template('catch.html', logged_in=True)
-    else:
-        return redirect(url_for('index'))
+    if current_user.isanonymous:
+        return redirect(url_for('login'))
+    return render_template('catch.html')
 
 @flaskApp.route('/gacha', methods=['POST'])
 def gacha():
