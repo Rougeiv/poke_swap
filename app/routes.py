@@ -86,22 +86,6 @@ def gacha():
 
 @flaskApp.route('/gacha_one_pull', methods=['POST'])
 def gacha_one_pull():
-    # try:
-    #     # Connect to the Pokemon database
-    #     conn_pokemon = sqlite3.connect('pokemon.db')
-    #     c_pokemon = conn_pokemon.cursor()
-
-    #     # Retrieve a single random Pokemon from the database
-    #     c_pokemon.execute("SELECT id, name FROM pokemon ORDER BY RANDOM() LIMIT 1")
-    #     pokemon = c_pokemon.fetchone()
-
-    #     # Close the Pokemon database connection
-    #     conn_pokemon.close()
-
-    #     # Pass the retrieved Pokemon to the game.html template
-    #     return jsonify(pokemon)
-    # except Exception as e:
-    #     return f"An error occurred: {str(e)}"
     try:
         random_pokemon = db.session.get(Pokemon, random.randint(1, 151))
         if random_pokemon is None:
@@ -115,8 +99,32 @@ def gacha_one_pull():
 
         # now assign the pokemon to the user
         current_user.inventory.append(random_pokemon)
+        db.session.commit()
 
         return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}pokemon
+    
+@flaskApp.route('/gacha_ten_pull', methods=['POST'])
+def gacha_ten_pull():
+    try:
+        random_pokemon = db.session.scalar(sa.select(Pokemon).order_by(func.random()).limit(10))
+        if random_pokemon is None:
+            return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
+        random_pokemon_list = []
+        for pokemon in random_pokemon:
+            pokemon_data = {
+            'id': pokemon.id,
+            'pokemon_id': pokemon.pokedex_num,
+            'name': pokemon.name
+            }
+            random_pokemon_list.append(pokemon_data)
+            # now assign the pokemon to the user
+            current_user.inventory.append(pokemon)
+   
+        db.session.commit()
+
+        return jsonify(random_pokemon_list), 200, {'Content-Type': 'application/json'}
     except Exception as e:
         return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}
 
