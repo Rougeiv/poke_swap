@@ -87,22 +87,39 @@ def gacha():
 
 @flaskApp.route('/gacha_one_pull', methods=['POST'])
 def gacha_one_pull():
+    # try:
+    #     # Connect to the Pokemon database
+    #     conn_pokemon = sqlite3.connect('pokemon.db')
+    #     c_pokemon = conn_pokemon.cursor()
+
+    #     # Retrieve a single random Pokemon from the database
+    #     c_pokemon.execute("SELECT id, name FROM pokemon ORDER BY RANDOM() LIMIT 1")
+    #     pokemon = c_pokemon.fetchone()
+
+    #     # Close the Pokemon database connection
+    #     conn_pokemon.close()
+
+    #     # Pass the retrieved Pokemon to the game.html template
+    #     return jsonify(pokemon)
+    # except Exception as e:
+    #     return f"An error occurred: {str(e)}"
     try:
-        # Connect to the Pokemon database
-        conn_pokemon = sqlite3.connect('pokemon.db')
-        c_pokemon = conn_pokemon.cursor()
+        random_pokemon = db.session.get(Pokemon, random.randint(1, 151))
+        if random_pokemon is None:
+            return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
 
-        # Retrieve a single random Pokemon from the database
-        c_pokemon.execute("SELECT id, name FROM pokemon ORDER BY RANDOM() LIMIT 1")
-        pokemon = c_pokemon.fetchone()
+        pokemon_data = {
+        'id': random_pokemon.id,
+        'pokemon_id': random_pokemon.pokedex_num,
+        'name': random_pokemon.name
+        }
 
-        # Close the Pokemon database connection
-        conn_pokemon.close()
+        # now assign the pokemon to the user
+        current_user.inventory.append(random_pokemon)
 
-        # Pass the retrieved Pokemon to the game.html template
-        return jsonify(pokemon)
+        return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
     except Exception as e:
-        return f"An error occurred: {str(e)}"
+        return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}
 
 @flaskApp.route('/my_trades', methods=['GET'])
 def my_trades():
