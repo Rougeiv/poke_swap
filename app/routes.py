@@ -109,7 +109,9 @@ def gacha_one_pull():
     try:
         # total_pokemon_count = Pokemon.query.count()
         # random_pokemon = Pokemon.query.offset(int(random.random() * total_pokemon_count)).first()
-        random_pokemon = db.session.scalar(sa.select(Pokemon).order_by(func.random()).limit(1))
+        # random_pokemon = db.session.scalar(sa.select(Pokemon).order_by(func.random()).limit(1))
+        # random_pokemon = Pokemon.query.order_by(func.random()).first()
+        random_pokemon = db.session.get(Pokemon, random.randint(1, 151))
         if random_pokemon is None:
             return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
 
@@ -121,7 +123,7 @@ def gacha_one_pull():
 
         # now assign the pokemon to the user
         current_user.inventory.append(random_pokemon)
-        # return random_pokemon so it's name field can be accessed to create the path to the corresponding sprite image
+
         return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
     except Exception as e:
         return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}

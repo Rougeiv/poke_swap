@@ -69,6 +69,7 @@
         fetch('/gacha', { method: 'POST' })
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 // Clear previous Pokemon info
                 pullContainer = document.getElementById('pull-result');
                 while (pullContainer.firstChild) {
