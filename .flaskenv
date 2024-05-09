@@ -1,1 +1,2 @@
 FLASK_APP=poke_swap.py
+FLASK_DEBUG=1
