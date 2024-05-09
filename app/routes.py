@@ -179,8 +179,31 @@ def trade_offer():
     except Exception as e:
         app.logger.error(f"Failed to load Pokémon sprites: {e}")
         pokemon_sprites = []  # Continue with empty list if error
+    
+    if current_user.is_authenticated:
+        user_id = current_user.id
+    else:
+        return redirect(url_for('login'))
 
-    return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites)
+    # Connect to the SQLite database
+    conn = sqlite3.connect('app.db')
+    cursor = conn.cursor()
+
+    # Fetch the Pokémon IDs for the logged-in user
+    cursor.execute("SELECT pokemon_id FROM user_pokemon WHERE user_id = ?", (user_id,))
+    pokemon_ids = cursor.fetchall()
+
+    # Fetch the names and images of Pokémon based on IDs
+    pokemon_names = []
+    for (pokemon_id,) in pokemon_ids:
+        cursor.execute("SELECT name FROM pokemon WHERE id = ?", (pokemon_id,))
+        pokemon_name = cursor.fetchone()
+        if pokemon_name:
+            pokemon_names.append(pokemon_name[0])
+
+    conn.close()
+
+    return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites, pokemon_owned = pokemon_names)
 
 @flaskApp.route('/update_sprite_selection', methods=['POST'])
 def update_sprite_selection():
