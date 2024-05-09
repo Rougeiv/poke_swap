@@ -19,10 +19,10 @@ if not flaskApp.debug:
     file_handler = RotatingFileHandler('logs/poke_swap.log', maxBytes=10240, backupCount=10)
     file_handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
-    file_handler.setLevel(logging.INFO)
+    file_handler.setLevel(logging.DEBUG)
     flaskApp.logger.addHandler(file_handler)
 
-    flaskApp.logger.setLevel(logging.INFO)
+    flaskApp.logger.setLevel(logging.DEBUG)
     flaskApp.logger.info('PokeSwap startup')
 
 from app import routes, models
