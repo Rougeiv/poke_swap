@@ -68,33 +68,16 @@ def catch():
         return redirect(url_for('login'))
     return render_template('catch.html')
 
-# @flaskApp.route('/gacha', methods=['POST'])
-# def gacha():
-#     try:
-#         # Connect to the Pokemon database
-#         conn = sqlite3.connect('pokemon.db')
-#         c = conn.cursor()
-
-#         # Retrieve 10 random Pokemon from the database
-#         c.execute("SELECT id, name FROM pokemon ORDER BY RANDOM() LIMIT 10")
-#         pokemon = c.fetchall()
-
-#         # Close the database connection
-#         conn.close()
-
-#         # Return the random Pokemon data as JSON
-#         return jsonify(pokemon)
-#     except Exception as e:
-#         return jsonify({'error': str(e)})
-
 @flaskApp.route('/gacha_one_pull', methods=['POST'])
 def gacha_one_pull():
     try:
         # random_pokemon = db.session.get(Pokemon, random.randint(1, 151))
         pquery = sa.select(Pokemon).order_by(func.random()).limit(1)
-        random_pokemon = db.session.execute(pquery)
+        random_pokemon = db.session.scalar(pquery)
         if random_pokemon is None:
             return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
+
+
 
         pokemon_data = {
         'id': random_pokemon.id,
@@ -102,9 +85,15 @@ def gacha_one_pull():
         'name': random_pokemon.name
         }
 
-        # now assign the pokemon to the user
-        current_user.inventory.append(random_pokemon)
-        db.session.commit()
+        # first check if the user already has the pokemon
+        if random_pokemon in current_user.inventory:
+            flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, random_pokemon.name)
+        else:
+            # Assign the Pokémon to the user's inventory
+            current_user.inventory.append(random_pokemon)
+            flaskApp.logger.debug('Assigned Pokémon %s to user %s', random_pokemon.name, current_user.username)
+            flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_data': pokemon_data}))
+            db.session.commit()
 
         return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
     except Exception as e:
