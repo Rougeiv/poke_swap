@@ -1,5 +1,5 @@
 from urllib.parse import urlsplit
-from app import flaskApp, db, logger
+from app import flaskApp, db
 from flask import flash, logging, render_template, request, redirect, session, jsonify, url_for
 import sqlite3
 from flask_login import current_user, login_required, login_user, logout_user
@@ -8,10 +8,8 @@ from datetime import datetime, timezone
 from app.models import User, Pokemon
 from app.forms import EditProfileForm, LoginForm, SignUpForm
 import random
-from sqlalchemy.sql.expression import func
-import logging
+# from sqlalchemy.sql.expression import func
 
-logging.basicConfig(level=logging.DEBUG)
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
@@ -131,8 +129,8 @@ def gacha_ten_pull():
             
             # Assign the Pokémon to the user's inventory
             current_user.inventory.append(pokemon)
-            logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
-        logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
+            # flaskApp.logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
+            # flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
         # Commit the changes to the database
         db.session.commit()
 
@@ -140,7 +138,7 @@ def gacha_ten_pull():
         return jsonify({'pokemon_list': random_pokemon_list}), 200, {'Content-Type': 'application/json'}
     except Exception as e:
         # return jsonify({'error exception': str(e)}), 500, {'Content-Type': 'application/json'}
-        logging.error('An error occurred: %s', str(e))
+        # logging.error('An error occurred: %s', str(e))
         return jsonify({'error': 'Internal Server Error'}), 500
 
 @flaskApp.route('/my_trades', methods=['GET'])
@@ -200,3 +198,12 @@ def edit_profile():
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile', form=form)
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('500.html'), 500

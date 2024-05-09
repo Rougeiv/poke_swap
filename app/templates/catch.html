@@ -69,9 +69,9 @@
         fetch('/gacha_ten_pull', { method: 'POST' })
         .then(response => {
             console.log(response);
-            if (!response.ok) {
-                throw new Error('Network response was not ok (No Pokemon found)');
-            }
+            // if (!response.ok) {
+            //     throw new Error('Network response was not ok (No Pokemon found)');
+            // }
             return response.json();
         })
         .then(data => {
