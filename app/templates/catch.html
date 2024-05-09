@@ -88,6 +88,8 @@
                 pokeball.classList.remove('closed');
             }
             let i = 0;
+            textboxText = document.getElementById('textbox-txt');
+            textboxText.textContent = `Congrats! You got: `;
             // Display information about the 10 random Pokemon
             data["pokemon_list"].forEach(pokemon => {
                 console.log(pokemon);
@@ -102,6 +104,10 @@
                 let cardImg = document.createElement("img");
                 pokemonDiv.appendChild(pokemonImg);
                 document.getElementById('pull-result').appendChild(pokemonDiv);
+                if (i == 9) {
+                    textboxText.textContent += `and ${pokemon["name"]}!`;
+                } else
+                textboxText.textContent += `${pokemon["name"]}, `;
                 i++;
             });
             })
