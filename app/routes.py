@@ -77,8 +77,6 @@ def gacha_one_pull():
         if random_pokemon is None:
             return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
 
-
-
         pokemon_data = {
         'id': random_pokemon.id,
         'pokemon_id': random_pokemon.pokedex_num,
