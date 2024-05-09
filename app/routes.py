@@ -1,52 +1,26 @@
 from urllib.parse import urlsplit
 from app import flaskApp, db
-from flask import flash, render_template, request, redirect, session, jsonify, url_for
+from flask import flash, logging, render_template, request, redirect, session, jsonify, url_for
 import sqlite3
 from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
 from flask import current_app as app
-from app.models import User
+from app.models import User, Pokemon
 from app.forms import EditProfileForm, LoginForm, SignUpForm
+import random
+from sqlalchemy.sql.expression import func
+
 import os
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
 # @login_required
 def index():
-    # signup_success = session.pop('signup_success', False)
-    # logged_in = session.get('logged_in', False)
-    # , signup_success=signup_success, logged_in=logged_in
     return render_template('index.html', title='Home')
 
 @flaskApp.route('/signup', methods=['GET', 'POST'])
 def signup():
-    # if request.method == 'POST':
-    #     try:
-    #         username = request.form['username']
-    #         password = request.form['password']
-
-    #         # Get the database connection
-    #         db = get_db()
-    #         c = db.cursor()
-
-    #         # Check if username already exists
-    #         c.execute("SELECT * FROM users WHERE username=?", (username,))
-    #         existing_user = c.fetchone()
-
-    #         if existing_user:
-    #             error_message = "Username already exists!"
-    #             return render_template('signup.html', error_message=error_message)
-    #         else:
-    #             # Insert new user into the database
-    #             c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
-    #             db.commit()
-    #             # Set success message in session
-    #             session['signup_success'] = True
-    #             return redirect('/')
-    #     except Exception as e:
-    #         return f"An error occurred: {str(e)}"
-    # else:
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = SignUpForm()
@@ -83,8 +57,6 @@ def main():
 
 @flaskApp.route('/logout')
 def logout():
-    # Remove user information from session
-    # session.pop('logged_in', None)
     logout_user()
     return redirect(url_for('index'))
 
@@ -92,48 +64,78 @@ def logout():
 @flaskApp.route('/catch')
 def catch():
     # Check if user is logged in
-    if session.get('logged_in', False):
-        return render_template('catch.html', logged_in=True)
-    else:
-        return redirect(url_for('index'))
-
-@flaskApp.route('/gacha', methods=['POST'])
-def gacha():
-    try:
-        # Connect to the Pokemon database
-        conn = sqlite3.connect('pokemon.db')
-        c = conn.cursor()
-
-        # Retrieve 10 random Pokemon from the database
-        c.execute("SELECT id, name FROM pokemon ORDER BY RANDOM() LIMIT 10")
-        pokemon = c.fetchall()
-
-        # Close the database connection
-        conn.close()
-
-        # Return the random Pokemon data as JSON
-        return jsonify(pokemon)
-    except Exception as e:
-        return jsonify({'error': str(e)})
+    if current_user.is_anonymous:
+        return redirect(url_for('login'))
+    return render_template('catch.html')
 
 @flaskApp.route('/gacha_one_pull', methods=['POST'])
 def gacha_one_pull():
     try:
-        # Connect to the Pokemon database
-        conn_pokemon = sqlite3.connect('pokemon.db')
-        c_pokemon = conn_pokemon.cursor()
+        # random_pokemon = db.session.get(Pokemon, random.randint(1, 151))
+        pquery = sa.select(Pokemon).order_by(func.random()).limit(1)
+        random_pokemon = db.session.scalar(pquery)
+        if random_pokemon is None:
+            return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
 
-        # Retrieve a single random Pokemon from the database
-        c_pokemon.execute("SELECT id, name FROM pokemon ORDER BY RANDOM() LIMIT 1")
-        pokemon = c_pokemon.fetchone()
+        pokemon_data = {
+        'id': random_pokemon.id,
+        'pokemon_id': random_pokemon.pokedex_num,
+        'name': random_pokemon.name
+        }
 
-        # Close the Pokemon database connection
-        conn_pokemon.close()
+        # first check if the user already has the pokemon
+        if random_pokemon in current_user.inventory:
+            flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, random_pokemon.name)
+        else:
+            # Assign the Pokémon to the user's inventory
+            current_user.inventory.append(random_pokemon)
+            flaskApp.logger.debug('Assigned Pokémon %s to user %s', random_pokemon.name, current_user.username)
+            flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_data': pokemon_data}))
+            db.session.commit()
 
-        # Pass the retrieved Pokemon to the game.html template
-        return jsonify(pokemon)
+        return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
     except Exception as e:
-        return f"An error occurred: {str(e)}"
+        flaskApp.logger.error('An error occurred: %s', str(e))
+        return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}
+    
+@flaskApp.route('/gacha_ten_pull', methods=['POST'])
+def gacha_ten_pull():
+    try:
+        pquery = sa.select(Pokemon).order_by(func.random()).limit(10)
+        random_pokemon = db.session.execute(pquery)
+        if random_pokemon is None:
+            return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
+        
+        # Prepare a list to hold the random Pokémon data
+        random_pokemon_list = []
+
+        # Loop through each randomly selected Pokémon
+        for tuple_entry in random_pokemon:
+            pokemon = tuple_entry[0]
+            pokemon_data = {
+                'id': pokemon.id,
+                'pokedex_num': pokemon.pokedex_num,
+                'name': pokemon.name
+            }
+            random_pokemon_list.append(pokemon_data)
+            
+            # first check if the user already has the pokemon
+            if pokemon in current_user.inventory:
+                flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, pokemon.name)
+            else:
+                # Assign the Pokémon to the user's inventory
+                current_user.inventory.append(pokemon)
+                flaskApp.logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
+                flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
+        # Commit the changes to the database
+        db.session.commit()
+
+        # Return the list of randomly selected Pokémon as JSON
+        return jsonify({'pokemon_list': random_pokemon_list}), 200, {'Content-Type': 'application/json'}
+    except Exception as e:
+        # return jsonify({'error exception': str(e)}), 500, {'Content-Type': 'application/json'}
+        flaskApp.logger.error('An error occurred: %s', str(e))
+        return jsonify({'error': 'Internal Server Error'}), 500
 
 @flaskApp.route('/my_trades', methods=['GET'])
 def my_trades():
@@ -197,7 +199,7 @@ def before_request():
 @flaskApp.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    form = EditProfileForm()
+    form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
@@ -208,3 +210,12 @@ def edit_profile():
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile', form=form)
+
+@flaskApp.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
+
+@flaskApp.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('500.html'), 500
