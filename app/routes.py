@@ -5,10 +5,12 @@ import sqlite3
 from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
+from flask import current_app as app
 from app.models import Pokemon, User
 from app.forms import EditProfileForm, LoginForm, SignUpForm
 import random
 from sqlalchemy.sql.expression import func
+import os
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
@@ -146,10 +148,26 @@ def my_trades():
         return jsonify(trades)
     except Exception as e:
         return jsonify({'error': str(e)})
-    
+
 @flaskApp.route('/trade_offer', methods=['POST', 'GET'])
 def trade_offer():
-    return render_template('trade_offer.html')
+    sprite_folder = os.path.join(app.static_folder, 'images', 'pokemon_gen4_sprites')
+    try:
+        pokemon_sprites = [f[:-4] for f in os.listdir(sprite_folder) if f.endswith('.png')]  # Removes '.png'
+        app.logger.info(f"Loaded Pokémon sprites: {pokemon_sprites}")
+    except Exception as e:
+        app.logger.error(f"Failed to load Pokémon sprites: {e}")
+        pokemon_sprites = []  # Continue with empty list if error
+
+    return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites)
+
+@flaskApp.route('/update_sprite_selection', methods=['POST'])
+def update_sprite_selection():
+    sprite_src = request.form['sprite']
+    # Update session or database with the new sprite selection
+    # e.g., session['selected_sprite'] = sprite_src
+    return jsonify(success=True)
+
 
 @flaskApp.route('/how_to_play')
 def how_to_play():
