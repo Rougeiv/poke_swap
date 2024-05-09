@@ -127,10 +127,14 @@ def gacha_ten_pull():
             }
             random_pokemon_list.append(pokemon_data)
             
-            # Assign the Pokémon to the user's inventory
-            current_user.inventory.append(pokemon)
-            flaskApp.logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
-            flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
+            # first check if the user already has the pokemon
+            if pokemon in current_user.inventory:
+                flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, pokemon.name)
+            else:
+                # Assign the Pokémon to the user's inventory
+                current_user.inventory.append(pokemon)
+                flaskApp.logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
+                flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
         # Commit the changes to the database
         db.session.commit()
 
