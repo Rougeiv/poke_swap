@@ -76,6 +76,7 @@
         })
         .then(data => {
             console.log("Data: ", data);
+            console.log(typeof data)
              // Clear previous Pokemon info
             pullContainer = document.getElementById('pull-result');
             while (pullContainer.firstChild) {
@@ -88,13 +89,13 @@
             }
             let i = 0;
             // Display information about the 10 random Pokemon
-            data.forEach(pokemon => {
+            data["pokemon_list"].forEach(pokemon => {
                 console.log(pokemon);
                 let pokemonDiv = document.createElement("div");
                 pokemonDiv.classList.add("pokemon-img-container");
 
                 let pokemonImg = document.createElement('img');
-                pokemonImg.src = '../static/images/pokemon_gen4_sprites/' + pokemon[i].name.toLowerCase() + '.png';
+                pokemonImg.src = '../static/images/pokemon_gen4_sprites/' + pokemon["name"].toLowerCase() + '.png';
                 pokemonImg.width = 200;
                 pokemonImg.height = 200;
 
