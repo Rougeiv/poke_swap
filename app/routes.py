@@ -68,29 +68,31 @@ def catch():
         return redirect(url_for('login'))
     return render_template('catch.html')
 
-@flaskApp.route('/gacha', methods=['POST'])
-def gacha():
-    try:
-        # Connect to the Pokemon database
-        conn = sqlite3.connect('pokemon.db')
-        c = conn.cursor()
+# @flaskApp.route('/gacha', methods=['POST'])
+# def gacha():
+#     try:
+#         # Connect to the Pokemon database
+#         conn = sqlite3.connect('pokemon.db')
+#         c = conn.cursor()
 
-        # Retrieve 10 random Pokemon from the database
-        c.execute("SELECT id, name FROM pokemon ORDER BY RANDOM() LIMIT 10")
-        pokemon = c.fetchall()
+#         # Retrieve 10 random Pokemon from the database
+#         c.execute("SELECT id, name FROM pokemon ORDER BY RANDOM() LIMIT 10")
+#         pokemon = c.fetchall()
 
-        # Close the database connection
-        conn.close()
+#         # Close the database connection
+#         conn.close()
 
-        # Return the random Pokemon data as JSON
-        return jsonify(pokemon)
-    except Exception as e:
-        return jsonify({'error': str(e)})
+#         # Return the random Pokemon data as JSON
+#         return jsonify(pokemon)
+#     except Exception as e:
+#         return jsonify({'error': str(e)})
 
 @flaskApp.route('/gacha_one_pull', methods=['POST'])
 def gacha_one_pull():
     try:
-        random_pokemon = db.session.get(Pokemon, random.randint(1, 151))
+        # random_pokemon = db.session.get(Pokemon, random.randint(1, 151))
+        pquery = sa.select(Pokemon).order_by(func.random()).limit(1)
+        random_pokemon = db.session.execute(pquery)
         if random_pokemon is None:
             return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
 
@@ -106,6 +108,7 @@ def gacha_one_pull():
 
         return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
     except Exception as e:
+        flaskApp.logger.error('An error occurred: %s', str(e))
         return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}
     
 @flaskApp.route('/gacha_ten_pull', methods=['POST'])
