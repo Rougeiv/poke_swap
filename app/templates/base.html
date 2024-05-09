@@ -11,6 +11,9 @@
     <!-- Additional head elements can be inserted here -->
     {% endblock %}
     <style>
+        html {
+            height: 100%;
+        }
         .navbar-brand {
             display: flex;
             align-items: center; /* Vertically centers the image and text */
@@ -19,6 +22,18 @@
             font-family: 'Comic Sans MS', cursive;
             color: #e8372d;
             margin: 0; /* Removes the default margin */
+        }
+
+        /* min-height:100% makes body expand enough so that footer sticks down*/
+        body {
+            min-height: 100%;
+
+            display:flex;
+            flex-direction: column;
+        }
+
+        footer {
+            margin-top: auto;
         }
     </style>
 </head>
