@@ -1,6 +1,6 @@
 from urllib.parse import urlsplit
-from app import flaskApp, db
-from flask import flash, render_template, request, redirect, session, jsonify, url_for
+from app import flaskApp, db, logger
+from flask import flash, logging, render_template, request, redirect, session, jsonify, url_for
 import sqlite3
 from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
@@ -9,6 +9,9 @@ from app.models import User, Pokemon
 from app.forms import EditProfileForm, LoginForm, SignUpForm
 import random
 from sqlalchemy.sql.expression import func
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
@@ -108,25 +111,37 @@ def gacha_one_pull():
 @flaskApp.route('/gacha_ten_pull', methods=['POST'])
 def gacha_ten_pull():
     try:
-        random_pokemon = db.session.scalar(sa.select(Pokemon).order_by(func.random()).limit(10))
+        pquery = sa.select(Pokemon).order_by(func.random()).limit(10)
+        random_pokemon = db.session.execute(pquery)
         if random_pokemon is None:
             return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
+        
+        # Prepare a list to hold the random Pokémon data
         random_pokemon_list = []
-        for pokemon in random_pokemon:
+
+        # Loop through each randomly selected Pokémon
+        for tuple_entry in random_pokemon:
+            pokemon = tuple_entry[0]
             pokemon_data = {
-            'id': pokemon.id,
-            'pokemon_id': pokemon.pokedex_num,
-            'name': pokemon.name
+                'id': pokemon.id,
+                'pokedex_num': pokemon.pokedex_num,
+                'name': pokemon.name
             }
             random_pokemon_list.append(pokemon_data)
-            # now assign the pokemon to the user
+            
+            # Assign the Pokémon to the user's inventory
             current_user.inventory.append(pokemon)
-   
+            logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
+        logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
+        # Commit the changes to the database
         db.session.commit()
 
-        return jsonify(random_pokemon_list), 200, {'Content-Type': 'application/json'}
+        # Return the list of randomly selected Pokémon as JSON
+        return jsonify({'pokemon_list': random_pokemon_list}), 200, {'Content-Type': 'application/json'}
     except Exception as e:
-        return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}
+        # return jsonify({'error exception': str(e)}), 500, {'Content-Type': 'application/json'}
+        logging.error('An error occurred: %s', str(e))
+        return jsonify({'error': 'Internal Server Error'}), 500
 
 @flaskApp.route('/my_trades', methods=['GET'])
 def my_trades():
