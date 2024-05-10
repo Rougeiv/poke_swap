@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, PasswordField, StringField, TextAreaField, SubmitField, ValidationError   
+from wtforms import BooleanField, EmailField, PasswordField, StringField, TextAreaField, SubmitField, ValidationError   
 from wtforms.validators import Length, DataRequired, EqualTo
 import sqlalchemy as sa
 from app import db
@@ -13,7 +13,7 @@ class LoginForm(FlaskForm):
 
 class SignUpForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), EmailField()])
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
