@@ -203,7 +203,32 @@ def trade_offer():
 
     conn.close()
 
-    return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites, pokemon_owned = pokemon_names)
+    return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites, pokemon_owned = pokemon_names, current_user_id=current_user.id)
+
+@flaskApp.route('/post_trade', methods=['POST'])
+def post_trade():
+    user_id = request.form.get('user_id')
+    pokemon_id1 = request.form.get('pokemon_id1')
+    pokemon_id2 = request.form.get('pokemon_id2')
+    date_time = datetime.now().strftime('%d/%m/%Y')  # Formats the current date as dd/mm/yy
+
+    # Connect to the SQLite database
+    conn = sqlite3.connect('app.db')
+    cursor = conn.cursor()
+
+    # Insert the new trade into the active_trades table
+    try:
+        cursor.execute('''
+            INSERT INTO active_trades (user_id, pokemon_id1, pokemon_id2, date_time) 
+            VALUES (?, ?, ?, ?)
+        ''', (user_id, pokemon_id1, pokemon_id2, date_time))
+        conn.commit()
+        return jsonify({'success': 'Trade posted successfully!'}), 200
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
 
 @flaskApp.route('/update_sprite_selection', methods=['POST'])
 def update_sprite_selection():

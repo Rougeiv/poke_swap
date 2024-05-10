@@ -32,8 +32,9 @@
             </div>
             <div class="row mt-3">
                 <div class="col text-center">
-                    <button class="btn btn-dark">Post</button>
+                    <button id="postTradeButton" class="btn btn-dark">Post</button>
                 </div>
+                
             </div>
         </div>
     </div>
@@ -54,8 +55,9 @@
                     {% for sprite in pokemon_owned %}
                     <div class="col-md-3 text-center">
                         <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite|lower + '.png') }}" 
-                             alt="{{ sprite }}" class="img-thumbnail pokemon-image selectable-sprite"
-                             data-target="#offeringPlaceholder" data-sprite="{{ sprite }}">
+                        alt="{{ sprite }}" class="img-thumbnail pokemon-image selectable-sprite"
+                        data-target="#offeringPlaceholder" data-sprite="{{ sprite }}"
+                        data-pokemon-id1="{{ sprite_id }}">
                         <p>{{ sprite }}</p>
                     </div>
                     {% endfor %}
@@ -84,8 +86,9 @@
                     {% for sprite in pokemon_sprites %}
                     <div class="col-md-3 text-center">
                         <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}" 
-                             alt="{{ sprite }}" class="img-thumbnail pokemon-image selectable-sprite"
-                             data-target="#requestingPlaceholder" data-sprite="{{ sprite }}">
+                        alt="{{ sprite }}" class="img-thumbnail pokemon-image selectable-sprite"
+                        data-target="#requestingPlaceholder" data-sprite="{{ sprite }}"
+                        data-pokemon-id2="{{ sprite_id }}">
                         <p>{{ sprite.capitalize().replace('_', ' ') }}</p>
                     </div>
                     {% endfor %}
@@ -102,16 +105,46 @@
 
 <script>
     $(document).ready(function() {
-        $('.selectable-sprite').on('click', function() {
-            const selectedSpriteSrc = $(this).attr('src');
-            const targetPlaceholder = $(this).data('target');
+        let selectedPokemonId1 = null;
+        let selectedPokemonId2 = null;
     
-            $(targetPlaceholder).attr('src', selectedSpriteSrc); // Update the src of the target placeholder
-            
-            $(this).closest('.modal').modal('hide'); // Close the parent modal
+        $('.selectable-sprite').on('click', function() {
+            const targetPlaceholder = $(this).data('target');
+            $(targetPlaceholder).attr('src', $(this).attr('src'));
+    
+            // Update selected IDs based on which modal they are selected from
+            if ($(this).data('pokemon-id1')) {
+                selectedPokemonId1 = $(this).data('pokemon-id1');
+            } else if ($(this).data('pokemon-id2')) {
+                selectedPokemonId2 = $(this).data('pokemon-id2');
+            }
+    
+            $(this).closest('.modal').modal('hide'); // Close the modal
+        });
+    
+        $('#postTradeButton').on('click', function() {
+        // Assuming selectedPokemonId1 and selectedPokemonId2 are already set
+        $.ajax({
+            url: '/post_trade',
+            type: 'POST',
+            data: {
+                user_id: '{{ current_user.id }}',
+                pokemon_id1: selectedPokemonId1,
+                pokemon_id2: selectedPokemonId2,
+                date_time: new Date().toLocaleDateString('en-GB')  // Ensuring the format is correct
+            },
+            success: function(response) {
+                alert(response.success);
+                // You might want to clear selected IDs or refresh the page here
+            },
+            error: function(xhr) {
+                alert("Error: " + xhr.responseText);
+            }
         });
     });
+    });
     </script>
+    
     
     
 
