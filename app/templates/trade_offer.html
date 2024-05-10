@@ -54,10 +54,10 @@
                 <div class="row">
                     {% for sprite in pokemon_owned %}
                     <div class="col-md-3 text-center">
-                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite|lower + '.png') }}" 
-                        alt="{{ sprite }}" class="img-thumbnail pokemon-image selectable-sprite"
-                        data-target="#offeringPlaceholder" data-sprite="{{ sprite }}"
-                        data-pokemon-id1="{{ sprite_id }}">
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}"
+                        class="img-thumbnail pokemon-image selectable-sprite"
+                        data-target="#offeringPlaceholder"
+                        data-sprite-name="{{ sprite }}">
                         <p>{{ sprite }}</p>
                     </div>
                     {% endfor %}
@@ -85,11 +85,11 @@
                 <div class="row">
                     {% for sprite in pokemon_sprites %}
                     <div class="col-md-3 text-center">
-                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}" 
-                        alt="{{ sprite }}" class="img-thumbnail pokemon-image selectable-sprite"
-                        data-target="#requestingPlaceholder" data-sprite="{{ sprite }}"
-                        data-pokemon-id2="{{ sprite_id }}">
-                        <p>{{ sprite.capitalize().replace('_', ' ') }}</p>
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}"
+                        class="img-thumbnail pokemon-image selectable-sprite"
+                        data-target="#requestingPlaceholder"
+                        data-sprite-name="{{ sprite|capitalize }}">
+                        <p>{{ sprite }}</p>
                     </div>
                     {% endfor %}
                 </div>                
@@ -105,43 +105,41 @@
 
 <script>
     $(document).ready(function() {
-        let selectedPokemonId1 = null;
-        let selectedPokemonId2 = null;
+        let selectedPokemonName1 = null;
+        let selectedPokemonName2 = null;
     
+        
         $('.selectable-sprite').on('click', function() {
+            console.log('Selected Pokemon:', $(this).data('sprite-name'));
             const targetPlaceholder = $(this).data('target');
             $(targetPlaceholder).attr('src', $(this).attr('src'));
-    
-            // Update selected IDs based on which modal they are selected from
-            if ($(this).data('pokemon-id1')) {
-                selectedPokemonId1 = $(this).data('pokemon-id1');
-            } else if ($(this).data('pokemon-id2')) {
-                selectedPokemonId2 = $(this).data('pokemon-id2');
+            
+            if ($(this).data('target') === "#offeringPlaceholder") {
+                selectedPokemonName1 = $(this).data('sprite-name');
+            } else if ($(this).data('target') === "#requestingPlaceholder") {
+                selectedPokemonName2 = $(this).data('sprite-name');
             }
     
             $(this).closest('.modal').modal('hide'); // Close the modal
         });
     
         $('#postTradeButton').on('click', function() {
-        // Assuming selectedPokemonId1 and selectedPokemonId2 are already set
-        $.ajax({
-            url: '/post_trade',
-            type: 'POST',
-            data: {
-                user_id: '{{ current_user.id }}',
-                pokemon_id1: selectedPokemonId1,
-                pokemon_id2: selectedPokemonId2,
-                date_time: new Date().toLocaleDateString('en-GB')  // Ensuring the format is correct
-            },
-            success: function(response) {
-                alert(response.success);
-                // You might want to clear selected IDs or refresh the page here
-            },
-            error: function(xhr) {
-                alert("Error: " + xhr.responseText);
-            }
+            $.ajax({
+                url: '/post_trade',
+                type: 'POST',
+                data: {
+                    pokemon_name1: selectedPokemonName1,
+                    pokemon_name2: selectedPokemonName2
+                },
+                success: function(response) {
+                    alert(response.success);
+                    // Optionally reset or refresh page here
+                },
+                error: function(xhr) {
+                    alert("Error: " + xhr.responseText);
+                }
+            });
         });
-    });
     });
     </script>
     

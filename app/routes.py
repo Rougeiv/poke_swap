@@ -1,6 +1,6 @@
 from urllib.parse import urlsplit
 from app import flaskApp, db
-from flask import flash, logging, render_template, request, redirect, session, jsonify, url_for
+from flask import flash, logging, render_template, request, redirect, session, jsonify, url_for, current_app
 import sqlite3
 from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
@@ -207,21 +207,27 @@ def trade_offer():
 
 @flaskApp.route('/post_trade', methods=['POST'])
 def post_trade():
-    user_id = request.form.get('user_id')
-    pokemon_id1 = request.form.get('pokemon_id1')
-    pokemon_id2 = request.form.get('pokemon_id2')
+    pokemon_name1 = request.form.get('pokemon_name1')
+    pokemon_name2 = request.form.get('pokemon_name2')
     date_time = datetime.now().strftime('%d/%m/%Y')  # Formats the current date as dd/mm/yy
 
     # Connect to the SQLite database
     conn = sqlite3.connect('app.db')
     cursor = conn.cursor()
 
-    # Insert the new trade into the active_trades table
     try:
+        # Resolve Pokémon names to IDs
+        cursor.execute("SELECT id FROM pokemon WHERE name = ?", (pokemon_name1,))
+        pokemon_id1 = cursor.fetchone()[0]
+        cursor.execute("SELECT id FROM pokemon WHERE name = ?", (pokemon_name2,))
+        pokemon_id2 = cursor.fetchone()[0]
+        print("Received names:", pokemon_name1, pokemon_name2)
+
+        # Insert the new trade into the trade table
         cursor.execute('''
-            INSERT INTO active_trades (user_id, pokemon_id1, pokemon_id2, date_time) 
-            VALUES (?, ?, ?, ?)
-        ''', (user_id, pokemon_id1, pokemon_id2, date_time))
+            INSERT INTO trade (timestamp, user_id1, user_id2, pokemon_id1, pokemon_id2) 
+            VALUES (?, ?, NULL, ?, ?)
+            ''', (date_time, current_user.id, pokemon_id1, pokemon_id2))
         conn.commit()
         return jsonify({'success': 'Trade posted successfully!'}), 200
     except Exception as e:
