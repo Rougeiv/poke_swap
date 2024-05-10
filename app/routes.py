@@ -139,22 +139,36 @@ def gacha_ten_pull():
 
 @flaskApp.route('/my_trades', methods=['GET'])
 def my_trades():
-    try:
-        # Connect to the Pokemon database
-        conn = sqlite3.connect('pokemon.db')
-        c = conn.cursor()
+    
+    #try:
+     #   # Connect to the Pokemon database
+      #  conn = sqlite3.connect('pokemon.db')
+       # c = conn.cursor()
 
         # Retrieve all trades from the database
-        c.execute("SELECT * FROM trades")
-        trades = c.fetchall()
+        #c.execute("SELECT * FROM trades")
+        #trades = c.fetchall()
 
         # Close the database connection
-        conn.close()
+        #conn.close()
 
         # Return the trades data as JSON
-        return jsonify(trades)
-    except Exception as e:
-        return jsonify({'error': str(e)})
+        #return jsonify(trades)
+    #except Exception as e:
+     #   return jsonify({'error': str(e)})
+    active_trades = [
+        {'id': 'Trade #0001', 'expires_in': '2 days', 'pokemon1': 'ditto', 'pokemon2': 'diglett'},
+        {'id': 'Trade #0002', 'expires_in': '3 days', 'pokemon1': 'cubone', 'pokemon2': 'dragonite'},
+        {'id': 'Trade #0003', 'expires_in': '5 days', 'pokemon1': 'arcanine', 'pokemon2': 'chansey'}
+    ]
+
+    past_trades = [
+        {'id': 'Trade #0001', 'expires_in': '2 days', 'pokemon1': 'ditto', 'pokemon2': 'diglett'},
+        {'id': 'Trade #0002', 'expires_in': '3 days', 'pokemon1': 'cubone', 'pokemon2': 'dragonite'},
+        {'id': 'Trade #0003', 'expires_in': '5 days', 'pokemon1': 'arcanine', 'pokemon2': 'chansey'}
+    ]
+
+    return render_template('my_trades.html', active_trades=active_trades, past_trades=past_trades)
 
 @flaskApp.route('/trade_offer', methods=['POST', 'GET'])
 def trade_offer():
