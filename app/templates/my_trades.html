@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}
+    My Trades
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">My Trades</h1>
+
+    <!-- Active Trade Offers Section -->
+    <div class="container mt-5 active-trades">
+        <h2 class="text-center">Active Trade Offers</h2>
+        <div class="list-group mt-3">
+            <!-- Dynamically generated active trade offers -->
+            {% for trade in active_trades %}
+            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ trade.id }}</h5>
+                    <small>Expires in {{ trade.expires_in }}</small>
+                </div>
+                <p class="mb-1">
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + trade.pokemon1 + '.png') }}" alt="Pokemon 1">
+                    ⇆
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + trade.pokemon2 + '.png') }}" alt="Pokemon 2">
+                </p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Past Trade Offers Section -->
+    <div class="container mt-5 past-trades">
+        <h2 class="text-center">Past Trade Offers</h2>
+        <div class="list-group mt-3">
+            <!-- Dynamically generated past trade offers -->
+            {% for trade in past_trades %}
+            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ trade.id }}</h5>
+                    <small>Completed on {{ trade.completed_on }}</small>
+                </div>
+                <p class="mb-1">
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + trade.pokemon1 + '.png') }}" alt="Pokemon 1">
+                    ⇆
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + trade.pokemon2 + '.png') }}" alt="Pokemon 2">
+                </p>
+            </a>
+            {% if loop.index % 3 == 0 %}
+                </div><div class="list-group mt-3">
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Pagination for Past Trade Offers -->
+        <nav aria-label="Trade offers pagination">
+            <ul class="pagination justify-content-center mt-4">
+                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                <!-- Generate pagination dynamically -->
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<style>
+/* Style for main container to ensure maximum width control */
+.container {
+    max-width: 800px; /* Adjust based on your design needs */
+    margin: auto; /* This centers the container */
+}
+
+/* Generic style for centered titles */
+.text-center {
+    text-align: center;
+}
+
+/* Specific background colors for trade sections */
+.active-trades {
+    background-color:darkgrey;
+}
+
+.past-trades {
+    background-color: darkslategray;
+}
+
+/* Padding for the last item in each trade offer list */
+.list-group-item:last-child {
+    margin-bottom: 20px; /* Adds space below the last item */
+}
+
+/* Margin for the pagination to create space below */
+.pagination {
+    margin-bottom: 20px; /* Adds space below the pagination */
+}
+
+/* Additional padding inside the containers for overall spacing */
+.active-trades, .past-trades {
+    padding-bottom: 20px; /* Adds space inside the container at the bottom */
+}
+
+
+
+</style>
+{% endblock content %}
