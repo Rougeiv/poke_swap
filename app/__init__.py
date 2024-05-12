@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 from flask import Flask, logging
+=======
+from flask import Flask
+>>>>>>> 08b780f90dd7d25499a2b54a0d97d3926efa758d
 from flask_login import LoginManager
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+<<<<<<< HEAD
+=======
+import logging
+>>>>>>> 08b780f90dd7d25499a2b54a0d97d3926efa758d
 from logging.handlers import RotatingFileHandler
 import os
 
