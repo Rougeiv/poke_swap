@@ -1,8 +1,8 @@
 """Added tokens field to User table
 
 Revision ID: 285668093583
-Revises: aa79ccb2150d
-Create Date: 2024-05-12 07:47:01.392428
+Revises: 0b1870e2b064
+Create Date: 2024-05-12 09:35:16.207039
 
 """
 from alembic import op
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '285668093583'
-down_revision = 'aa79ccb2150d'
+down_revision = '0b1870e2b064'
 branch_labels = None
 depends_on = None
 
