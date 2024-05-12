@@ -1,12 +1,12 @@
 from urllib.parse import urlsplit
 from app import flaskApp, db
-from flask import flash, logging, render_template, request, redirect, session, jsonify, url_for
+from flask import flash, logging, render_template, request, redirect, session, jsonify, url_for, current_app
 import sqlite3
 from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
 from flask import current_app as app
-from app.models import User, Pokemon
+from app.models import User, Pokemon, Trade
 from app.forms import EditProfileForm, LoginForm, SignUpForm
 import random
 from sqlalchemy.sql.expression import func
@@ -188,6 +188,7 @@ def my_trades():
 
     return render_template('my_trades.html', active_trades=active_trades, past_trades=past_trades)
 
+@login_required
 @flaskApp.route('/trade_offer', methods=['POST', 'GET'])
 def trade_offer():
     sprite_folder = os.path.join(app.static_folder, 'images', 'pokemon_gen4_sprites')
@@ -196,9 +197,52 @@ def trade_offer():
         app.logger.info(f"Loaded Pokémon sprites: {pokemon_sprites}")
     except Exception as e:
         app.logger.error(f"Failed to load Pokémon sprites: {e}")
-        pokemon_sprites = []  # Continue with empty list if error
+        pokemon_sprites = []
 
-    return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites)
+    # Using SQLAlchemy ORM to fetch Pokémon names owned by the logged-in user
+    if current_user.is_authenticated:
+        # Fetch the Pokémon IDs for the logged-in user
+        inventory_pokemon = current_user.inventory
+
+        pokemon_names = [pokemon.name.lower() for pokemon in inventory_pokemon]
+
+        return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites, pokemon_owned=pokemon_names, current_user_id=current_user.id)
+    else:
+        return redirect(url_for('login'))
+
+@login_required
+@flaskApp.route('/post_trade', methods=['POST'])
+def post_trade():
+    pokemon_name1 = request.form.get('pokemon_name1')
+    pokemon_name2 = request.form.get('pokemon_name2')
+    timestamp = datetime.now()  # Uses the datetime object directly
+
+    try:
+        # Resolve Pokémon names to IDs using SQLAlchemy
+        pokemon1 = Pokemon.query.filter_by(name=pokemon_name1).first()
+        pokemon2 = Pokemon.query.filter_by(name=pokemon_name2).first()
+
+        if not pokemon1 or not pokemon2:
+            return jsonify({'error': 'One or both Pokémon names are invalid.'}), 404
+
+        print("Received names:", pokemon_name1, pokemon_name2)
+
+        # Insert the new trade into the trade table
+        new_trade = Trade(
+            timestamp=timestamp,
+            user_id1=current_user.id,
+            user_id2=None,  # Assuming this is an offer waiting for another user to accept
+            pokemon_id1=pokemon1.id,
+            pokemon_id2=pokemon2.id
+        )
+
+        db.session.add(new_trade)
+        db.session.commit()
+        
+        return jsonify({'success': 'Trade posted successfully!'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @flaskApp.route('/update_sprite_selection', methods=['POST'])
 def update_sprite_selection():
