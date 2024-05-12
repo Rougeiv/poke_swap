@@ -6,7 +6,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
 from flask import current_app as app
-from app.models import User, Pokemon
+from app.models import User, Pokemon, Trade
 from app.forms import EditProfileForm, LoginForm, SignUpForm
 import random
 from sqlalchemy.sql.expression import func
@@ -178,63 +178,51 @@ def trade_offer():
         app.logger.info(f"Loaded Pokémon sprites: {pokemon_sprites}")
     except Exception as e:
         app.logger.error(f"Failed to load Pokémon sprites: {e}")
-        pokemon_sprites = []  # Continue with empty list if error
-    
+        pokemon_sprites = []
+
+    # Using SQLAlchemy ORM to fetch Pokémon names owned by the logged-in user
     if current_user.is_authenticated:
-        user_id = current_user.id
+        # Fetch the Pokémon IDs for the logged-in user
+        pokemon_owned = current_user.inventory
+
+        pokemon_names = [pokemon.name for pokemon in pokemon_owned]
+
+        return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites, pokemon_owned=pokemon_names, current_user_id=current_user.id)
     else:
         return redirect(url_for('login'))
-
-    # Connect to the SQLite database
-    conn = sqlite3.connect('app.db')
-    cursor = conn.cursor()
-
-    # Fetch the Pokémon IDs for the logged-in user
-    cursor.execute("SELECT pokemon_id FROM user_pokemon WHERE user_id = ?", (user_id,))
-    pokemon_ids = cursor.fetchall()
-
-    # Fetch the names and images of Pokémon based on IDs
-    pokemon_names = []
-    for (pokemon_id,) in pokemon_ids:
-        cursor.execute("SELECT name FROM pokemon WHERE id = ?", (pokemon_id,))
-        pokemon_name = cursor.fetchone()
-        if pokemon_name:
-            pokemon_names.append(pokemon_name[0])
-
-    conn.close()
-
-    return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites, pokemon_owned = pokemon_names, current_user_id=current_user.id)
 
 @flaskApp.route('/post_trade', methods=['POST'])
 def post_trade():
     pokemon_name1 = request.form.get('pokemon_name1')
     pokemon_name2 = request.form.get('pokemon_name2')
-    date_time = datetime.now().strftime('%d/%m/%Y')  # Formats the current date as dd/mm/yy
-
-    # Connect to the SQLite database
-    conn = sqlite3.connect('app.db')
-    cursor = conn.cursor()
+    timestamp = datetime.now()  # Uses the datetime object directly
 
     try:
-        # Resolve Pokémon names to IDs
-        cursor.execute("SELECT id FROM pokemon WHERE name = ?", (pokemon_name1,))
-        pokemon_id1 = cursor.fetchone()[0]
-        cursor.execute("SELECT id FROM pokemon WHERE name = ?", (pokemon_name2,))
-        pokemon_id2 = cursor.fetchone()[0]
+        # Resolve Pokémon names to IDs using SQLAlchemy
+        pokemon1 = Pokemon.query.filter_by(name=pokemon_name1).first()
+        pokemon2 = Pokemon.query.filter_by(name=pokemon_name2).first()
+
+        if not pokemon1 or not pokemon2:
+            return jsonify({'error': 'One or both Pokémon names are invalid.'}), 404
+
         print("Received names:", pokemon_name1, pokemon_name2)
 
         # Insert the new trade into the trade table
-        cursor.execute('''
-            INSERT INTO trade (timestamp, user_id1, user_id2, pokemon_id1, pokemon_id2) 
-            VALUES (?, ?, NULL, ?, ?)
-            ''', (date_time, current_user.id, pokemon_id1, pokemon_id2))
-        conn.commit()
+        new_trade = Trade(
+            timestamp=timestamp,
+            user_id1=current_user.id,
+            user_id2=None,  # Assuming this is an offer waiting for another user to accept
+            pokemon_id1=pokemon1.id,
+            pokemon_id2=pokemon2.id
+        )
+
+        db.session.add(new_trade)
+        db.session.commit()
+        
         return jsonify({'success': 'Trade posted successfully!'}), 200
     except Exception as e:
-        conn.rollback()
+        db.session.rollback()
         return jsonify({'error': str(e)}), 500
-    finally:
-        conn.close()
 
 @flaskApp.route('/update_sprite_selection', methods=['POST'])
 def update_sprite_selection():
