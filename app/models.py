@@ -56,6 +56,7 @@ class Pokemon(db.Model):
     name: so.Mapped[str] = so.mapped_column(sa.String(32), index=True,
                                                 unique=True)
     shiny: so.Mapped[bool] = so.mapped_column(sa.Boolean)
+    sprite_path: so.Mapped[Optional[str]] = so.mapped_column(sa.String(200), index=True)
     owners = so.relationship('User', secondary='user_pokemon', back_populates='inventory', lazy=True)
     def __repr__(self):
         return '<Pokemon {} {}>'.format(self.pokedex_num, self.name)
