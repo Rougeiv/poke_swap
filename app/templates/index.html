@@ -3,23 +3,7 @@
 {% block title %}PokeSwap - Home{% endblock %}
 
 {% block extra_head %}
-<style>
-    /* Custom styles specific to the Home page */
-    .gotta-catch, .trade-offer {
-        font-family: 'Comic Sans MS', sans-serif;
-        color: lightslategray;
-        text-align: center;
-        margin-top: 20px;
-    }
-    .card-title, .text-center.h2 {
-        font-family: 'Comic Sans MS', sans-serif;
-        color: lightblue;
-    }
-    .pagination a {
-        font-family: 'Comic Sans MS', sans-serif;
-
-    }
-</style>
+<link rel="stylesheet" href="../static/stylesheets/index.css">
 {% endblock %}
 
 {% block content %}
@@ -35,7 +19,7 @@
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Catch Pokemon</h5>
-                    <a href="{{ url_for('catch') }}" class="btn btn-custom" style="background-color: transparent;">
+                    <a href="{{ url_for('catch') }}" class="btn btn-custom my-button">
                         <img src="{{ url_for('static', filename='images/tallgrass.png') }}" width="100" height="100" alt="Catch Pokemon">
                     </a>
                 </div>
