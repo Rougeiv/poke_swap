@@ -73,8 +73,9 @@ def gacha_one_pull():
     try:
         if current_user.tokens >= 3:
             # first get pokemon already owned by user
-            owned_pokemon_ids = [pokemon.id for pokemon in current_user.inventory]
-            pquery = sa.select(Pokemon).filter(sa.not_(Pokemon.id.in_(owned_pokemon_ids))).order_by(func.random()).limit(1)
+            # owned_pokemon_ids = [pokemon.id for pokemon in current_user.inventory]
+            # .filter(sa.not_(Pokemon.id.in_(owned_pokemon_ids)))
+            pquery = sa.select(Pokemon).order_by(func.random()).limit(1)
             random_pokemon = db.session.scalar(pquery)
             if random_pokemon is None:
                 return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
@@ -112,7 +113,9 @@ def gacha_ten_pull():
         if current_user.tokens >= 10:
             # first get pokemon already owned by user
             owned_pokemon_ids = [pokemon.id for pokemon in current_user.inventory]
-            pquery = sa.select(Pokemon).filter(sa.not_(Pokemon.id.in_(owned_pokemon_ids))).order_by(func.random()).limit(10)
+            # randomly select 10 pokemon that the user doesnt own already
+            # .filter(sa.not_(Pokemon.id.in_(owned_pokemon_ids)))
+            pquery = sa.select(Pokemon).order_by(func.random()).limit(10)
             random_pokemon = db.session.execute(pquery)
             if random_pokemon is None:
                 return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
