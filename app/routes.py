@@ -6,10 +6,11 @@ from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
 from flask import current_app as app
-from app.models import User, Pokemon
+from app.models import User, Pokemon, Trade
 from app.forms import EditProfileForm, LoginForm, SignUpForm
 import random
 from sqlalchemy.sql.expression import func
+import sqlalchemy.orm as orm
 
 import os
 
@@ -17,7 +18,39 @@ import os
 @flaskApp.route('/index')
 # @login_required
 def index():
-    return render_template('index.html', title='Home')
+    page = request.args.get('page', 1, type=int)
+    per_page = 4
+    offset = (page - 1) * per_page
+
+    # Aliases for Pokemon to use in joins
+    Pokemon1 = orm.aliased(Pokemon)
+    Pokemon2 = orm.aliased(Pokemon)
+
+    # Query for trading data with proper joins, now with ascending order
+    trades_query = db.session.query(
+        Trade.id,
+        Trade.timestamp,
+        Pokemon1.name.label('pokemon1_name'),
+        Pokemon2.name.label('pokemon2_name')
+    ).join(
+        Pokemon1, Trade.pokemon_id1 == Pokemon1.id
+    ).join(
+        Pokemon2, Trade.pokemon_id2 == Pokemon2.id
+    ).order_by(Trade.timestamp.asc())  # Changed to ascending order
+
+    # Manual pagination handling
+    total_count = trades_query.count()
+    trades = trades_query.offset(offset).limit(per_page).all()
+    total_pages = (total_count + per_page - 1) // per_page
+
+    trade_offers = [{
+        'trade_id': trade.id,
+        'timestamp': trade.timestamp.strftime('%Y-%m-%d %H:%M'),
+        'pokemon1_name': trade.pokemon1_name.lower(),
+        'pokemon2_name': trade.pokemon2_name.lower()
+    } for trade in trades]
+
+    return render_template('index.html', trade_offers=trade_offers, page=page, total_pages=total_pages)
 
 @flaskApp.route('/signup', methods=['GET', 'POST'])
 def signup():
