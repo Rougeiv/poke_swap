@@ -71,29 +71,37 @@ def catch():
 @flaskApp.route('/gacha_one_pull', methods=['POST'])
 def gacha_one_pull():
     try:
-        # random_pokemon = db.session.get(Pokemon, random.randint(1, 151))
-        pquery = sa.select(Pokemon).order_by(func.random()).limit(1)
-        random_pokemon = db.session.scalar(pquery)
-        if random_pokemon is None:
-            return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
+        if current_user.tokens >= 3:
+            # first get pokemon already owned by user
+            owned_pokemon_ids = [pokemon.id for pokemon in current_user.inventory]
+            pquery = sa.select(Pokemon).filter(sa.not_(Pokemon.id.in_(owned_pokemon_ids))).order_by(func.random()).limit(1)
+            random_pokemon = db.session.scalar(pquery)
+            if random_pokemon is None:
+                return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
 
-        pokemon_data = {
-        'id': random_pokemon.id,
-        'pokemon_id': random_pokemon.pokedex_num,
-        'name': random_pokemon.name
-        }
+            pokemon_data = {
+            'id': random_pokemon.id,
+            'pokemon_id': random_pokemon.pokedex_num,
+            'name': random_pokemon.name
+            }
 
-        # first check if the user already has the pokemon
-        if random_pokemon in current_user.inventory:
-            flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, random_pokemon.name)
-        else:
-            # Assign the Pokémon to the user's inventory
-            current_user.inventory.append(random_pokemon)
-            flaskApp.logger.debug('Assigned Pokémon %s to user %s', random_pokemon.name, current_user.username)
-            flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_data': pokemon_data}))
+            # first check if the user already has the pokemon
+            if random_pokemon in current_user.inventory:
+                flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, random_pokemon.name)
+                # take 1 token away from the user
+                current_user.tokens -= 1
+            else:
+                # Assign the Pokémon to the user's inventory
+                current_user.inventory.append(random_pokemon)
+                flaskApp.logger.debug('Assigned Pokémon %s to user %s', random_pokemon.name, current_user.username)
+                flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_data': pokemon_data}))
+                # take 3 tokens away from the user
+                current_user.tokens -= 3
             db.session.commit()
-
-        return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
+            return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
+        else:
+            # Return an error response if the user doesn't have enough tokens
+            return jsonify({'error': 'Insufficient tokens'}), 403, {'Content-Type': 'application/json'}
     except Exception as e:
         flaskApp.logger.error('An error occurred: %s', str(e))
         return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}
@@ -101,37 +109,44 @@ def gacha_one_pull():
 @flaskApp.route('/gacha_ten_pull', methods=['POST'])
 def gacha_ten_pull():
     try:
-        pquery = sa.select(Pokemon).order_by(func.random()).limit(10)
-        random_pokemon = db.session.execute(pquery)
-        if random_pokemon is None:
-            return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
-        
-        # Prepare a list to hold the random Pokémon data
-        random_pokemon_list = []
-
-        # Loop through each randomly selected Pokémon
-        for tuple_entry in random_pokemon:
-            pokemon = tuple_entry[0]
-            pokemon_data = {
-                'id': pokemon.id,
-                'pokedex_num': pokemon.pokedex_num,
-                'name': pokemon.name
-            }
-            random_pokemon_list.append(pokemon_data)
+        if current_user.tokens >= 10:
+            # first get pokemon already owned by user
+            owned_pokemon_ids = [pokemon.id for pokemon in current_user.inventory]
+            pquery = sa.select(Pokemon).filter(sa.not_(Pokemon.id.in_(owned_pokemon_ids))).order_by(func.random()).limit(10)
+            random_pokemon = db.session.execute(pquery)
+            if random_pokemon is None:
+                return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
             
-            # first check if the user already has the pokemon
-            if pokemon in current_user.inventory:
-                flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, pokemon.name)
-            else:
-                # Assign the Pokémon to the user's inventory
-                current_user.inventory.append(pokemon)
-                flaskApp.logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
-                flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
-        # Commit the changes to the database
-        db.session.commit()
+            # Prepare a list to hold the random Pokémon data
+            random_pokemon_list = []
 
-        # Return the list of randomly selected Pokémon as JSON
-        return jsonify({'pokemon_list': random_pokemon_list}), 200, {'Content-Type': 'application/json'}
+            # Loop through each randomly selected Pokémon
+            for tuple_entry in random_pokemon:
+                pokemon = tuple_entry[0]
+                pokemon_data = {
+                    'id': pokemon.id,
+                    'pokedex_num': pokemon.pokedex_num,
+                    'name': pokemon.name
+                }
+                random_pokemon_list.append(pokemon_data)
+                
+                # first check if the user already has the pokemon
+                if pokemon in current_user.inventory:
+                    flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, pokemon.name)
+                else:
+                    # Assign the Pokémon to the user's inventory
+                    current_user.inventory.append(pokemon)
+                    flaskApp.logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
+                    flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
+            # take 10 tokens away from the user
+            current_user.tokens -= 10
+            # Commit the changes to the database
+            db.session.commit()
+            # Return the list of randomly selected Pokémon as JSON
+            return jsonify({'pokemon_list': random_pokemon_list}), 200, {'Content-Type': 'application/json'}
+        else:
+            # Return an error response if the user doesn't have enough tokens
+            return jsonify({'error': 'Insufficient tokens'}), 403, {'Content-Type': 'application/json'}
     except Exception as e:
         # return jsonify({'error exception': str(e)}), 500, {'Content-Type': 'application/json'}
         flaskApp.logger.error('An error occurred: %s', str(e))
