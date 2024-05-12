@@ -1,15 +1,14 @@
-/* flex container to set footer properly at the bottom */
 html {
     height: 100%;
 }
 .navbar-brand {
     display: flex;
-    align-items: center; /* Vertically centers the image and text */
+    align-items: center;
 }
 .navbar-brand p, .nav-link p {  /* Corrected to target <p> inside .nav-link correctly */
     font-family: 'Comic Sans MS', sans-serif;
     color: #ffffff;
-    margin: 0; /* Removes the default margin */
+    margin: 0; 
 }
 
 /* min-height:100% makes body expand enough so that footer sticks down*/

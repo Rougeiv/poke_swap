@@ -1,10 +1,9 @@
 /* Style for main container to ensure maximum width control */
 .container {
-    max-width: 800px; /* Adjust based on your design needs */
-    margin: auto; /* This centers the container */
+    max-width: 800px;
+    margin: auto; /* centered */
 }
 
-/* Generic style for centered titles */
 .text-center {
     text-align: center;
 }
