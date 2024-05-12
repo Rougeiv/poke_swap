@@ -17,10 +17,33 @@
     }
     .pagination a {
         font-family: 'Comic Sans MS', sans-serif;
-
+    }
+    .card {
+        margin-bottom: 30px; /* Spacing between cards */
+    }
+    .card-body img {
+        width: 150px; /* Larger image size */
+        height: 150px;
+    }
+    .pagination {
+        justify-content: center; /* Center pagination controls */
+    }
+    .trade-offers-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .trade-offer-card {
+        width: 100%; /* Adjust width as needed */
+        max-width: 600px; /* Limit max width */
+        margin: auto; /* Centering the card horizontally */
+    }
+    .row {
+        justify-content: center; /* Ensure that the row itself is also centered */
     }
 </style>
 {% endblock %}
+
 
 {% block content %}
 <div class="container text-center mt-5">
@@ -54,24 +77,25 @@
             </div>
         </div>
     </div>
-    <div class="container text-center mt-5">
+    <div class="container text-center mt-5 trade-offers-container">
         <h1>Active Trade Offers</h1>
         <div class="row mt-4">
             {% for offer in trade_offers %}
-            <div class="col-md-4">
+            <div class="col-12 trade-offer-card">
                 <div class="card bg-dark text-white">
                     <div class="card-body">
                         <h5 class="card-title">Trade #{{ offer.trade_id }}</h5>
                         <p class="card-text"><small>Posted on {{ offer.timestamp }}</small></p>
-                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon1_name ~ '.png') }}" width="100" height="100" alt="Pokemon 1">
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon1_name ~ '.png') }}" alt="Pokemon 1">
                         ⇆
-                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon2_name ~ '.png') }}" width="100" height="100" alt="Pokemon 2">
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon2_name ~ '.png') }}" alt="Pokemon 2">
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
-    <nav aria-label="Page navigation">
+    </div>
+    <nav aria-label="Page navigation" class="mt-4">
         <ul class="pagination">
             {% if page > 1 %}
             <li class="page-item"><a class="page-link" href="{{ url_for('index', page=page-1) }}">Previous</a></li>
@@ -84,7 +108,6 @@
             {% endif %}
         </ul>
     </nav>
-    
 </div>
 {% endblock %}
 
