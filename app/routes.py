@@ -183,9 +183,9 @@ def trade_offer():
     # Using SQLAlchemy ORM to fetch Pokémon names owned by the logged-in user
     if current_user.is_authenticated:
         # Fetch the Pokémon IDs for the logged-in user
-        pokemon_owned = current_user.inventory
+        inventory_pokemon = current_user.inventory
 
-        pokemon_names = [pokemon.name for pokemon in pokemon_owned]
+        pokemon_names = [pokemon.name.lower() for pokemon in inventory_pokemon]
 
         return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites, pokemon_owned=pokemon_names, current_user_id=current_user.id)
     else:

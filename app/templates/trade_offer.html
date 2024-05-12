@@ -14,7 +14,7 @@
             <div class="row text-center">
                 <div class="col">
                     <h5>Offering</h5>
-                    <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Requesting" class="img-thumbnail pokemon-image" id="offeringPlaceholder">
+                    <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Offering" class="img-thumbnail pokemon-image" id="offeringPlaceholder">
                     <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#pokemonPCModal">
                         Select Pokémon
                     </button>
@@ -57,7 +57,7 @@
                         <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}"
                         class="img-thumbnail pokemon-image selectable-sprite"
                         data-target="#offeringPlaceholder"
-                        data-sprite-name="{{ sprite }}">
+                        data-sprite-name="{{ sprite|capitalize }}">
                         <p>{{ sprite }}</p>
                     </div>
                     {% endfor %}
