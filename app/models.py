@@ -29,6 +29,8 @@ class User(UserMixin, db.Model):
     last_seen: so.Mapped[Optional[datetime]] = so.mapped_column(
         default=lambda: datetime.now(timezone.utc))
     
+    tokens: so.Mapped[int] = so.mapped_column(sa.Integer, nullable=False, default=10)
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
     
