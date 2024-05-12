@@ -170,6 +170,7 @@ def my_trades():
 
     return render_template('my_trades.html', active_trades=active_trades, past_trades=past_trades)
 
+@login_required
 @flaskApp.route('/trade_offer', methods=['POST', 'GET'])
 def trade_offer():
     sprite_folder = os.path.join(app.static_folder, 'images', 'pokemon_gen4_sprites')
@@ -191,6 +192,7 @@ def trade_offer():
     else:
         return redirect(url_for('login'))
 
+@login_required
 @flaskApp.route('/post_trade', methods=['POST'])
 def post_trade():
     pokemon_name1 = request.form.get('pokemon_name1')
