@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}PokeSwap - How to Play{% endblock %}
+
+{%block content %} 
+    <div class="container text-center mt-5">
+        <h1> How to Play</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h3>Your goal is to catch ALL the pokemon!</h3>
+                        <p> You must create an account before participating in trades! </p>
+                        <p class="text-center font-size-1 text-light">Don't have an account? <a href="{{ url_for('signup') }}" class="text-light">Sign up here!</a></p>
+                        <br>
+                        <p>1. Daily logins provide you with PokeTokens that you can use to catch Pokemon. PokeTokens may also be obtained via credit card information.</p>
+                        <p>2. Offer trade requests with other players to collect other Pokemon.</p>
+                        <p>3. You can only put up to 3 trade requests at a time.</p>
+                        <p>4. Complete your collection of Pokemon and have fun!</p>
+                        <br>
+                        <h6>Your very own Pokemon story is about to unfold! What kind of mysteries will you come accross?</h6>
+                        <h5 class="text-center text-light"><a href="{{ url_for('index') }}" class="text-light">Play!</a></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,10 +1,12 @@
-from app import app
+from app import flaskApp, db
 import sqlite3
 import os
-import random
 from flask import g
+import sqlalchemy as sa
+import sqlalchemy.orm as so
+from app.models import User, Trade
 
-app.secret_key = os.urandom(24)
+flaskApp.secret_key = os.urandom(24)
 
 # Function to connect to the SQLite database
 def connect_db():
@@ -19,10 +21,14 @@ def get_db():
     return g.sqlite_db
 
 # Close the database connection at the end of each request
-@app.teardown_appcontext
+@flaskApp.teardown_appcontext
 def close_db(error):
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    flaskApp.run(debug=True)
+
+@flaskApp.shell_context_processor
+def make_shell_context():
+    return {'sa': sa, 'so': so, 'db': db, 'User': User, 'Trade': Trade}

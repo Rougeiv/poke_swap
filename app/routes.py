@@ -1,117 +1,235 @@
-from app import app
-from flask import Flask, render_template, request, redirect, session, jsonify
+from urllib.parse import urlsplit
+from app import flaskApp, db
+from flask import flash, logging, render_template, request, redirect, session, jsonify, url_for
+import sqlite3
+from flask_login import current_user, login_required, login_user, logout_user
+import sqlalchemy as sa
+from datetime import datetime, timezone
+from flask import current_app as app
+from app.models import User, Pokemon
+from app.forms import EditProfileForm, LoginForm, SignUpForm
+import random
+from sqlalchemy.sql.expression import func
 
-@app.route('/')
-@app.route('/index')
+import os
+
+@flaskApp.route('/')
+@flaskApp.route('/index')
+# @login_required
 def index():
-    signup_success = session.pop('signup_success', False)
-    logged_in = session.get('logged_in', False)
-    return render_template('index.html', title='Home', signup_success=signup_success, logged_in=logged_in)
+    return render_template('index.html', title='Home')
 
-@app.route('/signup', methods=['GET', 'POST'])
+@flaskApp.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if request.method == 'POST':
-        try:
-            username = request.form['username']
-            password = request.form['password']
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = SignUpForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Congratulations, you are now a registered user!')
+        return redirect(url_for('login'))
+    return render_template('signup.html', title='SignUp', form=form)
 
-            # Get the database connection
-            db = get_db()
-            c = db.cursor()
-
-            # Check if username already exists
-            c.execute("SELECT * FROM users WHERE username=?", (username,))
-            existing_user = c.fetchone()
-
-            if existing_user:
-                error_message = "Username already exists!"
-                return render_template('signup.html', error_message=error_message)
-            else:
-                # Insert new user into the database
-                c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
-                db.commit()
-                # Set success message in session
-                session['signup_success'] = True
-                return redirect('/')
-        except Exception as e:
-            return f"An error occurred: {str(e)}"
-    else:
-        return render_template('signup.html')
-
-@app.route('/login', methods=['POST'])
+@flaskApp.route('/login', methods=['GET', 'POST'])
 def login():
-    username = request.form['username']
-    password = request.form['password']
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = db.session.scalar(
+            sa.select(User).where(User.username == form.username.data))
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        next_page = request.args.get('next')
+        if not next_page or urlsplit(next_page).netloc != '':
+            next_page = url_for('index')
+        return redirect(next_page)
+    return render_template('login.html', title='Sign In', form=form)
 
-    # Get the database connection
-    db = get_db()
-    c = db.cursor()
-
-    # Check if username and password match
-    c.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
-    user = c.fetchone()
-
-    if user:
-        # Set logged in flag in session
-        session['logged_in'] = True
-        return redirect('/game')
-    else:
-        error_message = "Invalid username or password!"
-        return render_template('login.html', error_message=error_message)
-
-@app.route('/main')
+@flaskApp.route('/main')
 def main():
-    return redirect('/')
+    return redirect(url_for('index'))
 
-@app.route('/logout')
+@flaskApp.route('/logout')
 def logout():
-    # Remove user information from session
-    session.pop('logged_in', None)
-    return redirect('/')
+    logout_user()
+    return redirect(url_for('index'))
 
 # Add a new route for the game page
-@app.route('/game')
-def game():
+@flaskApp.route('/catch')
+def catch():
     # Check if user is logged in
-    if session.get('logged_in', False):
-        return render_template('game.html', logged_in=True)
-    else:
-        return redirect('/')
+    if current_user.is_anonymous:
+        return redirect(url_for('login'))
+    return render_template('catch.html')
 
-@app.route('/gacha', methods=['POST'])
-def gacha():
-    try:
-        # Connect to the Pokemon database
-        conn = sqlite3.connect('pokemon.db')
-        c = conn.cursor()
-
-        # Retrieve 10 random Pokemon from the database
-        c.execute("SELECT id, name FROM pokemon ORDER BY RANDOM() LIMIT 10")
-        pokemon = c.fetchall()
-
-        # Close the database connection
-        conn.close()
-
-        # Return the random Pokemon data as JSON
-        return jsonify(pokemon)
-    except Exception as e:
-        return jsonify({'error': str(e)})
-
-@app.route('/gacha_one_pull', methods=['POST'])
+@flaskApp.route('/gacha_one_pull', methods=['POST'])
 def gacha_one_pull():
     try:
-        # Connect to the Pokemon database
-        conn_pokemon = sqlite3.connect('pokemon.db')
-        c_pokemon = conn_pokemon.cursor()
+        # random_pokemon = db.session.get(Pokemon, random.randint(1, 151))
+        pquery = sa.select(Pokemon).order_by(func.random()).limit(1)
+        random_pokemon = db.session.scalar(pquery)
+        if random_pokemon is None:
+            return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
 
-        # Retrieve a single random Pokemon from the database
-        c_pokemon.execute("SELECT id, name FROM pokemon ORDER BY RANDOM() LIMIT 1")
-        pokemon = c_pokemon.fetchone()
+        pokemon_data = {
+        'id': random_pokemon.id,
+        'pokemon_id': random_pokemon.pokedex_num,
+        'name': random_pokemon.name
+        }
 
-        # Close the Pokemon database connection
-        conn_pokemon.close()
+        # first check if the user already has the pokemon
+        if random_pokemon in current_user.inventory:
+            flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, random_pokemon.name)
+        else:
+            # Assign the Pokémon to the user's inventory
+            current_user.inventory.append(random_pokemon)
+            flaskApp.logger.debug('Assigned Pokémon %s to user %s', random_pokemon.name, current_user.username)
+            flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_data': pokemon_data}))
+            db.session.commit()
 
-        # Pass the retrieved Pokemon to the game.html template
-        return jsonify(pokemon)
+        return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
     except Exception as e:
-        return f"An error occurred: {str(e)}"
+        flaskApp.logger.error('An error occurred: %s', str(e))
+        return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}
+    
+@flaskApp.route('/gacha_ten_pull', methods=['POST'])
+def gacha_ten_pull():
+    try:
+        pquery = sa.select(Pokemon).order_by(func.random()).limit(10)
+        random_pokemon = db.session.execute(pquery)
+        if random_pokemon is None:
+            return jsonify({'error': 'No Pokémon found'}), 404, {'Content-Type': 'application/json'}
+        
+        # Prepare a list to hold the random Pokémon data
+        random_pokemon_list = []
+
+        # Loop through each randomly selected Pokémon
+        for tuple_entry in random_pokemon:
+            pokemon = tuple_entry[0]
+            pokemon_data = {
+                'id': pokemon.id,
+                'pokedex_num': pokemon.pokedex_num,
+                'name': pokemon.name
+            }
+            random_pokemon_list.append(pokemon_data)
+            
+            # first check if the user already has the pokemon
+            if pokemon in current_user.inventory:
+                flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, pokemon.name)
+            else:
+                # Assign the Pokémon to the user's inventory
+                current_user.inventory.append(pokemon)
+                flaskApp.logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
+                flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
+        # Commit the changes to the database
+        db.session.commit()
+
+        # Return the list of randomly selected Pokémon as JSON
+        return jsonify({'pokemon_list': random_pokemon_list}), 200, {'Content-Type': 'application/json'}
+    except Exception as e:
+        # return jsonify({'error exception': str(e)}), 500, {'Content-Type': 'application/json'}
+        flaskApp.logger.error('An error occurred: %s', str(e))
+        return jsonify({'error': 'Internal Server Error'}), 500
+
+@flaskApp.route('/my_trades', methods=['GET'])
+def my_trades():
+    
+    #try:
+     #   # Connect to the Pokemon database
+      #  conn = sqlite3.connect('pokemon.db')
+       # c = conn.cursor()
+
+        # Retrieve all trades from the database
+        #c.execute("SELECT * FROM trades")
+        #trades = c.fetchall()
+
+        # Close the database connection
+        #conn.close()
+
+        # Return the trades data as JSON
+        #return jsonify(trades)
+    #except Exception as e:
+     #   return jsonify({'error': str(e)})
+    active_trades = [
+        {'id': 'Trade #0001', 'expires_in': '2 days', 'pokemon1': 'ditto', 'pokemon2': 'diglett'},
+        {'id': 'Trade #0002', 'expires_in': '3 days', 'pokemon1': 'cubone', 'pokemon2': 'dragonite'},
+        {'id': 'Trade #0003', 'expires_in': '5 days', 'pokemon1': 'arcanine', 'pokemon2': 'chansey'}
+    ]
+
+    past_trades = [
+        {'id': 'Trade #0001', 'expires_in': '2 days', 'pokemon1': 'ditto', 'pokemon2': 'diglett'},
+        {'id': 'Trade #0002', 'expires_in': '3 days', 'pokemon1': 'cubone', 'pokemon2': 'dragonite'},
+        {'id': 'Trade #0003', 'expires_in': '5 days', 'pokemon1': 'arcanine', 'pokemon2': 'chansey'}
+    ]
+
+    return render_template('my_trades.html', active_trades=active_trades, past_trades=past_trades)
+
+@flaskApp.route('/trade_offer', methods=['POST', 'GET'])
+def trade_offer():
+    sprite_folder = os.path.join(app.static_folder, 'images', 'pokemon_gen4_sprites')
+    try:
+        pokemon_sprites = [f[:-4] for f in os.listdir(sprite_folder) if f.endswith('.png')]  # Removes '.png'
+        app.logger.info(f"Loaded Pokémon sprites: {pokemon_sprites}")
+    except Exception as e:
+        app.logger.error(f"Failed to load Pokémon sprites: {e}")
+        pokemon_sprites = []  # Continue with empty list if error
+
+    return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites)
+
+@flaskApp.route('/update_sprite_selection', methods=['POST'])
+def update_sprite_selection():
+    sprite_src = request.form['sprite']
+    # Update session or database with the new sprite selection
+    # e.g., session['selected_sprite'] = sprite_src
+    return jsonify(success=True)
+
+
+@flaskApp.route('/how_to_play')
+def how_to_play():
+    return render_template('how_to_play.html')
+# user profile page route
+@flaskApp.route('/user/<username>')
+@login_required
+def user(username):
+    user = db.first_or_404(sa.select(User).where(User.username == username))
+    trades = [
+        {'pokemon1': 'Pikachu', 'pokemon2': 'Charmander', 'timestamp': '2021-01-01', 'user_id1': 1, 'user_id2': 2},
+        {'pokemon1': 'Bulbasaur', 'pokemon2': 'Squirtle', 'timestamp': '2021-01-02', 'user_id1': 1, 'user_id2': 2}
+        ]
+    return render_template('user.html', user=user, trades=trades)
+
+@flaskApp.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.now(timezone.utc)
+        db.session.commit()
+
+@flaskApp.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm(current_user.username)
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.about_me = form.about_me.data
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('user', username=form.username.data))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.about_me.data = current_user.about_me
+    return render_template('edit_profile.html', title='Edit Profile', form=form)
+
+@flaskApp.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
+
+@flaskApp.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('500.html'), 500
