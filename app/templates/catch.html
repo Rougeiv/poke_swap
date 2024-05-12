@@ -52,6 +52,7 @@
 {% block content %}
 <div class="container text-center mt-5">
     <h1>Catch Pokemon</h1>
+    <p>Tokens: {{ current_user.tokens }}</p>
     <img id="pokeball-img" class="closed" src="../static/images/pokeball-pixel-closed.png" alt="pokeball-button" width="200" height="">
     <div id="pull-result"></div>
     <div id="textbox-container">
@@ -69,6 +70,10 @@
 
 {% block scripts %}
 <script>
+    document.getElementById('gacha-ten-pull-button').addEventListener('click', function() {
+        var audio = new Audio('../static/audio/Click.mp3');
+        audio.play();
+    });
     // Add event listener for the Gacha button
     document.getElementById('gacha-ten-pull-button').addEventListener('click', function() {
         fetch('/gacha_ten_pull', { method: 'POST' })
