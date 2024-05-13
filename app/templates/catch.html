@@ -46,13 +46,25 @@
         padding: 10px;
         margin: auto;
     }
+    #token-box {
+        background-color: #434343;
+        border-radius: 5rem;
+        width: 5rem;
+        height: 2rem;
+    }
+    .token-count {
+        color: #fff;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container text-center mt-5">
     <h1>Catch Pokemon</h1>
-    <p>₽ x{{ current_user.tokens }}</p>
+    <div id="token-box">
+        <p class="token-count">₽ x{{ current_user.tokens }}</p>
+    </div>
+    <div id="error-message" class="alert alert-danger" style="display:none"><a id="broke-hint" style="display:none">How to get Poke Tokens?</a></div>
     <img id="pokeball-img" class="closed" src="../static/images/pokeball-pixel-closed.png" alt="pokeball-button" width="200" height="">
     <div id="pull-result"></div>
     <div id="textbox-container">
@@ -60,7 +72,6 @@
             <p id="textbox-txt">Click a button to catch a Pokemon!</p>
         </div>
     </div>
-    <p id="error-message"></p>
     <button id="gacha-one-pull-button">
         <h2>Pokemon x1</h2>
         <p>₽ x3</p>
@@ -70,7 +81,7 @@
         <h2>Pokemon x10</h2>
         <p>₽ x10</p>
     </button>
-    <p>Note: if you already own a pokemon you will not get duplicates but you will lose one Poke Token</p>
+    <p>Note: you can only own one of each pokemon at a time. If you pull a pokemon you already own, you will lose one Poke Token</p>
 </div>
 
 {% endblock content %}
@@ -87,11 +98,11 @@
         .then(response => {
             console.log(response);
             if (response.ok) {
-                location.reload();
+                // location.reload();
                 // If the response is successful (status code 200), parse the JSON response
                 return response.json();
             } else if (response.status === 403) {
-                location.reload();
+                // location.reload();
                 // If the user has insufficient tokens (status code 403), handle the error
                 return Promise.reject('Insufficient tokens. GET YO MONEY UP!!');
             } else {
@@ -102,6 +113,11 @@
         .then(data => {
             console.log("Data: ", data);
             console.log(typeof data)
+
+            // Update the token count displayed on the page
+            const tokenCountElement = document.querySelector('.token-count');
+            tokenCountElement.textContent = '₽ x' + data.tokens;
+
              // Clear previous Pokemon info
             pullContainer = document.getElementById('pull-result');
             while (pullContainer.firstChild) {
@@ -135,6 +151,25 @@
                 textboxText.textContent += `${pokemon["name"]}, `;
                 i++;
             });
+            // Display Pokémon images
+            // const pokemonImagesContainer = document.getElementById('pull-result');
+            // const pokemonNames = data.pokemon_names;
+            // const pokemonImageUrls = data.pokemon_image_urls;
+
+            // // Loop through each Pokémon and create <img> elements
+            // for (let i = 0; i < pokemonNames.length; i++) {
+            //     const pokemonName = pokemonNames[i];
+            //     const pokemonImageUrl = pokemonImageUrls[i];
+
+            //     // Create <img> element
+            //     const img = document.createElement('img');
+            //     img.src = pokemonImageUrl;
+            //     img.alt = pokemonName;
+
+            //     // Append <img> element to the container
+            //     pokemonImagesContainer.appendChild(img);
+            // }
+            
         })
         .catch(error => {
             // Handle any errors that occurred during the request
@@ -143,6 +178,10 @@
             document.getElementById('error-message').innerText = error;
             // Show the error message element
             document.getElementById('error-message').style.display = 'block';
+
+            // let brokeHint = document.getElementById('broke-hint');
+            // brokeHint.href = "{{ url_for('how_to_play') }}";
+            // brokeHint.style.display = "block";
         })
     });
 </script>
@@ -173,6 +212,11 @@
         .then(data => {
             console.log("Data: ", data);
             console.log(typeof data)
+
+            // Update the token count displayed on the page
+            const tokenCountElement = document.querySelector('.token-count');
+            tokenCountElement.textContent = '₽ x' + data.tokens;
+
             //clear previous pull
             pullContainer = document.getElementById('pull-result');
             while (pullContainer.firstChild) {
@@ -184,13 +228,14 @@
                 pokeball.classList.remove('closed');
             }
             textboxText = document.getElementById('textbox-txt');
-            textboxText.textContent = `Congrats! You got: ${data.name}`;
+            textboxText.textContent = `Congrats! You got: ${data.pokemon_name}`;
             // Display the result of the one-pull gacha
             let pokemonDiv = document.createElement("div");
             pokemonDiv.classList.add("pokemon-img-container");
 
             let pokemonImg = document.createElement("img");
-            pokemonImg.src = '../static/images/pokemon_gen4_sprites/' + data.name.toLowerCase() + '.png';
+            // pokemonImg.src = '../static/images/pokemon_gen4_sprites/' + data.name.toLowerCase() + '.png';
+            pokemonImg.src = data.pokemon_image_url
             pokemonImg.width = 200;
             pokemonImg.height = 200;
 
@@ -206,6 +251,10 @@
             document.getElementById('error-message').innerText = error;
             // Show the error message element
             document.getElementById('error-message').style.display = 'block';
+
+            // let brokeHint = document.getElementById('broke-hint');
+            // brokeHint.href = "{{ url_for('how_to_play') }}";
+            // brokeHint.style.display = "block";
         })
     });
 </script>

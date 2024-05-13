@@ -99,7 +99,12 @@ def gacha_one_pull():
                 # take 3 tokens away from the user
                 current_user.tokens -= 3
             db.session.commit()
-            return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
+
+            # Generate the URL for the Pokémon image
+            pokemon_image_url = f'/static/images/pokemon_gen4_sprites/{random_pokemon.name.lower()}.png'
+
+            # return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
+            return jsonify({'tokens': current_user.tokens, 'pokemon_name': random_pokemon.name, 'pokemon_image_url': pokemon_image_url}), 200, {'Content-Type': 'application/json'}
         else:
             # Return an error response if the user doesn't have enough tokens
             return jsonify({'error': 'Insufficient tokens'}), 403, {'Content-Type': 'application/json'}
@@ -146,7 +151,8 @@ def gacha_ten_pull():
             # Commit the changes to the database
             db.session.commit()
             # Return the list of randomly selected Pokémon as JSON
-            return jsonify({'pokemon_list': random_pokemon_list}), 200, {'Content-Type': 'application/json'}
+            return jsonify({'tokens': current_user.tokens, 'pokemon_list': random_pokemon_list}), 200, {'Content-Type': 'application/json'}
+     
         else:
             # Return an error response if the user doesn't have enough tokens
             return jsonify({'error': 'Insufficient tokens'}), 403, {'Content-Type': 'application/json'}
