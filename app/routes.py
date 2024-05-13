@@ -112,7 +112,7 @@ def gacha_ten_pull():
     try:
         if current_user.tokens >= 10:
             # first get pokemon already owned by user
-            owned_pokemon_ids = [pokemon.id for pokemon in current_user.inventory]
+            # owned_pokemon_ids = [pokemon.id for pokemon in current_user.inventory]
             # randomly select 10 pokemon that the user doesnt own already
             # .filter(sa.not_(Pokemon.id.in_(owned_pokemon_ids)))
             pquery = sa.select(Pokemon).order_by(func.random()).limit(10)
@@ -157,23 +157,7 @@ def gacha_ten_pull():
 
 @flaskApp.route('/my_trades', methods=['GET'])
 def my_trades():
-    
-    #try:
-     #   # Connect to the Pokemon database
-      #  conn = sqlite3.connect('pokemon.db')
-       # c = conn.cursor()
 
-        # Retrieve all trades from the database
-        #c.execute("SELECT * FROM trades")
-        #trades = c.fetchall()
-
-        # Close the database connection
-        #conn.close()
-
-        # Return the trades data as JSON
-        #return jsonify(trades)
-    #except Exception as e:
-     #   return jsonify({'error': str(e)})
     active_trades = [
         {'id': 'Trade #0001', 'expires_in': '2 days', 'pokemon1': 'ditto', 'pokemon2': 'diglett'},
         {'id': 'Trade #0002', 'expires_in': '3 days', 'pokemon1': 'cubone', 'pokemon2': 'dragonite'},
@@ -237,6 +221,10 @@ def post_trade():
         )
 
         db.session.add(new_trade)
+
+        # when a user posts a trade, they get +3 tokens
+        current_user.tokens += 3
+        
         db.session.commit()
         
         return jsonify({'success': 'Trade posted successfully!'}), 200

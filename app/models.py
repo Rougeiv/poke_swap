@@ -37,6 +37,15 @@ class User(UserMixin, db.Model):
     def get_trades(self):   
         return Trade.query.filter((Trade.user_id1 == self.id) | (Trade.user_id2 == self.id)).all()
     
+    def requested_trades(self):   
+        return Trade.query.filter((Trade.user_id1 == self.id)).all()
+    
+    def accepted_trades(self):   
+        return Trade.query.filter((Trade.user_id2 == self.id)).all()
+
+    def active_trades(self):
+        return Trade.query.filter(Trade.user_id1 == self.id, Trade.user_id2 == None)
+    
     def avatar(self, size):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
