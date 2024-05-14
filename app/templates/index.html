@@ -17,10 +17,33 @@
     }
     .pagination a {
         font-family: 'Comic Sans MS', sans-serif;
-
+    }
+    .card {
+        margin-bottom: 30px; /* Spacing between cards */
+    }
+    .card-body img {
+        width: 150px; /* Larger image size */
+        height: 150px;
+    }
+    .pagination {
+        justify-content: center; /* Center pagination controls */
+    }
+    .trade-offers-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .trade-offer-card {
+        width: 100%; /* Adjust width as needed */
+        max-width: 600px; /* Limit max width */
+        margin: auto; /* Centering the card horizontally */
+    }
+    .row {
+        justify-content: center; /* Ensure that the row itself is also centered */
     }
 </style>
 {% endblock %}
+
 
 {% block content %}
 <div class="container text-center mt-5">
@@ -54,125 +77,51 @@
             </div>
         </div>
     </div>
-    <!-- Trade Offers Section -->
-    <div class="container mt-5">
-        <h2 class="trade-offer">Trade offers</h2>
-        <div id="tradeOffersPage1" class="list-group mt-3">
-            <!-- Dynamically generated trade offers could be listed here -->
-            <!-- This is a placeholder for demonstration -->
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Trade #0001</h5>
-                    <small>Expires in 2 days</small>
+    <div class="container text-center mt-5 trade-offers-container">
+        <h1>Active Trade Offers</h1>
+        <div class="row mt-4">
+            {% for offer in trade_offers %}
+            <div class="col-12 trade-offer-card">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Trade #{{ offer.trade_id }}</h5>
+                        <p class="card-text"><small>Posted on {{ offer.timestamp }}</small></p>
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon1_name ~ '.png') }}" alt="Pokemon 1">
+                        ⇆
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon2_name ~ '.png') }}" alt="Pokemon 2">
+                    </div>
                 </div>
-                <p class="mb-1">
-                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
-                    ⇆
-                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
-                </p>
-            </a>
-            <!-- Mock trade offer 2 -->
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Trade #0002</h5>
-                    <small>Expires in 2 days</small>
-                </div>
-                <p class="mb-1">
-                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
-                    ⇆
-                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
-                </p>
-            </a>
-            <!-- Mock trade offer 3 -->
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Trade #0003</h5>
-                    <small>Expires in 2 days</small>
-                </div>
-                <p class="mb-1">
-                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
-                    ⇆
-                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
-                </p>
-            </a>
-            <!-- Mock trade offer 4 -->
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Trade #0004</h5>
-                    <small>Expires in 2 days</small>
-                </div>
-                <p class="mb-1">
-                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
-                    ⇆
-                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
-                </p>
-            </a>
-            <!-- ... -->
+            </div>
+            {% endfor %}
         </div>
-        
-        <!-- Second Page Trade Offers (hidden by default) -->
-        <div id="tradeOffersPage2" class="list-group mt-3 d-none">
-            <!-- Mock trade offer 5 -->
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Trade #0005</h5>
-                    <small>Expires in 3 days</small>
-                </div>
-                <p class="mb-1">
-                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 5">
-                    ⇆
-                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 6">
-                </p>
-            </a>
-            <!-- Mock trade offer 6 -->
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Trade #0006</h5>
-                    <small>Expires in 2 days</small>
-                </div>
-                <p class="mb-1">
-                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
-                    ⇆
-                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
-                </p>
-            </a>
-            <!-- ... -->
-        </div>
-
-        <!-- Pagination for Trade Offers -->
-        <nav aria-label="Trade offers pagination">
-            <ul class="pagination justify-content-center mt-4">
-                <li class="page-item"><a class="page-link" href="#tradeOffersPage1">Previous</a></li>
-                <li class="page-item active"><a class="page-link" href="#tradeOffersPage1">1</a></li>
-                <li class="page-item"><a class="page-link" href="#tradeOffersPage2">2</a></li>
-                <li class="page-item"><a class="page-link" href="#tradeOffersPage2">Next</a></li>
-            </ul>
-        </nav>
     </div>
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination">
+            {% if page > 1 %}
+            <li class="page-item"><a class="page-link" href="{{ url_for('index', page=page-1) }}">Previous</a></li>
+            {% endif %}
+            {% for p in range(1, total_pages + 1) %}
+            <li class="page-item {{ 'active' if p == page else '' }}"><a class="page-link" href="{{ url_for('index', page=p) }}">{{ p }}</a></li>
+            {% endfor %}
+            {% if page < total_pages %}
+            <li class="page-item"><a class="page-link" href="{{ url_for('index', page=page+1) }}">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
 </div>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
 <script>
-    // Script for managing pagination or any additional functionality
     document.addEventListener('DOMContentLoaded', function () {
-        const paginate = (page) => {
-            document.querySelectorAll('.list-group').forEach(group => {
-                group.classList.add('d-none');
-            });
-            document.querySelector(page).classList.remove('d-none');
-        };
-
         document.querySelectorAll('.pagination a.page-link').forEach(link => {
             link.addEventListener('click', function (e) {
                 e.preventDefault();
-                paginate(this.getAttribute('href'));
+                const newPage = this.getAttribute('href');
+                window.location.href = newPage; // Redirect to the new URL with the correct page parameter
             });
         });
-
-        // Initialize the first page
-        paginate('#tradeOffersPage1');
     });
 </script>
 {% endblock %}
