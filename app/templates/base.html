@@ -77,11 +77,20 @@
             </ul>
         </div>
     </nav>
-
-    <!-- Main Content Area -->
-    {% block content %}
-    <!-- Child templates will override this area -->
-    {% endblock content %}
+    <!-- Alerts and Errors -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-info" role="alert">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Main Content Area -->
+        {% block content %}
+        <!-- Child templates will override this area -->
+        {% endblock content %}
+      </div>
 
     <!-- Footer -->
     <footer class="footer bg-dark text-center py-3">

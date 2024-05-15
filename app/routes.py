@@ -265,7 +265,7 @@ def post_trade():
         current_user.tokens += 3
         
         db.session.commit()
-        
+        flash('Your post is now live!')
         return jsonify({'success': 'Trade posted successfully!'}), 200
     except Exception as e:
         db.session.rollback()
