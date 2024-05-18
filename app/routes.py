@@ -278,8 +278,6 @@ def my_trades():
     Pokemon1 = orm.aliased(Pokemon)
     Pokemon2 = orm.aliased(Pokemon)
 
-    current_user
-
     trades_query = db.session.query(
     Trade.id,
     Trade.timestamp,
