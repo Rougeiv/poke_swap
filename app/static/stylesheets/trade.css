@@ -1,0 +1,37 @@
+/* Specific to trade.html */
+
+.container {
+    max-width: 800px;
+    margin: auto; /* centered */
+}
+
+.pokemon-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 767.98px) {
+    .pokemon-image {
+        width: 150px;
+        height: 150px;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .modal-header h5, .modal-footer .btn {
+        font-size: 1rem;
+    }
+
+    .btn {
+        font-size: 0.875rem;
+    }
+}

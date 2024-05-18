@@ -1,40 +1,44 @@
 {% extends "base.html" %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="../static/stylesheets/edit_profile.css">
-{%endblock%}
-{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/edit_profile.css') }}">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% endblock %}
 
+{% block content %}
+<div class="container mt-5">
     <h1>Edit Profile</h1>
     <form action="" method="post">
         {{ form.hidden_tag() }}
-        <table>
-            <p>
-                {{ form.username.label }}
-                {% if form.username.errors %}
-                    {{ form.username(class="form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.username.errors %}
-                            <span class = "error-msg">[{{ error }}]</span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.username(class="form-control") }}
-                {% endif %}
-            </p>
-            <p>
-                {{ form.about_me.label(class="form-control") }}
-                {% if form.about_me.errors %}
-                    {{ form.about_me(class="form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.about_me.errors %}
-                            <span class = "error-msg">[{{ error }}]</span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.about_me(cols=50, rows=4) }}
-                {% endif %}
-        </table>
-        <p>{{ form.submit() }}</p>
+        <div class="form-group">
+            <label for="username">{{ form.username.label }}</label>
+            {% if form.username.errors %}
+                {{ form.username(class="form-control is-invalid", id="username") }}
+                <div class="invalid-feedback">
+                    {% for error in form.username.errors %}
+                        <span class="error-msg">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.username(class="form-control", id="username") }}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="about_me">{{ form.about_me.label }}</label>
+            {% if form.about_me.errors %}
+                {{ form.about_me(class="form-control is-invalid", cols=50, rows=4, id="about_me") }}
+                <div class="invalid-feedback">
+                    {% for error in form.about_me.errors %}
+                        <span class="error-msg">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.about_me(class="form-control", cols=50, rows=4, id="about_me") }}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
     </form>
+</div>
 {% endblock %}
