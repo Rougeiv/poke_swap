@@ -37,13 +37,16 @@
         width: 100%; /* Adjust width as needed */
         max-width: 600px; /* Limit max width */
         margin: auto; /* Centering the card horizontally */
+        text-decoration: none; /* Remove underline from link */
+    }
+    .trade-offer-card .card {
+        cursor: pointer;
     }
     .row {
         justify-content: center; /* Ensure that the row itself is also centered */
     }
 </style>
 {% endblock %}
-
 
 {% block content %}
 <div class="container text-center mt-5">
@@ -81,7 +84,7 @@
         <h1>Active Trade Offers</h1>
         <div class="row mt-4">
             {% for offer in trade_offers %}
-            <div class="col-12 trade-offer-card">
+            <a href="{{ url_for('trade', trade_id=offer.trade_id) }}" class="col-12 trade-offer-card">
                 <div class="card bg-dark text-white">
                     <div class="card-body">
                         <h5 class="card-title">Trade #{{ offer.trade_id }}</h5>
@@ -91,7 +94,7 @@
                         <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon2_name ~ '.png') }}" alt="Pokemon 2">
                     </div>
                 </div>
-            </div>
+            </a>
             {% endfor %}
         </div>
     </div>
