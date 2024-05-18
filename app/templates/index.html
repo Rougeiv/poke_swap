@@ -18,33 +18,6 @@
     .pagination a {
         font-family: 'Comic Sans MS', sans-serif;
     }
-    .card {
-        margin-bottom: 30px; /* Spacing between cards */
-    }
-    .card-body img {
-        width: 150px; /* Larger image size */
-        height: 150px;
-    }
-    .pagination {
-        justify-content: center; /* Center pagination controls */
-    }
-    .trade-offers-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .trade-offer-card {
-        width: 100%; /* Adjust width as needed */
-        max-width: 600px; /* Limit max width */
-        margin: auto; /* Centering the card horizontally */
-        text-decoration: none; /* Remove underline from link */
-    }
-    .trade-offer-card .card {
-        cursor: pointer;
-    }
-    .row {
-        justify-content: center; /* Ensure that the row itself is also centered */
-    }
 </style>
 {% endblock %}
 
@@ -61,7 +34,7 @@
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Catch Pokemon</h5>
-                    <a href="{{ url_for('catch') }}" class="btn btn-custom" style="background-color: transparent;">
+                    <a href="{{ url_for('catch') }}" class="btn btn-custom my-button">
                         <img src="{{ url_for('static', filename='images/tallgrass.png') }}" width="100" height="100" alt="Catch Pokemon">
                     </a>
                 </div>

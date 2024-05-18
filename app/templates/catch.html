@@ -3,59 +3,7 @@
 {% block title %}PokeSwap - Trade Offer{% endblock %}
 
 {% block extra_head %}
-<style>
-    /* Custom styles specific to the Home page */
-    .gotta-catch, .trade-offer {
-        font-family: 'Comic Sans MS', cursive;
-        color: lightslategray;
-        text-align: center;
-        margin-top: 20px;
-    }
-    .card-title, .text-center.h2 {
-        font-family: 'Comic Sans MS', cursive;
-        color: lightblue;
-    }
-    .pagination a {
-        font-family: 'Comic Sans MS', cursive;
-
-    }
-    #textbox-container {
-        margin: 10px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-    }
-    #textbox {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: auto;
-        background-image: url('../static/images/pokemon_emerald_textbox.png');
-        width: 952px; /* 476px * 3 */
-        height: 168px;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-    }
-    #textbox-txt {
-        /* font-family: 'Comic Sans MS', cursive; */
-        font-size: 24px;
-        color: black;
-        text-align: center;
-        padding: 10px;
-        margin: auto;
-    }
-    #token-box {
-        background-color: #434343;
-        border-radius: 5rem;
-        width: 5rem;
-        height: 2rem;
-    }
-    .token-count {
-        color: #fff;
-    }
-</style>
+<link rel="stylesheet" href="../static/stylesheets/catch.css">
 {% endblock %}
 
 {% block content %}
