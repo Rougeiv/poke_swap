@@ -104,7 +104,7 @@ def catch():
 @flaskApp.route('/gacha_one_pull', methods=['POST'])
 def gacha_one_pull():
     try:
-        if current_user.tokens >= 3:
+        if current_user.coins >= 3:
             # first get pokemon already owned by user
             # owned_pokemon_ids = [pokemon.id for pokemon in current_user.inventory]
             # .filter(sa.not_(Pokemon.id.in_(owned_pokemon_ids)))
@@ -122,25 +122,25 @@ def gacha_one_pull():
             # first check if the user already has the pokemon
             if random_pokemon in current_user.inventory:
                 flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, random_pokemon.name)
-                # take 1 token away from the user
-                current_user.tokens -= 1
+                # take 1 coin away from the user
+                current_user.coins -= 1
             else:
                 # Assign the Pokémon to the user's inventory
                 current_user.inventory.append(random_pokemon)
                 flaskApp.logger.debug('Assigned Pokémon %s to user %s', random_pokemon.name, current_user.username)
                 flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_data': pokemon_data}))
-                # take 3 tokens away from the user
-                current_user.tokens -= 3
+                # take 3 coins away from the user
+                current_user.coins -= 3
             db.session.commit()
 
             # Generate the URL for the Pokémon image
             pokemon_image_url = f'/static/images/pokemon_gen4_sprites/{random_pokemon.name.lower()}.png'
 
             # return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
-            return jsonify({'tokens': current_user.tokens, 'pokemon_name': random_pokemon.name, 'pokemon_image_url': pokemon_image_url}), 200, {'Content-Type': 'application/json'}
+            return jsonify({'coins': current_user.coins, 'pokemon_name': random_pokemon.name, 'pokemon_image_url': pokemon_image_url}), 200, {'Content-Type': 'application/json'}
         else:
-            # Return an error response if the user doesn't have enough tokens
-            return jsonify({'error': 'Insufficient tokens'}), 403, {'Content-Type': 'application/json'}
+            # Return an error response if the user doesn't have enough coins
+            return jsonify({'error': 'Insufficient coins'}), 403, {'Content-Type': 'application/json'}
     except Exception as e:
         flaskApp.logger.error('An error occurred: %s', str(e))
         return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}
@@ -148,7 +148,7 @@ def gacha_one_pull():
 @flaskApp.route('/gacha_ten_pull', methods=['POST'])
 def gacha_ten_pull():
     try:
-        if current_user.tokens >= 10:
+        if current_user.coins >= 10:
             # first get pokemon already owned by user
             # owned_pokemon_ids = [pokemon.id for pokemon in current_user.inventory]
             # randomly select 10 pokemon that the user doesnt own already
@@ -179,16 +179,16 @@ def gacha_ten_pull():
                     current_user.inventory.append(pokemon)
                     flaskApp.logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
                     flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
-            # take 10 tokens away from the user
-            current_user.tokens -= 10
+            # take 10 coins away from the user
+            current_user.coins -= 10
             # Commit the changes to the database
             db.session.commit()
             # Return the list of randomly selected Pokémon as JSON
-            return jsonify({'tokens': current_user.tokens, 'pokemon_list': random_pokemon_list}), 200, {'Content-Type': 'application/json'}
+            return jsonify({'coins': current_user.coins, 'pokemon_list': random_pokemon_list}), 200, {'Content-Type': 'application/json'}
      
         else:
-            # Return an error response if the user doesn't have enough tokens
-            return jsonify({'error': 'Insufficient tokens'}), 403, {'Content-Type': 'application/json'}
+            # Return an error response if the user doesn't have enough coins
+            return jsonify({'error': 'Insufficient coins'}), 403, {'Content-Type': 'application/json'}
     except Exception as e:
         # return jsonify({'error exception': str(e)}), 500, {'Content-Type': 'application/json'}
         flaskApp.logger.error('An error occurred: %s', str(e))
@@ -261,8 +261,8 @@ def post_trade():
 
         db.session.add(new_trade)
 
-        # when a user posts a trade, they get +3 tokens
-        current_user.tokens += 3
+        # when a user posts a trade, they get +3 coins
+        current_user.coins += 3
         
         db.session.commit()
         

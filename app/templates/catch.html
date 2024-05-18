@@ -46,13 +46,13 @@
         padding: 10px;
         margin: auto;
     }
-    #token-box {
+    #coin-box {
         background-color: #434343;
         border-radius: 5rem;
         width: 5rem;
         height: 2rem;
     }
-    .token-count {
+    .coin-count {
         color: #fff;
     }
 </style>
@@ -61,10 +61,10 @@
 {% block content %}
 <div class="container text-center mt-5">
     <h1>Catch Pokemon</h1>
-    <div id="token-box">
-        <p class="token-count">₽ x{{ current_user.tokens }}</p>
+    <div id="coin-box">
+        <p class="coin-count">₽ x{{ current_user.coins }}</p>
     </div>
-    <div id="error-message" class="alert alert-danger" style="display:none"><a id="broke-hint" style="display:none">How to get Poke Tokens?</a></div>
+    <div id="error-message" class="alert alert-danger" style="display:none"><a id="broke-hint" style="display:none">How to get Poke coins?</a></div>
     <img id="pokeball-img" class="closed" src="../static/images/pokeball-pixel-closed.png" alt="pokeball-button" width="200" height="">
     <div id="pull-result"></div>
     <div id="textbox-container">
@@ -81,7 +81,7 @@
         <h2>Pokemon x10</h2>
         <p>₽ x10</p>
     </button>
-    <p>Note: you can only own one of each pokemon at a time. If you pull a pokemon you already own, you will lose one Poke Token</p>
+    <p>Note: you can only own one of each pokemon at a time. If you pull a pokemon you already own, you will lose one Poke coin</p>
 </div>
 
 {% endblock content %}
@@ -103,8 +103,8 @@
                 return response.json();
             } else if (response.status === 403) {
                 // location.reload();
-                // If the user has insufficient tokens (status code 403), handle the error
-                return Promise.reject('Insufficient tokens. GET YO MONEY UP!!');
+                // If the user has insufficient coins (status code 403), handle the error
+                return Promise.reject('Insufficient coins. GET YO MONEY UP!!');
             } else {
                 // For other error cases, handle them accordingly
                 return Promise.reject('An error occurred');
@@ -114,9 +114,9 @@
             console.log("Data: ", data);
             console.log(typeof data)
 
-            // Update the token count displayed on the page
-            const tokenCountElement = document.querySelector('.token-count');
-            tokenCountElement.textContent = '₽ x' + data.tokens;
+            // Update the coin count displayed on the page
+            const coinCountElement = document.querySelector('.coin-count');
+            coinCountElement.textContent = '₽ x' + data.coins;
 
              // Clear previous Pokemon info
             pullContainer = document.getElementById('pull-result');
@@ -202,8 +202,8 @@
                 return response.json();
             } else if (response.status === 403) {
                 // location.reload();
-                // If the user has insufficient tokens (status code 403), handle the error
-                return Promise.reject('Insufficient tokens. GET YO MONEY UP!!');
+                // If the user has insufficient coins (status code 403), handle the error
+                return Promise.reject('Insufficient coins. GET YO MONEY UP!!');
             } else {
                 // For other error cases, handle them accordingly
                 return Promise.reject('An error occurred');
@@ -213,9 +213,9 @@
             console.log("Data: ", data);
             console.log(typeof data)
 
-            // Update the token count displayed on the page
-            const tokenCountElement = document.querySelector('.token-count');
-            tokenCountElement.textContent = '₽ x' + data.tokens;
+            // Update the coin count displayed on the page
+            const coinCountElement = document.querySelector('.coin-count');
+            coinCountElement.textContent = '₽ x' + data.coins;
 
             //clear previous pull
             pullContainer = document.getElementById('pull-result');
