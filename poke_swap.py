@@ -1,4 +1,6 @@
-from app import flaskApp, db
+from flask_migrate import Migrate
+from app import create_app, db
+from config import DeploymentConfig
 import sqlite3
 import os
 from flask import g
@@ -6,6 +8,8 @@ import sqlalchemy as sa
 import sqlalchemy.orm as so
 from app.models import User, Trade
 
+flaskApp = create_app(DeploymentConfig)
+migrate = Migrate(db, flaskApp)
 flaskApp.secret_key = os.urandom(24)
 
 # Function to connect to the SQLite database
