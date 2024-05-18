@@ -37,7 +37,9 @@ def index():
         Pokemon1, Trade.pokemon_id1 == Pokemon1.id
     ).join(
         Pokemon2, Trade.pokemon_id2 == Pokemon2.id
-    ).order_by(Trade.timestamp.asc())  # Changed to ascending order
+    ).filter(
+        Trade.user_id2 == None
+    ).order_by(Trade.timestamp.asc())
 
     # Manual pagination handling
     total_count = trades_query.count()
@@ -52,6 +54,8 @@ def index():
     } for trade in trades]
 
     return render_template('index.html', trade_offers=trade_offers, page=page, total_pages=total_pages)
+
+
 
 @flaskApp.route('/trade/<int:trade_id>')
 @login_required
@@ -121,6 +125,8 @@ def accept_trade(trade_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+
 
 
 
