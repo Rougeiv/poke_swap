@@ -9,7 +9,7 @@
 }
 
 .my-page {
-    display:none;
+    display: none;
 }
 
 .pokemon-image {
@@ -20,7 +20,50 @@
 }
 
 .pokepc-background {
-    background-image: url("{{ url_for('static', filename='images/pikachubg.png') }}");
+    background-image: url("../images/pikachubg.png");
     background-size: cover;
     background-position: center;
+}
+
+@media (max-width: 767.98px) {
+    .pokemon-image {
+        width: 150px;
+        height: 150px;
+    }
+
+    .modal-lg {
+        max-width: 90%;
+    }
+
+    .btn {
+        font-size: 0.875rem;
+    }
+
+    .modal-body .row .col-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .modal-body .row .col-md-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .modal-header h5, .modal-footer .btn {
+        font-size: 1rem;
+    }
+
+    .card-body .row .col {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .card-body .row .col .btn {
+        width: 100%;
+    }
+
+    .modal-body .row .col {
+        margin-bottom: 15px;
+    }
 }

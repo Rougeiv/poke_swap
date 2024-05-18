@@ -10,7 +10,7 @@
 
 /* Specific background colors for trade sections */
 .active-trades {
-    background-color:darkgrey;
+    background-color: darkgrey;
 }
 
 .past-trades {
@@ -30,4 +30,39 @@
 /* Additional padding inside the containers for overall spacing */
 .active-trades, .past-trades {
     padding-bottom: 20px; /* Adds space inside the container at the bottom */
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .container {
+        padding: 10px;
+    }
+
+    .list-group-item {
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .list-group-item .d-flex {
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .list-group-item h5 {
+        font-size: 1.2rem;
+    }
+
+    .list-group-item small {
+        font-size: 0.9rem;
+    }
+
+    .trade-images img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .pagination .page-link {
+        font-size: 0.9rem;
+        padding: 5px;
+    }
 }

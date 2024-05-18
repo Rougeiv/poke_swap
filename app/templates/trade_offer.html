@@ -4,9 +4,10 @@
     Trade Offer
 {% endblock title %}
 
-{%block extra_head%}
-<link rel="stylesheet" href="../static/stylesheets/trade_offer.css">
-{%endblock%}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/trade_offer.css') }}">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% endblock %}
 
 {% block content %}
 <div class="container mt-5 mb-5">
@@ -38,7 +39,6 @@
                 <div class="col text-center">
                     <button id="postTradeButton" class="btn btn-dark">Post</button>
                 </div>
-                
             </div>
         </div>
     </div>
@@ -57,14 +57,13 @@
             <div class="modal-body pokepc-background">
                 <div class="row">
                     {% for sprite in pokemon_owned %}
-                    <div class="col-md-3 text-center">
+                    <div class="col-md-3 col-6 text-center mb-3">
                         <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}"
                         class="img-thumbnail pokemon-image selectable-sprite"
                         data-target="#offeringPlaceholder"
                         data-sprite-name="{{ sprite|capitalize }}">
                         <p>{{ sprite }}</p>
                     </div>
-
                     {% endfor %}
                 </div>
                 <div class="pokemon-pc page" id="page2" style="display: none;">
@@ -101,7 +100,7 @@
             <div class="modal-body">
                 <div class="row">
                     {% for sprite in pokemon_sprites %}
-                    <div class="col-md-3 text-center">
+                    <div class="col-md-3 col-6 text-center mb-3">
                         <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}"
                         class="img-thumbnail pokemon-image selectable-sprite"
                         data-target="#requestingPlaceholder"
@@ -119,27 +118,25 @@
     </div>
 </div>
 
-
 <script>
     $(document).ready(function() {
         let selectedPokemonName1 = null;
         let selectedPokemonName2 = null;
-    
-        
+
         $('.selectable-sprite').on('click', function() {
             console.log('Selected Pokemon:', $(this).data('sprite-name'));
             const targetPlaceholder = $(this).data('target');
             $(targetPlaceholder).attr('src', $(this).attr('src'));
-            
+
             if ($(this).data('target') === "#offeringPlaceholder") {
                 selectedPokemonName1 = $(this).data('sprite-name');
             } else if ($(this).data('target') === "#requestingPlaceholder") {
                 selectedPokemonName2 = $(this).data('sprite-name');
             }
-    
+
             $(this).closest('.modal').modal('hide'); // Close the modal
         });
-    
+
         $('#postTradeButton').on('click', function() {
             $.ajax({
                 url: '/post_trade',
@@ -158,8 +155,5 @@
             });
         });
     });
-    </script>
-    
-    
-    
+</script>
 {% endblock content %}
