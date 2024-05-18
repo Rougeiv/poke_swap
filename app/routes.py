@@ -275,19 +275,39 @@ def gacha_ten_pull():
 
 @flaskApp.route('/my_trades', methods=['GET'])
 def my_trades():
+    Pokemon1 = orm.aliased(Pokemon)
+    Pokemon2 = orm.aliased(Pokemon)
 
-    active_trades = [
-        {'id': 'Trade #0001', 'expires_in': '2 days', 'pokemon1': 'ditto', 'pokemon2': 'diglett'},
-        {'id': 'Trade #0002', 'expires_in': '3 days', 'pokemon1': 'cubone', 'pokemon2': 'dragonite'},
-        {'id': 'Trade #0003', 'expires_in': '5 days', 'pokemon1': 'arcanine', 'pokemon2': 'chansey'}
-    ]
+    trades_query = db.session.query(
+    Trade.id,
+    Trade.timestamp,
+    Pokemon1.name.label('pokemon1_name'),
+    Pokemon2.name.label('pokemon2_name')
+    ).join(
+        Pokemon1, Trade.pokemon_id1 == Pokemon1.id
+    ).join(
+        Pokemon2, Trade.pokemon_id2 == Pokemon2.id
+    ).filter(
+        Trade.user_id1 == current_user.id
+    ).order_by(Trade.timestamp.asc())
 
-    past_trades = [
-        {'id': 'Trade #0001', 'expires_in': '2 days', 'pokemon1': 'ditto', 'pokemon2': 'diglett'},
-        {'id': 'Trade #0002', 'expires_in': '3 days', 'pokemon1': 'cubone', 'pokemon2': 'dragonite'},
-        {'id': 'Trade #0003', 'expires_in': '5 days', 'pokemon1': 'arcanine', 'pokemon2': 'chansey'}
-    ]
+    # Fetching all trades
+    trades = trades_query.all()
 
+    active_trades = [{
+        'trade_id': trade.id, 
+        'timestamp': trade.timestamp.strftime('%Y-%m-%d %H:%M'), 
+        'pokemon1_name': trade.pokemon1_name.lower(), 
+        'pokemon2_name': trade.pokemon2_name.lower()
+    } for trade in trades]
+
+    past_trades = [{
+        'trade_id': trade.id, 
+        'timestamp': trade.timestamp.strftime('%Y-%m-%d %H:%M'), 
+        'pokemon1_name': trade.pokemon1_name.lower(), 
+        'pokemon2_name': trade.pokemon2_name.lower()
+    } for trade in trades]
+    
     return render_template('my_trades.html', active_trades=active_trades, past_trades=past_trades)
 
 @login_required

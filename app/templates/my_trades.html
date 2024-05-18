@@ -12,26 +12,27 @@
 {% block content %}
 <div class="container mt-5">
     <h1 class="text-center">My Trades</h1>
-
+    
     <!-- Active Trade Offers Section -->
     <div class="container mt-5 active-trades">
         <h2 class="text-center">Active Trade Offers</h2>
         <div class="list-group mt-3">
             <!-- Dynamically generated active trade offers -->
             {% for trade in active_trades %}
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="list-group-item flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1">{{ trade.id }}</h5>
                     <small>Expires in {{ trade.expires_in }}</small>
                 </div>
-                <p class="mb-1 trade-images">
-                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + trade.pokemon1 + '.png') }}" alt="Pokemon 1">
+                <p class="mb-1">
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon1_name ~ '.png') }}" alt="Pokemon 1">
                     ⇆
-                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + trade.pokemon2 + '.png') }}" alt="Pokemon 2">
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon2_name ~ '.png') }}" alt="Pokemon 2">
                 </p>
-            </a>
+            </div>
             {% endfor %}
         </div>
+        
     </div>
 
     <!-- Past Trade Offers Section -->
@@ -40,17 +41,17 @@
         <div class="list-group mt-3">
             <!-- Dynamically generated past trade offers -->
             {% for trade in past_trades %}
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="list-group-item flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1">{{ trade.id }}</h5>
                     <small>Completed on {{ trade.completed_on }}</small>
                 </div>
-                <p class="mb-1 trade-images">
-                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + trade.pokemon1 + '.png') }}" alt="Pokemon 1">
+                <p class="mb-1">
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon1_name ~ '.png') }}" alt="Pokemon 1">
                     ⇆
-                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + trade.pokemon2 + '.png') }}" alt="Pokemon 2">
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon2_name ~ '.png') }}" alt="Pokemon 2">
                 </p>
-            </a>
+            </div>
             {% if loop.index % 3 == 0 %}
                 </div><div class="list-group mt-3">
             {% endif %}
@@ -58,15 +59,15 @@
         </div>
 
         <!-- Pagination for Past Trade Offers -->
-        <nav aria-label="Trade offers pagination">
+        <!-- <nav aria-label="Trade offers pagination">
             <ul class="pagination justify-content-center mt-4">
                 <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <!-- Generate pagination dynamically -->
+                Generate pagination dynamically
                 <li class="page-item active"><a class="page-link" href="#">1</a></li>
                 <li class="page-item"><a class="page-link" href="#">2</a></li>
                 <li class="page-item"><a class="page-link" href="#">Next</a></li>
             </ul>
-        </nav>
+        </nav> -->
     </div>
 </div>
 {% endblock content %}
