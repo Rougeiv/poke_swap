@@ -13,6 +13,22 @@
 <div class="container mt-5">
     <h1 class="text-center">My Trades</h1>
     
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container mt-4">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    
     <!-- Active Trade Offers Section -->
     <div class="container mt-5 active-trades">
         <h2 class="text-center">Active Trade Offers</h2>
@@ -21,8 +37,11 @@
             {% for trade in active_trades %}
             <div class="list-group-item flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{ trade.id }}</h5>
-                    <small>Expires in {{ trade.expires_in }}</small>
+                    <h5 class="mb-1">{{ trade.trade_id }}</h5>
+                    <small>Posted on {{ trade.timestamp }}</small>
+                    <form action="{{ url_for('delete_trade', trade_id=trade.trade_id) }}" method="post" class="ml-auto">
+                        <button type="submit" class="btn btn-danger btn-sm">X</button>
+                    </form>
                 </div>
                 <p class="mb-1">
                     <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon1_name ~ '.png') }}" alt="Pokemon 1">
@@ -32,7 +51,6 @@
             </div>
             {% endfor %}
         </div>
-        
     </div>
 
     <!-- Past Trade Offers Section -->
@@ -43,8 +61,8 @@
             {% for trade in past_trades %}
             <div class="list-group-item flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{ trade.id }}</h5>
-                    <small>Completed on {{ trade.completed_on }}</small>
+                    <h5 class="mb-1">{{ trade.trade_id }}</h5>
+                    <small>Completed on {{ trade.timestamp }}</small>
                 </div>
                 <p class="mb-1">
                     <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon1_name ~ '.png') }}" alt="Pokemon 1">
@@ -52,22 +70,23 @@
                     <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon2_name ~ '.png') }}" alt="Pokemon 2">
                 </p>
             </div>
-            {% if loop.index % 3 == 0 %}
-                </div><div class="list-group mt-3">
-            {% endif %}
             {% endfor %}
         </div>
 
         <!-- Pagination for Past Trade Offers -->
-        <!-- <nav aria-label="Trade offers pagination">
+        <nav aria-label="Trade offers pagination">
             <ul class="pagination justify-content-center mt-4">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                Generate pagination dynamically
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                {% if page > 1 %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('my_trades', page=page-1) }}">Previous</a></li>
+                {% endif %}
+                {% for p in range(1, total_pages + 1) %}
+                <li class="page-item {{ 'active' if p == page else '' }}"><a class="page-link" href="{{ url_for('my_trades', page=p) }}">{{ p }}</a></li>
+                {% endfor %}
+                {% if page < total_pages %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('my_trades', page=page+1) }}">Next</a></li>
+                {% endif %}
             </ul>
-        </nav> -->
+        </nav>
     </div>
 </div>
 {% endblock content %}

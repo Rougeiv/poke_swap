@@ -12,7 +12,7 @@ import random
 from sqlalchemy.sql.expression import func
 import sqlalchemy.orm as orm
 from flask_wtf import CSRFProtect
-
+from datetime import datetime, timedelta
 import os
 
 @flaskApp.route('/')
@@ -154,9 +154,32 @@ def login():
         user = db.session.scalar(
             sa.select(User).where(User.username == form.username.data))
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
+            flash('Invalid username or password', 'danger')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
+
+        # Check for expired trades
+        three_days_ago = datetime.now() - timedelta(days=3)
+        expired_trades = db.session.query(Trade).filter(
+            Trade.user_id1 == user.id,
+            Trade.user_id2 == None,
+            Trade.timestamp < three_days_ago
+        ).all()
+
+        expired_count = 0
+        for trade in expired_trades:
+            offered_pokemon = db.session.query(Pokemon).filter_by(id=trade.pokemon_id1).first()
+            if offered_pokemon:
+                if offered_pokemon not in user.inventory:
+                    user.inventory.append(offered_pokemon)
+                db.session.delete(trade)
+                expired_count += 1
+
+        db.session.commit()
+
+        if expired_count > 0:
+            flash(f'{expired_count} expired trade(s) were deleted and Pokémon returned to your inventory.', 'info')
+
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('index')
@@ -274,41 +297,97 @@ def gacha_ten_pull():
         return jsonify({'error': 'Internal Server Error'}), 500
 
 @flaskApp.route('/my_trades', methods=['GET'])
+@login_required
 def my_trades():
+    page = request.args.get('page', 1, type=int)
+    per_page = 3
+    offset = (page - 1) * per_page
+
     Pokemon1 = orm.aliased(Pokemon)
     Pokemon2 = orm.aliased(Pokemon)
 
-    trades_query = db.session.query(
-    Trade.id,
-    Trade.timestamp,
-    Pokemon1.name.label('pokemon1_name'),
-    Pokemon2.name.label('pokemon2_name')
+    # Query for active trades
+    active_trades_query = db.session.query(
+        Trade.id,
+        Trade.timestamp,
+        Pokemon1.name.label('pokemon1_name'),
+        Pokemon2.name.label('pokemon2_name')
     ).join(
         Pokemon1, Trade.pokemon_id1 == Pokemon1.id
     ).join(
         Pokemon2, Trade.pokemon_id2 == Pokemon2.id
     ).filter(
-        Trade.user_id1 == current_user.id
+        Trade.user_id1 == current_user.id,
+        Trade.user_id2 == None
     ).order_by(Trade.timestamp.asc())
-
-    # Fetching all trades
-    trades = trades_query.all()
 
     active_trades = [{
         'trade_id': trade.id, 
         'timestamp': trade.timestamp.strftime('%Y-%m-%d %H:%M'), 
         'pokemon1_name': trade.pokemon1_name.lower(), 
         'pokemon2_name': trade.pokemon2_name.lower()
-    } for trade in trades]
+    } for trade in active_trades_query.all()]
 
+    # Query for completed trades with pagination
+    past_trades_query = db.session.query(
+        Trade.id,
+        Trade.timestamp,
+        Pokemon1.name.label('pokemon1_name'),
+        Pokemon2.name.label('pokemon2_name')
+    ).join(
+        Pokemon1, Trade.pokemon_id1 == Pokemon1.id
+    ).join(
+        Pokemon2, Trade.pokemon_id2 == Pokemon2.id
+    ).filter(
+        Trade.user_id1 == current_user.id,
+        Trade.user_id2 != None
+    ).order_by(Trade.timestamp.asc())
+
+    total_count = past_trades_query.count()
     past_trades = [{
         'trade_id': trade.id, 
         'timestamp': trade.timestamp.strftime('%Y-%m-%d %H:%M'), 
         'pokemon1_name': trade.pokemon1_name.lower(), 
         'pokemon2_name': trade.pokemon2_name.lower()
-    } for trade in trades]
+    } for trade in past_trades_query.offset(offset).limit(per_page).all()]
+
+    total_pages = (total_count + per_page - 1) // per_page
+
+    return render_template('my_trades.html', active_trades=active_trades, past_trades=past_trades, page=page, total_pages=total_pages)
+
+@flaskApp.route('/delete_trade/<int:trade_id>', methods=['POST'])
+@login_required
+def delete_trade(trade_id):
+    try:
+        # Fetch the trade to be deleted
+        trade = db.session.query(Trade).filter_by(id=trade_id, user_id1=current_user.id, user_id2=None).first()
+        if not trade:
+            flash('Trade not found or already completed.', 'danger')
+            return redirect(url_for('my_trades'))
+
+        # Fetch the Pokémon being offered
+        offered_pokemon = db.session.query(Pokemon).filter_by(id=trade.pokemon_id1).first()
+        
+        if not offered_pokemon:
+            flash('Offered Pokémon not found.', 'danger')
+            return redirect(url_for('my_trades'))
+
+        # Check if the user already owns the Pokémon
+        if offered_pokemon not in current_user.inventory:
+            # Add the Pokémon back to the user's inventory
+            current_user.inventory.append(offered_pokemon)
+
+        # Delete the trade
+        db.session.delete(trade)
+        db.session.commit()
+
+        flash('Trade offer deleted and Pokémon returned to your inventory.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred: {e}', 'danger')
     
-    return render_template('my_trades.html', active_trades=active_trades, past_trades=past_trades)
+    return redirect(url_for('my_trades'))
+
 
 @login_required
 @flaskApp.route('/trade_offer', methods=['POST', 'GET'])
