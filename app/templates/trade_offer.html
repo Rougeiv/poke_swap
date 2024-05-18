@@ -134,8 +134,12 @@
                     pokemon_name2: selectedPokemonName2
                 },
                 success: function(response) {
-                    console.log(response.success);
-                    // Optionally reset or refresh page here
+                    if (response.error) {
+                        alert(response.error); // Show pop-up for maximum active trades
+                    } else {
+                        console.log(response.success);
+                        // Optionally reset or refresh page here
+                    }
                 },
                 error: function(xhr) {
                     alert("Error: " + xhr.responseText);

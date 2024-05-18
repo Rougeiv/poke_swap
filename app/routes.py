@@ -312,14 +312,20 @@ def trade_offer():
     else:
         return redirect(url_for('login'))
 
-@login_required
 @flaskApp.route('/post_trade', methods=['POST'])
+@login_required
 def post_trade():
     pokemon_name1 = request.form.get('pokemon_name1')
     pokemon_name2 = request.form.get('pokemon_name2')
     timestamp = datetime.now()  # Uses the datetime object directly
 
     try:
+        # Check the number of active trades for the user
+        active_trades_count = db.session.query(Trade).filter_by(user_id1=current_user.id, user_id2=None).count()
+        
+        if active_trades_count >= 3:
+            return jsonify({'error': 'You have reached the maximum number of active trades.'}), 403
+
         # Resolve Pokémon names to IDs using SQLAlchemy
         pokemon1 = Pokemon.query.filter_by(name=pokemon_name1).first()
         pokemon2 = Pokemon.query.filter_by(name=pokemon_name2).first()
@@ -328,6 +334,13 @@ def post_trade():
             return jsonify({'error': 'One or both Pokémon names are invalid.'}), 404
 
         print("Received names:", pokemon_name1, pokemon_name2)
+
+        # Ensure the user owns the Pokémon they are offering
+        if pokemon1 not in current_user.inventory:
+            return jsonify({'error': 'You do not own the Pokémon you are offering.'}), 403
+
+        # Remove the offered Pokémon from the user's inventory
+        current_user.inventory.remove(pokemon1)
 
         # Insert the new trade into the trade table
         new_trade = Trade(
@@ -340,7 +353,7 @@ def post_trade():
 
         db.session.add(new_trade)
 
-        # when a user posts a trade, they get +3 tokens
+        # When a user posts a trade, they get +3 tokens
         current_user.tokens += 3
         
         db.session.commit()
@@ -349,6 +362,8 @@ def post_trade():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+
 
 @flaskApp.route('/update_sprite_selection', methods=['POST'])
 def update_sprite_selection():
