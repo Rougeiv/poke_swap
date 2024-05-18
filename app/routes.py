@@ -486,6 +486,11 @@ def update_sprite_selection():
 @flaskApp.route('/how_to_play')
 def how_to_play():
     return render_template('how_to_play.html')
+
+@flaskApp.route('/top_up.html')
+def top_up():
+    return render_template('top_up.html')
+
 # user profile page route
 @flaskApp.route('/user/<username>')
 @login_required

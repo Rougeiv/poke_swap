@@ -1,0 +1,61 @@
+/* Specific to top_up.html */
+
+.my-card {
+    font-family: 'Comic Sans MS', sans-serif;
+    text-align: center;
+    font-size: large;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto; /* centered */
+}
+
+.pokemon-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.my-card {
+    margin-bottom: 50px;
+}
+
+.my-note {
+    margin-bottom: 40px;
+}
+
+@media (max-width: 767.98px) {
+    .pokemon-image {
+        width: 150px;
+        height: 150px;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .modal-header h5, .modal-footer .btn {
+        font-size: 1rem;
+    }
+
+    .btn {
+        font-size: 0.875rem;
+    }
+}
+
+
+body {
+    background-image: url('https://wallpapercave.com/wp/wp1902707.jpg');
+    background-size: cover; /* Cover the entire background */
+    background-position: center; /* Center the background image */
+    background-position-y: -200px;
+    background-repeat: no-repeat; /* Do not repeat the background image */
+    font-family: 'Arial', sans-serif; /* Your font family */
+}

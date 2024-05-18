@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}PokeSwap - Top Up{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="../static/stylesheets/top_up.css">
+{% endblock %}
+
+
+{% block content %}
+<div class="container mt-5">
+    <div class ="card text-white bg-dark my-card">
+        <div class ="card-body">
+            <h1 class="text-center">Top-up Station</h1>
+        </div>
+        <div id="token-box" class="text-center">
+            <p class="token-count">You currently have <span class="token-amount">₽{{ current_user.tokens }}</span> tokens!</p>
+        </div>
+    </div>
+
+    <!-- Center the image -->
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <img id="pokeball-img" class="closed" src="{{ url_for('static', filename='images/pokeball-pixel-closed.png') }}" alt="pokeball-button" width="200">
+        </div>
+    </div>
+
+    <!-- Buttons on a separate row -->
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-6">
+            <button id="top-up-10-tokens" class="token-button btn-block">
+                <h2>₽10</h2>
+                <h5>$9.99</h5>
+            </button>
+
+            <button id="top-up-50-tokens" class="token-button btn-block">
+                <h2>₽50</h2>
+                <h5>$9.99</h5>
+            </button>
+
+            <button id="top-up-100-tokens" class="token-button btn-block">
+                <h2>₽100</h2>
+                <h5>$9.99</h5>
+            </button>
+
+            <button id="top-up-500-tokens" class="token-button btn-block">
+                <h2>₽500</h2>
+                <h5>$9.99</h5>
+            </button>
+
+            <button id="top-up-1000-tokens" class="token-button btn-block">
+                <h2>₽1000</h2>
+                <h5>$9.99</h5>
+            </button>
+
+            <button id="top-up-100000-tokens" class="token-button btn-block">
+                <h2>₽100000</h2>
+                <h5>$99.99</h5>
+            </button>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-6 my-note">
+            <div class="card bg-dark text-white">
+                <p class="card-body text-center"> Please play responsibly and at your own risk!</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
