@@ -4,9 +4,10 @@
     Trade Offer
 {% endblock title %}
 
-{%block extra_head%}
-<link rel="stylesheet" href="../static/stylesheets/trade_offer.css">
-{%endblock%}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/trade_offer.css') }}">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% endblock %}
 
 {% block content %}
 <div class="container mt-5 mb-5">
@@ -38,7 +39,6 @@
                 <div class="col text-center">
                     <button id="postTradeButton" class="btn btn-dark">Post</button>
                 </div>
-                
             </div>
         </div>
     </div>
@@ -54,30 +54,17 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body pokepc-background">
+            <div class="modal-body">
                 <div class="row">
                     {% for sprite in pokemon_owned %}
-                    <div class="col-md-3 text-center">
+                    <div class="col-md-3 col-6 text-center mb-3">
                         <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}"
                         class="img-thumbnail pokemon-image selectable-sprite"
                         data-target="#offeringPlaceholder"
                         data-sprite-name="{{ sprite|capitalize }}">
                         <p>{{ sprite }}</p>
                     </div>
-
                     {% endfor %}
-                </div>
-                <div class="pokemon-pc page" id="page2" style="display: none;">
-                    <div class="row">
-                        <!-- Display Pokémon from the second page -->
-                    </div>
-                </div>
-                <!-- Add more pages as needed -->
-
-                <!-- Pagination -->
-                <div class="text-center mt-3">
-                    <button type="button" class="btn btn-primary mr-2" id="prevPageBtn" disabled>Previous</button>
-                    <button type="button" class="btn btn-primary" id="nextPageBtn">Next</button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -94,14 +81,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="requestPokemonModalLabel">Select Requested Pokémon</h5>
-                <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="row">
                     {% for sprite in pokemon_sprites %}
-                    <div class="col-md-3 text-center">
+                    <div class="col-md-3 col-6 text-center mb-3">
                         <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}"
                         class="img-thumbnail pokemon-image selectable-sprite"
                         data-target="#requestingPlaceholder"
@@ -112,34 +99,32 @@
                 </div>                
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-close" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary">Select</button>
             </div>
         </div>
     </div>
 </div>
 
-
 <script>
     $(document).ready(function() {
         let selectedPokemonName1 = null;
         let selectedPokemonName2 = null;
-    
-        
+
         $('.selectable-sprite').on('click', function() {
             console.log('Selected Pokemon:', $(this).data('sprite-name'));
             const targetPlaceholder = $(this).data('target');
             $(targetPlaceholder).attr('src', $(this).attr('src'));
-            
+
             if ($(this).data('target') === "#offeringPlaceholder") {
                 selectedPokemonName1 = $(this).data('sprite-name');
             } else if ($(this).data('target') === "#requestingPlaceholder") {
                 selectedPokemonName2 = $(this).data('sprite-name');
             }
-    
+
             $(this).closest('.modal').modal('hide'); // Close the modal
         });
-    
+
         $('#postTradeButton').on('click', function() {
             $.ajax({
                 url: '/post_trade',
@@ -149,8 +134,12 @@
                     pokemon_name2: selectedPokemonName2
                 },
                 success: function(response) {
-                    console.log(response.success);
-                    // Optionally reset or refresh page here
+                    if (response.error) {
+                        alert(response.error); // Show pop-up for maximum active trades
+                    } else {
+                        console.log(response.success);
+                        // Optionally reset or refresh page here
+                    }
                 },
                 error: function(xhr) {
                     alert("Error: " + xhr.responseText);
@@ -158,8 +147,5 @@
             });
         });
     });
-    </script>
-    
-    
-    
+</script>
 {% endblock content %}
