@@ -18,6 +18,10 @@
     margin-bottom: 20px; /* Add margin for spacing between sections */
 }
 
+.my-trade-id, .my-trade-timestamp{
+    color:black;
+}
+
 .past-trades {
     background-color: rgba(0, 0, 0, 0.6); /* Dark semi-transparent background */
     color: white; /* Text color for better contrast */

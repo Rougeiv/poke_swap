@@ -37,8 +37,8 @@
             {% for trade in active_trades %}
             <div class="list-group-item flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{ trade.trade_id }}</h5>
-                    <small>Posted on {{ trade.timestamp }}</small>
+                    <h5 class="mb-1 my-trade-id">{{ trade.trade_id }}</h5>
+                    <small class="my-trade-timestamp">Posted on {{ trade.timestamp }}</small>
                     <form action="{{ url_for('delete_trade', trade_id=trade.trade_id) }}" method="post" class="ml-auto">
                         <button type="submit" class="btn btn-danger btn-sm">X</button>
                     </form>
