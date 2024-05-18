@@ -40,7 +40,7 @@
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="{{ url_for('index') }}">
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">
             <img src="{{ url_for('static', filename='images/pokeswap.png') }}" width="120" height="40" alt="PokeSwap Logo" class="d-inline-block align-top">
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,29 +49,29 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('how_to_play') }}"><p>How to Play</p></a>
+                    <a class="nav-link" href="{{ url_for('main.how_to_play') }}"><p>How to Play</p></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('catch') }}"><p>Catch</p></a>
+                    <a class="nav-link" href="{{ url_for('main.catch') }}"><p>Catch</p></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('trade_offer') }}"><p>Trade</p></a>
+                    <a class="nav-link" href="{{ url_for('main.trade_offer') }}"><p>Trade</p></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('my_trades') }}"><p>My Trades</p></a>
+                    <a class="nav-link" href="{{ url_for('main.my_trades') }}"><p>My Trades</p></a>
                 </li>
                 {% if current_user.is_anonymous %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('login') }}"><p>Login</p></a>
+                    <a class="nav-link" href="{{ url_for('main.login') }}"><p>Login</p></a>
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('user', username=current_user.username) }}">
+                    <a class="nav-link" href="{{ url_for('main.user', username=current_user.username) }}">
                         <img src="{{ url_for('static', filename='images/user.png') }}" width="40" height="40" alt="Login">
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('logout') }}"><p>Logout</p></a>
+                    <a class="nav-link" href="{{ url_for('main.logout') }}"><p>Logout</p></a>
                 </li>
                 {% endif %}
             </ul>

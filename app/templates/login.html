@@ -36,7 +36,7 @@
                                             {{ form.password(size=32) }}
                                         </p>
                                         <p style="color:white">{{ form.remember_me() }}  {{ form.remember_me.label }}</p>
-                                        <p class="text-center font-size-1 text-light">Don't have an account? <a href="{{ url_for('signup') }}" class="text-light">Sign up here!</a></p>
+                                        <p class="text-center font-size-1 text-light">Don't have an account? <a href="{{ url_for('main.signup') }}" class="text-light">Sign up here!</a></p>
                                         {{ form.submit() }}
                                     </form>
                                 </div>

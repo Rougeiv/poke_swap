@@ -1,6 +1,5 @@
 from urllib.parse import urlsplit
-from app import db
-from flask import flash, render_template, request, redirect, session, jsonify, url_for, current_app as flaskApp
+from flask import flash, render_template, request, redirect, session, jsonify, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
@@ -10,6 +9,7 @@ from sqlalchemy.sql.expression import func
 import sqlalchemy.orm as orm
 import os
 from app.blueprints import main
+from app import db
 
 
 @main.route('/')
@@ -82,9 +82,9 @@ def login():
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
-@main.route('/main')
-def main():
-    return redirect(location=url_for('main.index'))
+# @main.route('/main')
+# def main():
+#     return redirect(location=url_for('main.index'))
 
 @main.route('/logout')
 def logout():
@@ -119,14 +119,14 @@ def gacha_one_pull():
 
             # first check if the user already has the pokemon
             if random_pokemon in current_user.inventory:
-                flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, random_pokemon.name)
+                main.logger.debug('User %s already has Pokémon %s', current_user.username, random_pokemon.name)
                 # take 1 coin away from the user
                 current_user.coins -= 1
             else:
                 # Assign the Pokémon to the user's inventory
                 current_user.inventory.append(random_pokemon)
-                flaskApp.logger.debug('Assigned Pokémon %s to user %s', random_pokemon.name, current_user.username)
-                flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_data': pokemon_data}))
+                main.logger.debug('Assigned Pokémon %s to user %s', random_pokemon.name, current_user.username)
+                main.logger.debug('Response Data: %s', jsonify({'pokemon_data': pokemon_data}))
                 # take 3 coins away from the user
                 current_user.coins -= 3
             db.session.commit()
@@ -140,7 +140,7 @@ def gacha_one_pull():
             # Return an error response if the user doesn't have enough coins
             return jsonify({'error': 'Insufficient coins'}), 403, {'Content-Type': 'application/json'}
     except Exception as e:
-        flaskApp.logger.error('An error occurred: %s', str(e))
+        main.logger.error('An error occurred: %s', str(e))
         return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}
     
 @main.route('/gacha_ten_pull', methods=['POST'])
@@ -171,12 +171,12 @@ def gacha_ten_pull():
                 
                 # first check if the user already has the pokemon
                 if pokemon in current_user.inventory:
-                    flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, pokemon.name)
+                    main.logger.debug('User %s already has Pokémon %s', current_user.username, pokemon.name)
                 else:
                     # Assign the Pokémon to the user's inventory
                     current_user.inventory.append(pokemon)
-                    flaskApp.logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
-                    flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
+                    main.logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
+                    main.logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
             # take 10 coins away from the user
             current_user.coins -= 10
             # Commit the changes to the database
@@ -189,7 +189,7 @@ def gacha_ten_pull():
             return jsonify({'error': 'Insufficient coins'}), 403, {'Content-Type': 'application/json'}
     except Exception as e:
         # return jsonify({'error exception': str(e)}), 500, {'Content-Type': 'application/json'}
-        flaskApp.logger.error('An error occurred: %s', str(e))
+        main.logger.error('An error occurred: %s', str(e))
         return jsonify({'error': 'Internal Server Error'}), 500
 
 @main.route('/my_trades', methods=['GET'])

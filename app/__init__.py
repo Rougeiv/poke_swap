@@ -19,16 +19,13 @@ def create_app(config):
     flaskApp = Flask(__name__)
     flaskApp.config.from_object(config)
     
+    from app.blueprints import main
+    flaskApp.register_blueprint(main)
     db.init_app(flaskApp)
     migrate.init_app(flaskApp, db)
     login.init_app(flaskApp)
     moment.init_app(flaskApp)
 
-    from app.blueprints import main as main_blueprint
-    flaskApp.register_blueprint(main_blueprint)
-
-    # Import routes after the blueprint has been registered
-    from app import routes
 
     if not flaskApp.debug and not flaskApp.testing:
         if not os.path.exists('logs'):
@@ -42,3 +39,6 @@ def create_app(config):
         flaskApp.logger.setLevel(logging.DEBUG)
         flaskApp.logger.info('PokeSwap startup')
     return flaskApp
+
+from app import models
+

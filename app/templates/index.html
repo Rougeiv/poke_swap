@@ -58,7 +58,7 @@
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Catch Pokemon</h5>
-                    <a href="{{ url_for('catch') }}" class="btn btn-custom" style="background-color: transparent;">
+                    <a href="{{ url_for('main.catch') }}" class="btn btn-custom" style="background-color: transparent;">
                         <img src="{{ url_for('static', filename='images/tallgrass.png') }}" width="100" height="100" alt="Catch Pokemon">
                     </a>
                 </div>
@@ -68,7 +68,7 @@
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Make a trade offer</h5>
-                    <a href="{{ url_for('trade_offer') }}" class="btn btn-secondary">
+                    <a href="{{ url_for('main.trade_offer') }}" class="btn btn-secondary">
                         <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball">
                         ⇆
                         <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball">
@@ -98,13 +98,13 @@
     <nav aria-label="Page navigation" class="mt-4">
         <ul class="pagination">
             {% if page > 1 %}
-            <li class="page-item"><a class="page-link" href="{{ url_for('index', page=page-1) }}">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="{{ url_for('main.index', page=page-1) }}">Previous</a></li>
             {% endif %}
             {% for p in range(1, total_pages + 1) %}
-            <li class="page-item {{ 'active' if p == page else '' }}"><a class="page-link" href="{{ url_for('index', page=p) }}">{{ p }}</a></li>
+            <li class="page-item {{ 'active' if p == page else '' }}"><a class="page-link" href="{{ url_for('main.index', page=p) }}">{{ p }}</a></li>
             {% endfor %}
             {% if page < total_pages %}
-            <li class="page-item"><a class="page-link" href="{{ url_for('index', page=page+1) }}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="{{ url_for('main.index', page=page+1) }}">Next</a></li>
             {% endif %}
         </ul>
     </nav>
