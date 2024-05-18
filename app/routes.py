@@ -1,21 +1,19 @@
 from urllib.parse import urlsplit
 from app import flaskApp, db
-from flask import flash, logging, render_template, request, redirect, session, jsonify, url_for, current_app
-import sqlite3
+from flask import flash, logging, render_template, request, redirect, session, jsonify, url_for, current_app as app, Blueprint
 from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
-from flask import current_app as app
 from app.models import User, Pokemon, Trade
 from app.forms import EditProfileForm, LoginForm, SignUpForm
-import random
 from sqlalchemy.sql.expression import func
 import sqlalchemy.orm as orm
-
 import os
+from blueprints import main
 
-@flaskApp.route('/')
-@flaskApp.route('/index')
+
+@main.route('/')
+@main.route('/index')
 # @login_required
 def index():
     page = request.args.get('page', 1, type=int)
@@ -52,10 +50,10 @@ def index():
 
     return render_template('index.html', trade_offers=trade_offers, page=page, total_pages=total_pages)
 
-@flaskApp.route('/signup', methods=['GET', 'POST'])
+@main.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     form = SignUpForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
@@ -63,45 +61,45 @@ def signup():
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
     return render_template('signup.html', title='SignUp', form=form)
 
-@flaskApp.route('/login', methods=['GET', 'POST'])
+@main.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = db.session.scalar(
             sa.select(User).where(User.username == form.username.data))
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
-            return redirect(url_for('login'))
+            return redirect(url_for('lmainogin'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
-            next_page = url_for('index')
+            next_page = url_for('main.index')
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
-@flaskApp.route('/main')
+@main.route('/main')
 def main():
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))
 
-@flaskApp.route('/logout')
+@main.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))
 
 # Add a new route for the game page
-@flaskApp.route('/catch')
+@main.route('/catch')
 def catch():
     # Check if user is logged in
     if current_user.is_anonymous:
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
     return render_template('catch.html')
 
-@flaskApp.route('/gacha_one_pull', methods=['POST'])
+@main.route('/gacha_one_pull', methods=['POST'])
 def gacha_one_pull():
     try:
         if current_user.coins >= 3:
@@ -145,7 +143,7 @@ def gacha_one_pull():
         flaskApp.logger.error('An error occurred: %s', str(e))
         return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}
     
-@flaskApp.route('/gacha_ten_pull', methods=['POST'])
+@main.route('/gacha_ten_pull', methods=['POST'])
 def gacha_ten_pull():
     try:
         if current_user.coins >= 10:
@@ -194,7 +192,7 @@ def gacha_ten_pull():
         flaskApp.logger.error('An error occurred: %s', str(e))
         return jsonify({'error': 'Internal Server Error'}), 500
 
-@flaskApp.route('/my_trades', methods=['GET'])
+@main.route('/my_trades', methods=['GET'])
 def my_trades():
 
     active_trades = [
@@ -212,7 +210,7 @@ def my_trades():
     return render_template('my_trades.html', active_trades=active_trades, past_trades=past_trades)
 
 @login_required
-@flaskApp.route('/trade_offer', methods=['POST', 'GET'])
+@main.route('/trade_offer', methods=['POST', 'GET'])
 def trade_offer():
     sprite_folder = os.path.join(app.static_folder, 'images', 'pokemon_gen4_sprites')
     try:
@@ -231,10 +229,10 @@ def trade_offer():
 
         return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites, pokemon_owned=pokemon_names, current_user_id=current_user.id)
     else:
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
 
 @login_required
-@flaskApp.route('/post_trade', methods=['POST'])
+@main.route('/post_trade', methods=['POST'])
 def post_trade():
     pokemon_name1 = request.form.get('pokemon_name1')
     pokemon_name2 = request.form.get('pokemon_name2')
@@ -271,7 +269,7 @@ def post_trade():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
-@flaskApp.route('/update_sprite_selection', methods=['POST'])
+@main.route('/update_sprite_selection', methods=['POST'])
 def update_sprite_selection():
     sprite_src = request.form['sprite']
     # Update session or database with the new sprite selection
@@ -279,11 +277,11 @@ def update_sprite_selection():
     return jsonify(success=True)
 
 
-@flaskApp.route('/how_to_play')
+@main.route('/how_to_play')
 def how_to_play():
     return render_template('how_to_play.html')
 # user profile page route
-@flaskApp.route('/user/<username>')
+@main.route('/user/<username>')
 @login_required
 def user(username):
     user = db.first_or_404(sa.select(User).where(User.username == username))
@@ -293,13 +291,13 @@ def user(username):
         ]
     return render_template('user.html', user=user, trades=trades)
 
-@flaskApp.before_request
+@main.before_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.now(timezone.utc)
         db.session.commit()
 
-@flaskApp.route('/edit_profile', methods=['GET', 'POST'])
+@main.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
     form = EditProfileForm(current_user.username)
@@ -308,17 +306,17 @@ def edit_profile():
         current_user.about_me = form.about_me.data
         db.session.commit()
         flash('Your changes have been saved.')
-        return redirect(url_for('user', username=form.username.data))
+        return redirect(url_for('main.user', username=form.username.data))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile', form=form)
 
-@flaskApp.errorhandler(404)
+@main.errorhandler(404)
 def not_found_error(error):
     return render_template('404.html'), 404
 
-@flaskApp.errorhandler(500)
+@main.errorhandler(500)
 def internal_error(error):
     db.session.rollback()
     return render_template('500.html'), 500

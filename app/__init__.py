@@ -13,6 +13,10 @@ def create_app(config):
     flaskApp = Flask(__name__)
     flaskApp.config.from_object(config)
     db.init_app(flaskApp)
+
+    from app.blueprints import main
+    flaskApp.register_blueprint(main)
+    
     migrate = Migrate(flaskApp, db)
     login = LoginManager(flaskApp)
     login.login_view = 'login'
@@ -28,5 +32,6 @@ def create_app(config):
 
         flaskApp.logger.setLevel(logging.DEBUG)
         flaskApp.logger.info('PokeSwap startup')
+    return flaskApp
 
 from app import routes, models

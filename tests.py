@@ -6,14 +6,15 @@ import unittest
 from app import create_app, db
 from config import TestConfig
 from app.models import User
+from unittest import TestCase
 
-testApp = create_app(TestConfig)
 
-class UserModelCase(unittest.TestCase):
+class UserModelCase(TestCase):
     def setUp(self):
-        self.app_context = app.app_context()
+        self.app_context = testApp.app_context()
         self.app_context.push()
         db.create_all()
+        # add_test_data_to_db()
 
     def tearDown(self):
         db.session.remove()
