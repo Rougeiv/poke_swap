@@ -1,0 +1,33 @@
+/* Style for main container to ensure maximum width control */
+.container {
+    max-width: 800px;
+    margin: auto; /* centered */
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Specific background colors for trade sections */
+.active-trades {
+    background-color:darkgrey;
+}
+
+.past-trades {
+    background-color: darkslategray;
+}
+
+/* Padding for the last item in each trade offer list */
+.list-group-item:last-child {
+    margin-bottom: 20px; /* Adds space below the last item */
+}
+
+/* Margin for the pagination to create space below */
+.pagination {
+    margin-bottom: 20px; /* Adds space below the pagination */
+}
+
+/* Additional padding inside the containers for overall spacing */
+.active-trades, .past-trades {
+    padding-bottom: 20px; /* Adds space inside the container at the bottom */
+}

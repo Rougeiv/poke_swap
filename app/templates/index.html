@@ -3,47 +3,11 @@
 {% block title %}PokeSwap - Home{% endblock %}
 
 {% block extra_head %}
-<style>
-    /* Custom styles specific to the Home page */
-    .gotta-catch, .trade-offer {
-        font-family: 'Comic Sans MS', sans-serif;
-        color: lightslategray;
-        text-align: center;
-        margin-top: 20px;
-    }
-    .card-title, .text-center.h2 {
-        font-family: 'Comic Sans MS', sans-serif;
-        color: lightblue;
-    }
-    .pagination a {
-        font-family: 'Comic Sans MS', sans-serif;
-    }
-    .card {
-        margin-bottom: 30px; /* Spacing between cards */
-    }
-    .card-body img {
-        width: 150px; /* Larger image size */
-        height: 150px;
-    }
-    .pagination {
-        justify-content: center; /* Center pagination controls */
-    }
-    .trade-offers-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .trade-offer-card {
-        width: 100%; /* Adjust width as needed */
-        max-width: 600px; /* Limit max width */
-        margin: auto; /* Centering the card horizontally */
-    }
-    .row {
-        justify-content: center; /* Ensure that the row itself is also centered */
-    }
-</style>
-{% endblock %}
 
+<link rel="stylesheet" href="../static/stylesheets/index.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+{% endblock %}
 
 {% block content %}
 <div class="container text-center mt-5">
@@ -58,7 +22,7 @@
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Catch Pokemon</h5>
-                    <a href="{{ url_for('catch') }}" class="btn btn-custom" style="background-color: transparent;">
+                    <a href="{{ url_for('catch') }}" class="btn btn-custom my-button">
                         <img src="{{ url_for('static', filename='images/tallgrass.png') }}" width="100" height="100" alt="Catch Pokemon">
                     </a>
                 </div>
@@ -81,7 +45,7 @@
         <h1>Active Trade Offers</h1>
         <div class="row mt-4">
             {% for offer in trade_offers %}
-            <div class="col-12 trade-offer-card">
+            <a href="{{ url_for('trade', trade_id=offer.trade_id) }}" class="col-12 trade-offer-card">
                 <div class="card bg-dark text-white">
                     <div class="card-body">
                         <h5 class="card-title">Trade #{{ offer.trade_id }}</h5>
@@ -91,7 +55,7 @@
                         <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon2_name ~ '.png') }}" alt="Pokemon 2">
                     </div>
                 </div>
-            </div>
+            </a>
             {% endfor %}
         </div>
     </div>

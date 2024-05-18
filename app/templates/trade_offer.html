@@ -4,13 +4,17 @@
     Trade Offer
 {% endblock title %}
 
+{%block extra_head%}
+<link rel="stylesheet" href="../static/stylesheets/trade_offer.css">
+{%endblock%}
+
 {% block content %}
 <div class="container mt-5 mb-5">
-    <div class="card" style="border-radius: 10px;">
+    <div class="card my-card-border">
         <div class="card-header text-center bg-dark text-white">
             Trade Offer
         </div>
-        <div class="card-body" style="background: linear-gradient(to bottom, #d1f1f1, #306060);">
+        <div class="card-body my-card-color">
             <div class="row text-center">
                 <div class="col">
                     <h5>Offering</h5>
@@ -60,7 +64,20 @@
                         data-sprite-name="{{ sprite|capitalize }}">
                         <p>{{ sprite }}</p>
                     </div>
+
                     {% endfor %}
+                </div>
+                <div class="pokemon-pc page" id="page2" style="display: none;">
+                    <div class="row">
+                        <!-- Display Pokémon from the second page -->
+                    </div>
+                </div>
+                <!-- Add more pages as needed -->
+
+                <!-- Pagination -->
+                <div class="text-center mt-3">
+                    <button type="button" class="btn btn-primary mr-2" id="prevPageBtn" disabled>Previous</button>
+                    <button type="button" class="btn btn-primary" id="nextPageBtn">Next</button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -145,20 +162,4 @@
     
     
     
-
-<style>
-    .pokemon-image {
-        width: 200px; /* Adjust this width as needed to match the pikachusil.png */
-        height: 200px; /* Adjust this height as needed */
-        object-fit: cover; /* This will cover the area without distorting the ratio */
-        border-radius: 10px; /* Optional, for rounded corners */
-    }
-    
-    .pokepc-background {
-        background-image: url("{{ url_for('static', filename='images/pikachubg.png') }}");
-        background-size: cover; /* Cover the entire container, maintaining aspect ratio */
-        background-position: center;
-    }
-</style>
-
 {% endblock content %}

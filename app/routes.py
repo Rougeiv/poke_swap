@@ -11,6 +11,7 @@ from app.forms import EditProfileForm, LoginForm, SignUpForm
 import random
 from sqlalchemy.sql.expression import func
 import sqlalchemy.orm as orm
+from flask_wtf import CSRFProtect
 
 import os
 
@@ -36,7 +37,9 @@ def index():
         Pokemon1, Trade.pokemon_id1 == Pokemon1.id
     ).join(
         Pokemon2, Trade.pokemon_id2 == Pokemon2.id
-    ).order_by(Trade.timestamp.asc())  # Changed to ascending order
+    ).filter(
+        Trade.user_id2 == None
+    ).order_by(Trade.timestamp.asc())
 
     # Manual pagination handling
     total_count = trades_query.count()
@@ -51,6 +54,82 @@ def index():
     } for trade in trades]
 
     return render_template('index.html', trade_offers=trade_offers, page=page, total_pages=total_pages)
+
+
+
+@flaskApp.route('/trade/<int:trade_id>')
+@login_required
+def trade(trade_id):
+    # Fetch the trade details from the database using the trade_id
+    Pokemon1 = orm.aliased(Pokemon)
+    Pokemon2 = orm.aliased(Pokemon)
+
+    trade = db.session.query(
+        Trade.id,
+        Trade.timestamp,
+        User.username.label('user1'),
+        Trade.user_id1,
+        Pokemon1.name.label('pokemon1_name'),
+        Pokemon2.name.label('pokemon2_name')
+    ).join(
+        Pokemon1, Trade.pokemon_id1 == Pokemon1.id
+    ).join(
+        Pokemon2, Trade.pokemon_id2 == Pokemon2.id
+    ).join(
+        User, Trade.user_id1 == User.id
+    ).filter(
+        Trade.id == trade_id
+    ).first()
+
+    if not trade:
+        flash('Trade not found.')
+        return redirect(url_for('index'))
+
+    return render_template('trade.html', trade=trade)
+
+
+@flaskApp.route('/accept_trade/<int:trade_id>', methods=['POST'])
+@login_required
+def accept_trade(trade_id):
+    trade = db.session.query(Trade).filter_by(id=trade_id).first()
+    if not trade:
+        return jsonify({'error': 'Trade not found'}), 404
+    
+    # Check if the current user owns the requested Pokémon
+    requested_pokemon = db.session.query(Pokemon).filter_by(id=trade.pokemon_id2).first()
+    if requested_pokemon not in current_user.inventory:
+        return jsonify({'error': 'You do not own the Pokémon the user is requesting'}), 403
+    
+    try:
+        # Add the current user as user_id2 in the trade
+        trade.user_id2 = current_user.id
+        
+        # Update the inventory of both users
+        user1 = db.session.query(User).filter_by(id=trade.user_id1).first()
+        user2 = current_user
+        
+        # User1 gets Pokemon2 and loses Pokemon1
+        if trade.pokemon1 in user1.inventory:
+            user1.inventory.remove(trade.pokemon1)
+        if trade.pokemon2 not in user1.inventory:
+            user1.inventory.append(trade.pokemon2)
+        
+        # User2 gets Pokemon1 and loses Pokemon2
+        if trade.pokemon2 in user2.inventory:
+            user2.inventory.remove(trade.pokemon2)
+        if trade.pokemon1 not in user2.inventory:
+            user2.inventory.append(trade.pokemon1)
+        
+        db.session.commit()
+        return jsonify({'success': 'Trade accepted successfully!'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+
+
+
 
 @flaskApp.route('/signup', methods=['GET', 'POST'])
 def signup():
