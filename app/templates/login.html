@@ -18,6 +18,19 @@
                                 <div class="text-center my-forms" style="padding-top: 24.8rem;">
                                     <form action="" method="post" novalidate>
                                         {{ form.hidden_tag() }}
+                                        <!-- <div class="mb-3">
+                                            <p style="color: white">
+                                            {{ form.username.label(class='form-label') }}
+                                            {% if autofocus %}
+                                              {{ form.username(size=32, class='form-control' + (' is-invalid' if form.username.errors else ''), autofocus=True) }}
+                                            {% else %}
+                                              {{ form.username(size=32, class='form-control' + (' is-invalid' if form.username.errors else '')) }}
+                                            {% endif %}
+                                            </p>
+                                            {%- for error in form.username.errors %}
+                                            <div class="invalid-feedback">{{ error }}</div>
+                                            {%- endfor %}
+                                        </div> -->
                                         <p style="color:white">
                                             {{ form.username.label }}
                                             {{ form.username(size=32) }}

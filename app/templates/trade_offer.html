@@ -18,7 +18,7 @@
             <div class="row text-center">
                 <div class="col">
                     <h5>Offering</h5>
-                    <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Offering" class="img-thumbnail">
+                    <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Offering" class="img-thumbnail pokemon-image" id="offeringPlaceholder">
                     <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#pokemonPCModal">
                         Select Pokémon
                     </button>
@@ -36,14 +36,15 @@
             </div>
             <div class="row mt-3">
                 <div class="col text-center">
-                    <button class="btn btn-dark">Post</button>
+                    <button id="postTradeButton" class="btn btn-dark">Post</button>
                 </div>
+                
             </div>
         </div>
     </div>
 </div>
 
-<!-- Offer pokemon Modal -->
+<!-- Offer Pokemon Modal -->
 <div class="modal fade" id="pokemonPCModal" tabindex="-1" role="dialog" aria-labelledby="pokemonPCModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -54,12 +55,19 @@
                 </button>
             </div>
             <div class="modal-body pokepc-background">
-                <div class="pokemon-pc page" id="page1">
-                    <div class="row">
-                        <!-- Display Pokémon from the first page -->
+                <div class="row">
+                    {% for sprite in pokemon_owned %}
+                    <div class="col-md-3 text-center">
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}"
+                        class="img-thumbnail pokemon-image selectable-sprite"
+                        data-target="#offeringPlaceholder"
+                        data-sprite-name="{{ sprite|capitalize }}">
+                        <p>{{ sprite }}</p>
                     </div>
+
+                    {% endfor %}
                 </div>
-                <div class="pokemon-pc page my-page" id="page2">
+                <div class="pokemon-pc page" id="page2" style="display: none;">
                     <div class="row">
                         <!-- Display Pokémon from the second page -->
                     </div>
@@ -94,69 +102,64 @@
                 <div class="row">
                     {% for sprite in pokemon_sprites %}
                     <div class="col-md-3 text-center">
-                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}" 
-                             alt="{{ sprite }}" class="img-thumbnail pokemon-image selectable-sprite" 
-                             data-sprite="{{ sprite }}">
-                        <p>{{ sprite.capitalize().replace('_', ' ') }}</p>
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}"
+                        class="img-thumbnail pokemon-image selectable-sprite"
+                        data-target="#requestingPlaceholder"
+                        data-sprite-name="{{ sprite|capitalize }}">
+                        <p>{{ sprite }}</p>
                     </div>
                     {% endfor %}
                 </div>                
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn btn-close" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary">Select</button>
             </div>
         </div>
     </div>
 </div>
 
+
 <script>
     $(document).ready(function() {
-        // Initialize page index
-        let currentPage = 1;
-        const maxPages = 3; // Set maximum number of pages
-
+        let selectedPokemonName1 = null;
+        let selectedPokemonName2 = null;
+    
+        
         $('.selectable-sprite').on('click', function() {
-            const selectedSpriteSrc = $(this).attr('src');
-            $('#requestingPlaceholder').attr('src', selectedSpriteSrc); // Update src
-            // No need to update the class because it's already set correctly
-            $('#requestPokemonModal').modal('hide'); // Assuming this is the ID of your modal
-        });
-
-        // Save selection (if needed)
-        $('#saveSelection').on('click', function() {
-            const selectedSrc = $('#requestingPlaceholder').attr('src');
-            // Optionally send this information back to the server or handle it further
-        });
-
-        // Function to show/hide pages based on currentPage
-        function showPage(pageNumber) {
-            $(".page").hide();
-            $(`#page${pageNumber}`).show();
-
-            // Disable/Enable Previous/Next buttons based on currentPage
-            $("#prevPageBtn").prop("disabled", pageNumber === 1);
-            $("#nextPageBtn").prop("disabled", pageNumber === maxPages);
-        }
-
-        // Show initial page
-        showPage(currentPage);
-
-        // Previous page button click event
-        $("#prevPageBtn").click(function() {
-            if (currentPage > 1) {
-                currentPage--;
-                showPage(currentPage);
+            console.log('Selected Pokemon:', $(this).data('sprite-name'));
+            const targetPlaceholder = $(this).data('target');
+            $(targetPlaceholder).attr('src', $(this).attr('src'));
+            
+            if ($(this).data('target') === "#offeringPlaceholder") {
+                selectedPokemonName1 = $(this).data('sprite-name');
+            } else if ($(this).data('target') === "#requestingPlaceholder") {
+                selectedPokemonName2 = $(this).data('sprite-name');
             }
+    
+            $(this).closest('.modal').modal('hide'); // Close the modal
         });
-
-        // Next page button click event
-        $("#nextPageBtn").click(function() {
-            if (currentPage < maxPages) {
-                currentPage++;
-                showPage(currentPage);
-            }
+    
+        $('#postTradeButton').on('click', function() {
+            $.ajax({
+                url: '/post_trade',
+                type: 'POST',
+                data: {
+                    pokemon_name1: selectedPokemonName1,
+                    pokemon_name2: selectedPokemonName2
+                },
+                success: function(response) {
+                    console.log(response.success);
+                    // Optionally reset or refresh page here
+                },
+                error: function(xhr) {
+                    alert("Error: " + xhr.responseText);
+                }
+            });
         });
     });
-</script>
+    </script>
+    
+    
+    
 {% endblock content %}

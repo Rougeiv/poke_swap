@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, logging
 from flask_login import LoginManager
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
