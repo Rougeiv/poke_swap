@@ -12,7 +12,6 @@
 .pagination a {
     font-family: 'Comic Sans MS', sans-serif;
 }
-
 .my-button {
     background-color: transparent;
 }
@@ -30,4 +29,27 @@
 }
 .pagination a {
     font-family: 'Comic Sans MS', sans-serif;
+}
+/* Maintain desktop image sizes */
+.custom-image {
+    width: 100px;
+    height: 100px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .card-title {
+        font-size: 1.2rem;
+    }
+    .pagination {
+        font-size: 0.8rem;
+    }
+    .trade-offer-card {
+        margin-bottom: 20px;
+    }
+    /* Make images responsive on mobile */
+    .custom-image {
+        width: 80px;
+        height: 80px;
+    }
 }

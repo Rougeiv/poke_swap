@@ -4,9 +4,10 @@
     My Trades
 {% endblock title %}
 
-{%block extra_head%}
-<link rel="stylesheet" href="../static/stylesheets/my_trades.css">
-{%endblock%}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/my_trades.css') }}">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
@@ -23,7 +24,7 @@
                     <h5 class="mb-1">{{ trade.id }}</h5>
                     <small>Expires in {{ trade.expires_in }}</small>
                 </div>
-                <p class="mb-1">
+                <p class="mb-1 trade-images">
                     <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + trade.pokemon1 + '.png') }}" alt="Pokemon 1">
                     ⇆
                     <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + trade.pokemon2 + '.png') }}" alt="Pokemon 2">
@@ -44,7 +45,7 @@
                     <h5 class="mb-1">{{ trade.id }}</h5>
                     <small>Completed on {{ trade.completed_on }}</small>
                 </div>
-                <p class="mb-1">
+                <p class="mb-1 trade-images">
                     <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + trade.pokemon1 + '.png') }}" alt="Pokemon 1">
                     ⇆
                     <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + trade.pokemon2 + '.png') }}" alt="Pokemon 2">
