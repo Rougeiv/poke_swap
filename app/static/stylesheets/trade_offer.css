@@ -8,21 +8,11 @@
     background: linear-gradient(to bottom, #d1f1f1, #306060);
 }
 
-.my-page {
-    display: none;
-}
-
 .pokemon-image {
     width: 200px;
     height: 200px;
     object-fit: cover;
     border-radius: 10px;
-}
-
-.pokepc-background {
-    background-image: url("../images/pikachubg.png");
-    background-size: cover;
-    background-position: center;
 }
 
 @media (max-width: 767.98px) {
