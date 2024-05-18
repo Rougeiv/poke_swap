@@ -1,6 +1,6 @@
 from urllib.parse import urlsplit
-from app import flaskApp, db
-from flask import flash, logging, render_template, request, redirect, session, jsonify, url_for, current_app as app, Blueprint
+from app import db
+from flask import flash, render_template, request, redirect, session, jsonify, url_for, current_app as flaskApp
 from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
@@ -9,7 +9,7 @@ from app.forms import EditProfileForm, LoginForm, SignUpForm
 from sqlalchemy.sql.expression import func
 import sqlalchemy.orm as orm
 import os
-from blueprints import main
+from app.blueprints import main
 
 
 @main.route('/')
@@ -53,7 +53,7 @@ def index():
 @main.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(location=url_for('main.index'))
     form = SignUpForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
@@ -61,20 +61,20 @@ def signup():
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('main.login'))
+        return redirect(location=url_for('main.login'))
     return render_template('signup.html', title='SignUp', form=form)
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(location=url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = db.session.scalar(
             sa.select(User).where(User.username == form.username.data))
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
-            return redirect(url_for('lmainogin'))
+            return redirect(location=url_for('lmainogin'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
@@ -84,19 +84,19 @@ def login():
 
 @main.route('/main')
 def main():
-    return redirect(url_for('main.index'))
+    return redirect(location=url_for('main.index'))
 
 @main.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('main.index'))
+    return redirect(location=url_for('main.index'))
 
 # Add a new route for the game page
 @main.route('/catch')
 def catch():
     # Check if user is logged in
     if current_user.is_anonymous:
-        return redirect(url_for('main.login'))
+        return redirect(location=url_for('main.login'))
     return render_template('catch.html')
 
 @main.route('/gacha_one_pull', methods=['POST'])
@@ -229,7 +229,7 @@ def trade_offer():
 
         return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites, pokemon_owned=pokemon_names, current_user_id=current_user.id)
     else:
-        return redirect(url_for('main.login'))
+        return redirect(location=url_for('main.login'))
 
 @login_required
 @main.route('/post_trade', methods=['POST'])
@@ -306,7 +306,7 @@ def edit_profile():
         current_user.about_me = form.about_me.data
         db.session.commit()
         flash('Your changes have been saved.')
-        return redirect(url_for('main.user', username=form.username.data))
+        return redirect(location=url_for('main.user', username=form.username.data))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me

@@ -8,10 +8,10 @@ from config import TestConfig
 from app.models import User
 from unittest import TestCase
 
-
 class UserModelCase(TestCase):
     def setUp(self):
-        self.app_context = testApp.app_context()
+        self.app = create_app(TestConfig)
+        self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
         # add_test_data_to_db()
