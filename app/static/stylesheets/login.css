@@ -1,3 +1,22 @@
 .my-forms p {
     color:white;
 }
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .card-title {
+        font-size: 1.2rem;
+    }
+    .pagination {
+        font-size: 0.8rem;
+    }
+    .my-card {
+        margin-bottom: 20px;
+        width: 100%;
+    }
+    /* Make images responsive on mobile */
+    .custom-image {
+        width: 80px;
+        height: 80px;
+    }
+}
