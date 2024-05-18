@@ -4,9 +4,10 @@
     My Trades
 {% endblock title %}
 
-{%block extra_head%}
-<link rel="stylesheet" href="../static/stylesheets/my_trades.css">
-{%endblock%}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/my_trades.css') }}">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% endblock %}
 
 {% block content %}
 <div class="container mt-5">

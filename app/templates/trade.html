@@ -2,25 +2,30 @@
 
 {% block title %}Trade #{{ trade.id }}{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/trade.css') }}">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% endblock %}
+
 {% block content %}
 <div class="container text-center mt-5">
     <h1>Trade #{{ trade.id }}</h1>
     <p><small>Posted on {{ trade.timestamp }}</small></p>
     <p>Offered by: {{ trade.user1 }}</p>
     <div class="row mt-4">
-        <div class="col-6">
+        <div class="col-md-6 mb-3">
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Offering: {{ trade.pokemon1_name }}</h5>
-                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon1_name.lower() ~ '.png') }}" alt="{{ trade.pokemon1_name }}">
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon1_name.lower() ~ '.png') }}" alt="{{ trade.pokemon1_name }}" class="pokemon-image">
                 </div>
             </div>
         </div>
-        <div class="col-6">
+        <div class="col-md-6 mb-3">
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Requesting: {{ trade.pokemon2_name }}</h5>
-                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon2_name.lower() ~ '.png') }}" alt="{{ trade.pokemon2_name }}">
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon2_name.lower() ~ '.png') }}" alt="{{ trade.pokemon2_name }}" class="pokemon-image">
                 </div>
             </div>
         </div>

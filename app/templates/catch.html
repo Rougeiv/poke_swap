@@ -3,7 +3,8 @@
 {% block title %}PokeSwap - Trade Offer{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="../static/stylesheets/catch.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/catch.css') }}">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 {% endblock %}
 
 {% block content %}
@@ -13,7 +14,7 @@
         <p class="token-count">₽ x{{ current_user.tokens }}</p>
     </div>
     <div id="error-message" class="alert alert-danger" style="display:none"><a id="broke-hint" style="display:none">How to get Poke Tokens?</a></div>
-    <img id="pokeball-img" class="closed" src="../static/images/pokeball-pixel-closed.png" alt="pokeball-button" width="200" height="">
+    <img id="pokeball-img" class="closed" src="{{ url_for('static', filename='images/pokeball-pixel-closed.png') }}" alt="pokeball-button" width="200">
     <div id="pull-result"></div>
     <div id="textbox-container">
         <div id="textbox" alt="pokemon-textbox">
@@ -32,12 +33,12 @@
     <p>Note: you can only own one of each pokemon at a time. If you pull a pokemon you already own, you will lose one Poke Token</p>
 </div>
 
-{% endblock content %}
+{% endblock %}
 
 {% block scripts %}
 <script>
     document.getElementById('gacha-ten-pull-button').addEventListener('click', function() {
-        var audio = new Audio('../static/audio/Click.mp3');
+        var audio = new Audio('{{ url_for('static', filename='audio/Click.mp3') }}');
         audio.play();
     });
     // Add event listener for the Gacha button
@@ -46,38 +47,33 @@
         .then(response => {
             console.log(response);
             if (response.ok) {
-                // location.reload();
-                // If the response is successful (status code 200), parse the JSON response
                 return response.json();
             } else if (response.status === 403) {
-                // location.reload();
-                // If the user has insufficient tokens (status code 403), handle the error
                 return Promise.reject('Insufficient tokens. GET YO MONEY UP!!');
             } else {
-                // For other error cases, handle them accordingly
                 return Promise.reject('An error occurred');
             }
         })
         .then(data => {
             console.log("Data: ", data);
-            console.log(typeof data)
+            console.log(typeof data);
 
             // Update the token count displayed on the page
             const tokenCountElement = document.querySelector('.token-count');
             tokenCountElement.textContent = '₽ x' + data.tokens;
 
              // Clear previous Pokemon info
-            pullContainer = document.getElementById('pull-result');
+            let pullContainer = document.getElementById('pull-result');
             while (pullContainer.firstChild) {
                 pullContainer.firstChild.remove();
             }
             let pokeball = document.getElementById('pokeball-img');
             if (pokeball.classList.contains('closed')) {
-                pokeball.src = '../static/images/pokeball-pixel-opened-fully.png';
+                pokeball.src = '{{ url_for('static', filename='images/pokeball-pixel-opened-fully.png') }}';
                 pokeball.classList.remove('closed');
             }
             let i = 0;
-            textboxText = document.getElementById('textbox-txt');
+            let textboxText = document.getElementById('textbox-txt');
             textboxText.textContent = `Congrats! You got: `;
             // Display information about the 10 random Pokemon
             data["pokemon_list"].forEach(pokemon => {
@@ -86,9 +82,8 @@
                 pokemonDiv.classList.add("pokemon-img-container");
 
                 let pokemonImg = document.createElement('img');
-                pokemonImg.src = '../static/images/pokemon_gen4_sprites/' + pokemon["name"].toLowerCase() + '.png';
-                pokemonImg.width = 200;
-                pokemonImg.height = 200;
+                pokemonImg.src = '{{ url_for('static', filename='images/pokemon_gen4_sprites/') }}' + pokemon["name"].toLowerCase() + '.png';
+                pokemonImg.classList.add('custom-image');
 
                 let cardImg = document.createElement("img");
                 pokemonDiv.appendChild(pokemonImg);
@@ -99,44 +94,19 @@
                 textboxText.textContent += `${pokemon["name"]}, `;
                 i++;
             });
-            // Display Pokémon images
-            // const pokemonImagesContainer = document.getElementById('pull-result');
-            // const pokemonNames = data.pokemon_names;
-            // const pokemonImageUrls = data.pokemon_image_urls;
-
-            // // Loop through each Pokémon and create <img> elements
-            // for (let i = 0; i < pokemonNames.length; i++) {
-            //     const pokemonName = pokemonNames[i];
-            //     const pokemonImageUrl = pokemonImageUrls[i];
-
-            //     // Create <img> element
-            //     const img = document.createElement('img');
-            //     img.src = pokemonImageUrl;
-            //     img.alt = pokemonName;
-
-            //     // Append <img> element to the container
-            //     pokemonImagesContainer.appendChild(img);
-            // }
             
         })
         .catch(error => {
-            // Handle any errors that occurred during the request
             console.error(error);
-            // Display the error message on the webpage
             document.getElementById('error-message').innerText = error;
-            // Show the error message element
             document.getElementById('error-message').style.display = 'block';
-
-            // let brokeHint = document.getElementById('broke-hint');
-            // brokeHint.href = "{{ url_for('how_to_play') }}";
-            // brokeHint.style.display = "block";
         })
     });
 </script>
 <script>
-    //click audio
+    // Click audio
     document.getElementById('gacha-one-pull-button').addEventListener('click', function() {
-        var audio = new Audio('../static/audio/Click.mp3');
+        var audio = new Audio('{{ url_for('static', filename='audio/Click.mp3') }}');
         audio.play();
     });
     // Add event listener for one-pull gacha button
@@ -145,64 +115,49 @@
         .then(response => {
             console.log(response);
             if (response.ok) {
-                // location.reload();
-                // If the response is successful (status code 200), parse the JSON response
                 return response.json();
             } else if (response.status === 403) {
-                // location.reload();
-                // If the user has insufficient tokens (status code 403), handle the error
                 return Promise.reject('Insufficient tokens. GET YO MONEY UP!!');
             } else {
-                // For other error cases, handle them accordingly
                 return Promise.reject('An error occurred');
             }
         })
         .then(data => {
             console.log("Data: ", data);
-            console.log(typeof data)
+            console.log(typeof data);
 
             // Update the token count displayed on the page
             const tokenCountElement = document.querySelector('.token-count');
             tokenCountElement.textContent = '₽ x' + data.tokens;
 
-            //clear previous pull
-            pullContainer = document.getElementById('pull-result');
+            // Clear previous pull
+            let pullContainer = document.getElementById('pull-result');
             while (pullContainer.firstChild) {
                 pullContainer.firstChild.remove();
             }
             let pokeball = document.getElementById('pokeball-img');
             if (pokeball.classList.contains('closed')) {
-                pokeball.src = '../static/images/pokeball-pixel-opened-fully.png';
+                pokeball.src = '{{ url_for('static', filename='images/pokeball-pixel-opened-fully.png') }}';
                 pokeball.classList.remove('closed');
             }
-            textboxText = document.getElementById('textbox-txt');
+            let textboxText = document.getElementById('textbox-txt');
             textboxText.textContent = `Congrats! You got: ${data.pokemon_name}`;
             // Display the result of the one-pull gacha
             let pokemonDiv = document.createElement("div");
             pokemonDiv.classList.add("pokemon-img-container");
 
             let pokemonImg = document.createElement("img");
-            // pokemonImg.src = '../static/images/pokemon_gen4_sprites/' + data.name.toLowerCase() + '.png';
-            pokemonImg.src = data.pokemon_image_url
-            pokemonImg.width = 200;
-            pokemonImg.height = 200;
+            pokemonImg.src = data.pokemon_image_url;
+            pokemonImg.classList.add('custom-image');
 
             let cardImg = document.createElement("img");
             pokemonDiv.appendChild(pokemonImg);
-            document.getElementById("pull-result").append(pokemonDiv)
-            })
-
+            document.getElementById("pull-result").append(pokemonDiv);
+        })
         .catch(error => {
-            // Handle any errors that occurred during the request
             console.error(error);
-            // Display the error message on the webpage
             document.getElementById('error-message').innerText = error;
-            // Show the error message element
             document.getElementById('error-message').style.display = 'block';
-
-            // let brokeHint = document.getElementById('broke-hint');
-            // brokeHint.href = "{{ url_for('how_to_play') }}";
-            // brokeHint.style.display = "block";
         })
     });
 </script>

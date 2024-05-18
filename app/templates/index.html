@@ -18,24 +18,24 @@
     {% endif %}
     <h2 class="gotta-catch">Gotta catch 'em all!</h2>
     <div class="row mt-4">
-        <div class="col-6">
+        <div class="col-md-6 col-12 mb-3">
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Catch Pokemon</h5>
                     <a href="{{ url_for('catch') }}" class="btn btn-custom my-button">
-                        <img src="{{ url_for('static', filename='images/tallgrass.png') }}" width="100" height="100" alt="Catch Pokemon">
+                        <img src="{{ url_for('static', filename='images/tallgrass.png') }}" width="100" height="100" alt="Catch Pokemon" class="custom-image">
                     </a>
                 </div>
             </div>
         </div>
-        <div class="col-6">
+        <div class="col-md-6 col-12 mb-3">
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Make a trade offer</h5>
                     <a href="{{ url_for('trade_offer') }}" class="btn btn-secondary">
-                        <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball">
+                        <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball" class="custom-image">
                         ⇆
-                        <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball">
+                        <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball" class="custom-image">
                     </a>
                 </div>
             </div>
@@ -45,14 +45,14 @@
         <h1>Active Trade Offers</h1>
         <div class="row mt-4">
             {% for offer in trade_offers %}
-            <a href="{{ url_for('trade', trade_id=offer.trade_id) }}" class="col-12 trade-offer-card">
+            <a href="{{ url_for('trade', trade_id=offer.trade_id) }}" class="col-12 trade-offer-card mb-3">
                 <div class="card bg-dark text-white">
                     <div class="card-body">
                         <h5 class="card-title">Trade #{{ offer.trade_id }}</h5>
                         <p class="card-text"><small>Posted on {{ offer.timestamp }}</small></p>
-                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon1_name ~ '.png') }}" alt="Pokemon 1">
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon1_name ~ '.png') }}" alt="Pokemon 1" class="custom-image">
                         ⇆
-                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon2_name ~ '.png') }}" alt="Pokemon 2">
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon2_name ~ '.png') }}" alt="Pokemon 2" class="custom-image">
                     </div>
                 </div>
             </a>
@@ -60,7 +60,7 @@
         </div>
     </div>
     <nav aria-label="Page navigation" class="mt-4">
-        <ul class="pagination">
+        <ul class="pagination justify-content-center">
             {% if page > 1 %}
             <li class="page-item"><a class="page-link" href="{{ url_for('index', page=page-1) }}">Previous</a></li>
             {% endif %}
