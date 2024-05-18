@@ -199,6 +199,8 @@ def my_trades():
     Pokemon1 = orm.aliased(Pokemon)
     Pokemon2 = orm.aliased(Pokemon)
 
+    current_user
+
     trades_query = db.session.query(
     Trade.id,
     Trade.timestamp,
@@ -208,6 +210,8 @@ def my_trades():
         Pokemon1, Trade.pokemon_id1 == Pokemon1.id
     ).join(
         Pokemon2, Trade.pokemon_id2 == Pokemon2.id
+    ).filter(
+        Trade.user_id1 == current_user.id
     ).order_by(Trade.timestamp.asc())
 
     # Fetching all trades
