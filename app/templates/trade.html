@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Trade #{{ trade.id }}{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1>Trade #{{ trade.id }}</h1>
+    <p><small>Posted on {{ trade.timestamp }}</small></p>
+    <p>Offered by: {{ trade.user1 }}</p>
+    <div class="row mt-4">
+        <div class="col-6">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Offering: {{ trade.pokemon1_name }}</h5>
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon1_name.lower() ~ '.png') }}" alt="{{ trade.pokemon1_name }}">
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Requesting: {{ trade.pokemon2_name }}</h5>
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon2_name.lower() ~ '.png') }}" alt="{{ trade.pokemon2_name }}">
+                </div>
+            </div>
+        </div>
+    </div>
+    <button id="accept-trade-btn" class="btn btn-success mt-4">Accept Trade</button>
+</div>
+
+<!-- Modal for error messages -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="errorModalLabel">Error</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        You do not own the Pokémon the user is requesting.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.getElementById('accept-trade-btn').addEventListener('click', function () {
+        fetch('{{ url_for("accept_trade", trade_id=trade.id) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                $('#errorModal').modal('show');
+            } else {
+                window.location.href = '{{ url_for("index") }}';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+{% endblock %}
