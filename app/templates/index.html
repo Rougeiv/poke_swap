@@ -12,9 +12,19 @@
     {% if current_user.is_anonymous %}
     <h1>Welcome to Pokeswap</h1>
     {% else %}
-    <h1>Hi, {{ current_user.username }}!</h1>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h1>Hi, {{ current_user.username }}!</h1>
+                        <h3>Are you ready to catch 'em all?!</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>   
     {% endif %}
-    <h2 class="gotta-catch">Gotta catch 'em all!</h2>
     <div class="row mt-4">
         <div class="col-md-6 col-12 mb-3">
             <div class="card bg-dark text-white">

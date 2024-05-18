@@ -11,14 +11,14 @@
 
 {% block content %}
 <div class="container mt-5 mb-5">
-    <div class="card my-card-border">
-        <div class="card-header text-center bg-dark text-white">
-            Trade Offer
+    <div class="card my-card-border text-center bg-dark text-white">
+        <div class="card-header trade-offer-header">
+            <h1> Trade Offer </h1>
         </div>
         <div class="card-body my-card-color">
             <div class="row text-center">
                 <div class="col">
-                    <h5>Offering</h5>
+                    <h5 class="my-offer">Offering</h5>
                     <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Offering" class="img-thumbnail pokemon-image" id="offeringPlaceholder">
                     <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#pokemonPCModal">
                         Select Pokémon
@@ -28,7 +28,7 @@
                     <span class="mx-3">⇆</span>
                 </div>
                 <div class="col">
-                    <h5>Requesting</h5>
+                    <h5 class="my-request">Requesting</h5>
                     <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Requesting" class="img-thumbnail pokemon-image" id="requestingPlaceholder">
                     <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#requestPokemonModal">
                         Select Pokémon
@@ -106,6 +106,47 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Success!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+                <div class="modal-body">
+                    Your trade has been posted successfully.
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class ="modal fade" id="errorModal" role="dialog" aria-labelledby="error" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                    <div class="modal-body">
+                        You have exceeded your maximum trade offer limit!
+                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+
 <script>
     $(document).ready(function() {
         let selectedPokemonName1 = null;
@@ -135,14 +176,17 @@
                 },
                 success: function(response) {
                     if (response.error) {
-                        alert(response.error); // Show pop-up for maximum active trades
+                        // Show pop-up for maximum active trades
+                        alert(response.error); 
                     } else {
+                        console.log(response.success);
+                        $('#successModal').modal('show'); // Show success modal
                         console.log(response.success);
                         // Optionally reset or refresh page here
                     }
                 },
                 error: function(xhr) {
-                    alert("Error: " + xhr.responseText);
+                    $('#errorModal').modal('show');
                 }
             });
         });
