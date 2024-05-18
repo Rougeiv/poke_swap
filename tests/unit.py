@@ -13,6 +13,7 @@ class UserModelCase(TestCase):
         self.app = create_app(TestConfig)
         self.app_context = self.app.app_context()
         self.app_context.push()
+        
         db.create_all()
         # add_test_data_to_db()
 

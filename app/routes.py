@@ -82,9 +82,6 @@ def login():
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
-# @main.route('/main')
-# def main():
-#     return redirect(location=url_for('main.index'))
 
 @main.route('/logout')
 def logout():
