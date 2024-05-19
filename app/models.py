@@ -52,9 +52,16 @@ class User(UserMixin, db.Model):
     def active_trades(self):
         return Trade.query.filter(Trade.user_id1 == self.id, Trade.user_id2 == None).all()
     
-    def past_trades(self):
-        return Trade.query.filter((Trade.user_id1 == self.id) | (Trade.user_id2 == self.id)).filter(Trade.user_id1 != None and Trade.user_id2 != None).all()
+    # def past_trades(self):
+    #     return Trade.query.filter((Trade.user_id1 == self.id) | (Trade.user_id2 == self.id)).filter(Trade.user_id1 != None and Trade.user_id2 != None).all()
     
+    def past_trades(self):
+        return Trade.query.filter(
+            (Trade.user_id1 == self.id) | (Trade.user_id2 == self.id)
+        ).filter(
+            Trade.user_id1.isnot(None), Trade.user_id2.isnot(None)
+        ).all()
+
     def avatar(self, size):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
