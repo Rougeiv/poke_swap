@@ -231,14 +231,14 @@ def gacha_one_pull():
 
             # first check if the user already has the pokemon
             if random_pokemon in current_user.inventory:
-                main.logger.debug('User %s already has Pokémon %s', current_user.username, random_pokemon.name)
+                current_app.logger.debug('User %s already has Pokémon %s', current_user.username, random_pokemon.name)
                 # take 1 coin away from the user
                 current_user.coins -= 1
             else:
                 # Assign the Pokémon to the user's inventory
                 current_user.inventory.append(random_pokemon)
-                main.logger.debug('Assigned Pokémon %s to user %s', random_pokemon.name, current_user.username)
-                main.logger.debug('Response Data: %s', jsonify({'pokemon_data': pokemon_data}))
+                current_app.logger.debug('Assigned Pokémon %s to user %s', random_pokemon.name, current_user.username)
+                current_app.logger.debug('Response Data: %s', jsonify({'pokemon_data': pokemon_data}))
                 # take 3 coins away from the user
                 current_user.coins -= 3
             db.session.commit()
@@ -252,7 +252,7 @@ def gacha_one_pull():
             # Return an error response if the user doesn't have enough coins
             return jsonify({'error': 'Insufficient coins'}), 403, {'Content-Type': 'application/json'}
     except Exception as e:
-        main.logger.error('An error occurred: %s', str(e))
+        # current_app.logger.error('An error occurred: %s', str(e))
         return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}
     
 @main.route('/gacha_ten_pull', methods=['POST'])
