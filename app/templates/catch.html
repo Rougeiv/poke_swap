@@ -17,7 +17,7 @@
             <p class="token-count">You currently have <span class="token-amount">₽{{ current_user.tokens }}</span> tokens!</p>
         </div>
     </div>
-    <div id="error-message" class="alert alert-danger" style="display:none"><a id="broke-hint" style="display:none">How to get Poke Tokens?</a></div>
+    <div id="error-message" class="alert alert-danger" style="display:none"><a id="broke-hint" style="display:none">How to get Poke coins?</a></div>
     <img id="pokeball-img" class="closed" src="{{ url_for('static', filename='images/pokeball-pixel-closed.png') }}" alt="pokeball-button" width="200">
     <div id="pull-result"></div>
     <div id="textbox-container">
@@ -44,7 +44,7 @@
 {% block scripts %}
 <script>
     document.getElementById('gacha-ten-pull-button').addEventListener('click', function() {
-        var audio = new Audio('{{ url_for('static', filename='audio/Click.mp3') }}');
+        var audio = new Audio('{{ url_for("static", filename="audio/Click.mp3") }}');
         audio.play();
     });
     // Add event listener for the Gacha button
@@ -55,6 +55,7 @@
             if (response.ok) {
                 return response.json();
             } else if (response.status === 403) {
+                // If the user has insufficient tokens (status code 403), handle the error
                 return Promise.reject('Insufficient tokens. GET YO MONEY UP!!');
             } else {
                 return Promise.reject('An error occurred');
@@ -64,9 +65,9 @@
             console.log("Data: ", data);
             console.log(typeof data);
 
-            // Update the token count displayed on the page
-            const tokenCountElement = document.querySelector('.token-count');
-            tokenCountElement.textContent = '₽ x' + data.tokens;
+            // Update the coin count displayed on the page
+            const coinCountElement = document.querySelector('.coin-count');
+            coinCountElement.textContent = '₽ x' + data.coins;
 
              // Clear previous Pokemon info
             let pullContainer = document.getElementById('pull-result');
@@ -75,7 +76,7 @@
             }
             let pokeball = document.getElementById('pokeball-img');
             if (pokeball.classList.contains('closed')) {
-                pokeball.src = '{{ url_for('static', filename='images/pokeball-pixel-opened-fully.png') }}';
+                pokeball.src = "{{ url_for('static', filename='images/pokeball-pixel-opened-fully.png') }}";
                 pokeball.classList.remove('closed');
             }
             let i = 0;
@@ -88,7 +89,7 @@
                 pokemonDiv.classList.add("pokemon-img-container");
 
                 let pokemonImg = document.createElement('img');
-                pokemonImg.src = '{{ url_for('static', filename='images/pokemon_gen4_sprites/') }}' + pokemon["name"].toLowerCase() + '.png';
+                pokemonImg.src = "{{ url_for('static', filename='images/pokemon_gen4_sprites/') }}" + pokemon["name"].toLowerCase() + '.png';
                 pokemonImg.classList.add('custom-image');
 
                 let cardImg = document.createElement("img");
@@ -112,7 +113,7 @@
 <script>
     // Click audio
     document.getElementById('gacha-one-pull-button').addEventListener('click', function() {
-        var audio = new Audio('{{ url_for('static', filename='audio/Click.mp3') }}');
+        var audio = new Audio("{{ url_for('static', filename='audio/Click.mp3') }}");
         audio.play();
     });
     // Add event listener for one-pull gacha button
@@ -123,6 +124,8 @@
             if (response.ok) {
                 return response.json();
             } else if (response.status === 403) {
+                // location.reload();
+                // If the user has insufficient tokens (status code 403), handle the error
                 return Promise.reject('Insufficient tokens. GET YO MONEY UP!!');
             } else {
                 return Promise.reject('An error occurred');
@@ -132,9 +135,9 @@
             console.log("Data: ", data);
             console.log(typeof data);
 
-            // Update the token count displayed on the page
-            const tokenCountElement = document.querySelector('.token-count');
-            tokenCountElement.textContent = '₽ x' + data.tokens;
+            // Update the coin count displayed on the page
+            const coinCountElement = document.querySelector('.coin-count');
+            coinCountElement.textContent = '₽ x' + data.coins;
 
             // Clear previous pull
             let pullContainer = document.getElementById('pull-result');
@@ -143,7 +146,7 @@
             }
             let pokeball = document.getElementById('pokeball-img');
             if (pokeball.classList.contains('closed')) {
-                pokeball.src = '{{ url_for('static', filename='images/pokeball-pixel-opened-fully.png') }}';
+                pokeball.src = "{{ url_for('static', filename='images/pokeball-pixel-opened-fully.png') }}";
                 pokeball.classList.remove('closed');
             }
             let textboxText = document.getElementById('textbox-txt');
