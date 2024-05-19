@@ -44,19 +44,29 @@
     <div class="container text-center mt-5 trade-offers-container">
         <h1>Active Trade Offers</h1>
         <div class="row mt-4">
-            {% for offer in trade_offers %}
-            <a href="{{ url_for('trade', trade_id=offer.trade_id) }}" class="col-12 trade-offer-card mb-3">
-                <div class="card bg-dark text-white">
-                    <div class="card-body">
-                        <h5 class="card-title">Trade #{{ offer.trade_id }}</h5>
-                        <p class="card-text"><small>Posted on {{ offer.timestamp }}</small></p>
-                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon1_name ~ '.png') }}" alt="Pokemon 1" class="custom-image">
-                        ⇆
-                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon2_name ~ '.png') }}" alt="Pokemon 2" class="custom-image">
+            <!-- {% if trade_offers %} -->
+                {% for offer in trade_offers %}
+                <a href="{{ url_for('main.trade', trade_id=offer.trade_id) }}" class="col-12 trade-offer-card mb-3">
+                    <div class="card bg-dark text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Trade #{{ offer.trade_id }}</h5>
+                            <p class="card-text"><small>Posted on {{ offer.timestamp }}</small></p>
+                            <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon1_name ~ '.png') }}" alt="Pokemon 1" class="custom-image">
+                            ⇆
+                            <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon2_name ~ '.png') }}" alt="Pokemon 2" class="custom-image">
+                        </div>
                     </div>
-                </div>
-            </a>
-            {% endfor %}
+                </a>
+                {% endfor %}
+            <!-- {% else %}
+                <div class="col-12 trade-offer-card mb-3">
+                    <div class="card bg-dark text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">No Trades found...</h5>
+                            <p class="card-text">Post a trade offer!</p>
+                    </div>
+                </a>
+            {% endif %} -->
         </div>
     </div>
     <nav aria-label="Page navigation" class="mt-4">

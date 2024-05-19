@@ -135,9 +135,10 @@
                 },
                 success: function(response) {
                     if (response.error) {
-                        alert(response.error); // Show pop-up for maximum active trades
+                        alert(response.error, danger); // Show pop-up for maximum active trades
                     } else {
                         console.log(response.success);
+                        return redirect(url_for('main.index'))
                         // Optionally reset or refresh page here
                     }
                 },

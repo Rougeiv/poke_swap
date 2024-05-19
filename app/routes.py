@@ -1,5 +1,5 @@
 from urllib.parse import urlsplit
-from flask import flash, render_template, request, redirect, session, jsonify, url_for
+from flask import flash, render_template, request, redirect, session, jsonify, url_for, current_app
 from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
@@ -126,10 +126,6 @@ def accept_trade(trade_id):
         return jsonify({'error': str(e)}), 500
 
 
-
-
-
-
 @main.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
@@ -154,7 +150,7 @@ def login():
             sa.select(User).where(User.username == form.username.data))
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password', 'danger')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
         login_user(user, remember=form.remember_me.data)
 
         # Check for expired trades
@@ -271,12 +267,12 @@ def gacha_ten_pull():
                 
                 # first check if the user already has the pokemon
                 if pokemon in current_user.inventory:
-                    main.logger.debug('User %s already has Pokémon %s', current_user.username, pokemon.name)
+                    current_app.logger.debug('User %s already has Pokémon %s', current_user.username, pokemon.name)
                 else:
                     # Assign the Pokémon to the user's inventory
                     current_user.inventory.append(pokemon)
-                    main.logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
-                    main.logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
+                    current_app.logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
+                    current_app.logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
             # take 10 coins away from the user
             current_user.coins -= 10
             # Commit the changes to the database
@@ -289,7 +285,7 @@ def gacha_ten_pull():
             return jsonify({'error': 'Insufficient coins'}), 403, {'Content-Type': 'application/json'}
     except Exception as e:
         # return jsonify({'error exception': str(e)}), 500, {'Content-Type': 'application/json'}
-        main.logger.error('An error occurred: %s', str(e))
+        current_app.logger.error('An error occurred: %s', str(e))
         return jsonify({'error': 'Internal Server Error'}), 500
 
 @main.route('/my_trades', methods=['GET'])
@@ -387,16 +383,22 @@ def delete_trade(trade_id):
 @login_required
 @main.route('/trade_offer', methods=['POST', 'GET'])
 def trade_offer():
-    sprite_folder = os.path.join(app.static_folder, 'images', 'pokemon_gen4_sprites')
-    try:
-        pokemon_sprites = [f[:-4] for f in os.listdir(sprite_folder) if f.endswith('.png')]  # Removes '.png'
-        app.logger.info(f"Loaded Pokémon sprites: {pokemon_sprites}")
-    except Exception as e:
-        app.logger.error(f"Failed to load Pokémon sprites: {e}")
-        pokemon_sprites = []
-
     # Using SQLAlchemy ORM to fetch Pokémon names owned by the logged-in user
     if current_user.is_authenticated:
+        try:
+            sprite_folder = os.path.join(current_app.static_folder, 'images', 'pokemon_gen4_sprites')
+
+            # Ensure the sprite folder exists
+            if not os.path.exists(sprite_folder):
+                current_app.logger.error(f"Sprite folder does not exist: {sprite_folder}")
+                flash(f"error: Sprite folder does not exist: {sprite_folder}")
+                pokemon_sprites = []
+            else:
+                pokemon_sprites = [f[:-4] for f in os.listdir(sprite_folder) if f.endswith('.png')]  # Removes '.png'
+                # app.logger.info(f"Loaded Pokémon sprites: {pokemon_sprites}")
+        except Exception as e:
+            current_app.logger.error(f"Failed to load Pokémon sprites: {e}")
+            pokemon_sprites = []
         # Fetch the Pokémon IDs for the logged-in user
         inventory_pokemon = current_user.inventory
 
@@ -447,12 +449,13 @@ def post_trade():
 
         db.session.add(new_trade)
 
-        # when a user posts a trade, they get +3 tokens
-        current_user.tokens += 3
+        # when a user posts a trade, they get +3 coins
+        current_user.coins += 3
         
         db.session.commit()
         flash('Your post is now live!')
         return jsonify({'success': 'Trade posted successfully!'}), 200
+        # return redirect(url_for('main.index'))
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

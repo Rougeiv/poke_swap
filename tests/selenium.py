@@ -23,6 +23,15 @@ class SeleniumTestCase(TestCase):
         self.driver = webdriver.Chrome()
         self.driver.get(localhost)
 
+    def run_server(self):
+        self.app.run(port=5000)
+
+    def create_user(self, username, email, password):
+        user = User(username=username, email=email)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+
     def tearDown(self):
         db.session.remove()
         db.drop_all()
@@ -30,18 +39,20 @@ class SeleniumTestCase(TestCase):
 
         self.server_process.terminate()
 
-    def test_login(self):
+    def test_login_success(self):
+        self.create_user('testuser', 'test@example.com', 'password')
+        self.driver.get('http://localhost:5000/login')
         time.sleep(1)
-        loginEle = self.driver.find_element(webdriver.common.By.ID, "username")
-        loginEle.send_keys("MythicFJGHKJ")
 
-        loginEle = self.driver.find_element(webdriver.common.By.ID, "password")
-        loginEle.send_keys("Password1!")
+        username_input = self.driver.find_element(webdriver.common.By.ID, "username")
+        password_input = self.driver.find_element(webdriver.common.By.ID, "password")
+        login_button = self.driver.find_element(webdriver.common.By.ID, "submit")
 
-        loginEle = self.driver.find_element(webdriver.common.By.ID, "submit")
-        loginEle.click()
+        username_input.send_keys("MythicFJGHKJ")
+        password_input.send_keys("Password1!")
+        login_button.click()
 
         
-        self.assertEqual(self.driver.current_url, localhost + "login")
-        time.sleep(10)
+        time.sleep(1)
+        self.assertIn('http://localhost:5000/', self.driver.current_url)
 

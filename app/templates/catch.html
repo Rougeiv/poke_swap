@@ -38,7 +38,7 @@
 {% block scripts %}
 <script>
     document.getElementById('gacha-ten-pull-button').addEventListener('click', function() {
-        var audio = new Audio('{{ url_for('static', filename='audio/Click.mp3') }}');
+        var audio = new Audio('{{ url_for("static", filename="audio/Click.mp3") }}');
         audio.play();
     });
     // Add event listener for the Gacha button
@@ -70,7 +70,7 @@
             }
             let pokeball = document.getElementById('pokeball-img');
             if (pokeball.classList.contains('closed')) {
-                pokeball.src = '{{ url_for('static', filename='images/pokeball-pixel-opened-fully.png') }}';
+                pokeball.src = "{{ url_for('static', filename='images/pokeball-pixel-opened-fully.png') }}";
                 pokeball.classList.remove('closed');
             }
             let i = 0;
@@ -83,7 +83,7 @@
                 pokemonDiv.classList.add("pokemon-img-container");
 
                 let pokemonImg = document.createElement('img');
-                pokemonImg.src = '{{ url_for('static', filename='images/pokemon_gen4_sprites/') }}' + pokemon["name"].toLowerCase() + '.png';
+                pokemonImg.src = "{{ url_for('static', filename='images/pokemon_gen4_sprites/') }}" + pokemon["name"].toLowerCase() + '.png';
                 pokemonImg.classList.add('custom-image');
 
                 let cardImg = document.createElement("img");
@@ -107,7 +107,7 @@
 <script>
     // Click audio
     document.getElementById('gacha-one-pull-button').addEventListener('click', function() {
-        var audio = new Audio('{{ url_for('static', filename='audio/Click.mp3') }}');
+        var audio = new Audio("{{ url_for('static', filename='audio/Click.mp3') }}");
         audio.play();
     });
     // Add event listener for one-pull gacha button
@@ -140,7 +140,7 @@
             }
             let pokeball = document.getElementById('pokeball-img');
             if (pokeball.classList.contains('closed')) {
-                pokeball.src = '{{ url_for('static', filename='images/pokeball-pixel-opened-fully.png') }}';
+                pokeball.src = "{{ url_for('static', filename='images/pokeball-pixel-opened-fully.png') }}";
                 pokeball.classList.remove('closed');
             }
             let textboxText = document.getElementById('textbox-txt');
