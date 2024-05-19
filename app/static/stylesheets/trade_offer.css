@@ -80,3 +80,7 @@ body {
     background-repeat: no-repeat; /* Do not repeat the background image */
     font-family: 'Arial', sans-serif; /* Your font family */
 }
+
+body {
+    background-color: #7EAC71; /* Green */
+}
