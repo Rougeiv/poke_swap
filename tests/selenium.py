@@ -1,6 +1,7 @@
 from datetime import time
 import multiprocessing
 from selenium import webdriver
+# from selenium.webdriver.common.by import By
 from app import create_app, db
 from config import TestConfig
 from app.models import User
@@ -11,8 +12,8 @@ localhost = "http://localhost:5000"
 class SeleniumTestCase(TestCase):
 
     def setUp(self):
-        testApp = create_app(TestConfig)
-        self.app_context = testApp.app_context()
+        self.testApp = create_app(TestConfig)
+        self.app_context = self.testApp.app_context()
         self.app_context.push()
         db.create_all()
 
@@ -29,9 +30,18 @@ class SeleniumTestCase(TestCase):
 
         self.server_process.terminate()
 
-    def test_signup(self):
-        time.sleep(10)
-        self.assertTrue(True)
+    def test_login(self):
+        time.sleep(1)
+        loginEle = self.driver.find_element(webdriver.common.By.ID, "username")
+        loginEle.send_keys("MythicFJGHKJ")
 
-        loginEle = self.driver.find_element(BY.ID, "login")
-        loginEle.send_keys("01349324")
+        loginEle = self.driver.find_element(webdriver.common.By.ID, "password")
+        loginEle.send_keys("Password1!")
+
+        loginEle = self.driver.find_element(webdriver.common.By.ID, "submit")
+        loginEle.click()
+
+        
+        self.assertEqual(self.driver.current_url, localhost + "login")
+        time.sleep(10)
+
