@@ -1,22 +1,22 @@
 from urllib.parse import urlsplit
-from app import flaskApp, db
-from flask import flash, logging, render_template, request, redirect, session, jsonify, url_for, current_app
-import sqlite3
+from flask import flash, render_template, request, redirect, session, jsonify, url_for, current_app
 from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
-from flask import current_app as app
 from app.models import User, Pokemon, Trade
 from app.forms import EditProfileForm, LoginForm, SignUpForm
-import random
 from sqlalchemy.sql.expression import func
 import sqlalchemy.orm as orm
 from flask_wtf import CSRFProtect
 from datetime import datetime, timedelta
 import os
+from app.blueprints import main
+from app import db
 
-@flaskApp.route('/')
-@flaskApp.route('/index')
+
+@main.route('/')
+@main.route('/index')
+# @login_required
 def index():
     page = request.args.get('page', 1, type=int)
     per_page = 4
@@ -68,7 +68,7 @@ def index():
 
 
 
-@flaskApp.route('/trade/<int:trade_id>')
+@main.route('/trade/<int:trade_id>')
 @login_required
 def trade(trade_id):
     # Fetch the trade details from the database using the trade_id
@@ -99,7 +99,7 @@ def trade(trade_id):
     return render_template('trade.html', trade=trade)
 
 
-@flaskApp.route('/accept_trade/<int:trade_id>', methods=['POST'])
+@main.route('/accept_trade/<int:trade_id>', methods=['POST'])
 @login_required
 def accept_trade(trade_id):
     trade = db.session.query(Trade).filter_by(id=trade_id).first()
@@ -138,14 +138,10 @@ def accept_trade(trade_id):
         return jsonify({'error': str(e)}), 500
 
 
-
-
-
-
-@flaskApp.route('/signup', methods=['GET', 'POST'])
+@main.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(location=url_for('main.index'))
     form = SignUpForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
@@ -153,20 +149,20 @@ def signup():
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('login'))
+        return redirect(location=url_for('main.login'))
     return render_template('signup.html', title='SignUp', form=form)
 
-@flaskApp.route('/login', methods=['GET', 'POST'])
+@main.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(location=url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = db.session.scalar(
             sa.select(User).where(User.username == form.username.data))
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password', 'danger')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
         login_user(user, remember=form.remember_me.data)
 
         # Check for expired trades
@@ -193,31 +189,27 @@ def login():
 
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
-            next_page = url_for('index')
+            next_page = url_for('main.index')
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
-@flaskApp.route('/main')
-def main():
-    return redirect(url_for('index'))
 
-@flaskApp.route('/logout')
+@main.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(location=url_for('main.index'))
 
-# Add a new route for the game page
-@flaskApp.route('/catch')
+@main.route('/catch')
 def catch():
     # Check if user is logged in
     if current_user.is_anonymous:
-        return redirect(url_for('login'))
+        return redirect(location=url_for('main.login'))
     return render_template('catch.html')
 
-@flaskApp.route('/gacha_one_pull', methods=['POST'])
+@main.route('/gacha_one_pull', methods=['POST'])
 def gacha_one_pull():
     try:
-        if current_user.tokens >= 3:
+        if current_user.coins >= 3:
             # first get pokemon already owned by user
             # owned_pokemon_ids = [pokemon.id for pokemon in current_user.inventory]
             # .filter(sa.not_(Pokemon.id.in_(owned_pokemon_ids)))
@@ -234,34 +226,34 @@ def gacha_one_pull():
 
             # first check if the user already has the pokemon
             if random_pokemon in current_user.inventory:
-                flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, random_pokemon.name)
-                # take 1 token away from the user
-                current_user.tokens -= 1
+                main.logger.debug('User %s already has Pokémon %s', current_user.username, random_pokemon.name)
+                # take 1 coin away from the user
+                current_user.coins -= 1
             else:
                 # Assign the Pokémon to the user's inventory
                 current_user.inventory.append(random_pokemon)
-                flaskApp.logger.debug('Assigned Pokémon %s to user %s', random_pokemon.name, current_user.username)
-                flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_data': pokemon_data}))
-                # take 3 tokens away from the user
-                current_user.tokens -= 3
+                main.logger.debug('Assigned Pokémon %s to user %s', random_pokemon.name, current_user.username)
+                main.logger.debug('Response Data: %s', jsonify({'pokemon_data': pokemon_data}))
+                # take 3 coins away from the user
+                current_user.coins -= 3
             db.session.commit()
 
             # Generate the URL for the Pokémon image
             pokemon_image_url = f'/static/images/pokemon_gen4_sprites/{random_pokemon.name.lower()}.png'
 
             # return jsonify(pokemon_data), 200, {'Content-Type': 'application/json'}
-            return jsonify({'tokens': current_user.tokens, 'pokemon_name': random_pokemon.name, 'pokemon_image_url': pokemon_image_url}), 200, {'Content-Type': 'application/json'}
+            return jsonify({'coins': current_user.coins, 'pokemon_name': random_pokemon.name, 'pokemon_image_url': pokemon_image_url}), 200, {'Content-Type': 'application/json'}
         else:
-            # Return an error response if the user doesn't have enough tokens
-            return jsonify({'error': 'Insufficient tokens'}), 403, {'Content-Type': 'application/json'}
+            # Return an error response if the user doesn't have enough coins
+            return jsonify({'error': 'Insufficient coins'}), 403, {'Content-Type': 'application/json'}
     except Exception as e:
-        flaskApp.logger.error('An error occurred: %s', str(e))
+        main.logger.error('An error occurred: %s', str(e))
         return jsonify({'error': str(e)}), 500, {'Content-Type': 'application/json'}
     
-@flaskApp.route('/gacha_ten_pull', methods=['POST'])
+@main.route('/gacha_ten_pull', methods=['POST'])
 def gacha_ten_pull():
     try:
-        if current_user.tokens >= 10:
+        if current_user.coins >= 10:
             # first get pokemon already owned by user
             # owned_pokemon_ids = [pokemon.id for pokemon in current_user.inventory]
             # randomly select 10 pokemon that the user doesnt own already
@@ -286,29 +278,28 @@ def gacha_ten_pull():
                 
                 # first check if the user already has the pokemon
                 if pokemon in current_user.inventory:
-                    flaskApp.logger.debug('User %s already has Pokémon %s', current_user.username, pokemon.name)
+                    current_app.logger.debug('User %s already has Pokémon %s', current_user.username, pokemon.name)
                 else:
                     # Assign the Pokémon to the user's inventory
                     current_user.inventory.append(pokemon)
-                    flaskApp.logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
-                    flaskApp.logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
-            # take 10 tokens away from the user
-            current_user.tokens -= 10
+                    current_app.logger.debug('Assigned Pokémon %s to user %s', pokemon.name, current_user.username)
+                    current_app.logger.debug('Response Data: %s', jsonify({'pokemon_list': random_pokemon_list}))
+            # take 10 coins away from the user
+            current_user.coins -= 10
             # Commit the changes to the database
             db.session.commit()
             # Return the list of randomly selected Pokémon as JSON
-            return jsonify({'tokens': current_user.tokens, 'pokemon_list': random_pokemon_list}), 200, {'Content-Type': 'application/json'}
+            return jsonify({'coins': current_user.coins, 'pokemon_list': random_pokemon_list}), 200, {'Content-Type': 'application/json'}
      
         else:
-            # Return an error response if the user doesn't have enough tokens
-            return jsonify({'error': 'Insufficient tokens'}), 403, {'Content-Type': 'application/json'}
+            # Return an error response if the user doesn't have enough coins
+            return jsonify({'error': 'Insufficient coins'}), 403, {'Content-Type': 'application/json'}
     except Exception as e:
         # return jsonify({'error exception': str(e)}), 500, {'Content-Type': 'application/json'}
-        flaskApp.logger.error('An error occurred: %s', str(e))
+        current_app.logger.error('An error occurred: %s', str(e))
         return jsonify({'error': 'Internal Server Error'}), 500
 
-@flaskApp.route('/my_trades', methods=['GET'])
-@login_required
+@main.route('/my_trades', methods=['GET'])
 def my_trades():
     page = request.args.get('page', 1, type=int)
     per_page = 3
@@ -366,7 +357,7 @@ def my_trades():
 
     return render_template('my_trades.html', active_trades=active_trades, past_trades=past_trades, page=page, total_pages=total_pages)
 
-@flaskApp.route('/delete_trade/<int:trade_id>', methods=['POST'])
+@main.route('/delete_trade/<int:trade_id>', methods=['POST'])
 @login_required
 def delete_trade(trade_id):
     try:
@@ -401,18 +392,24 @@ def delete_trade(trade_id):
 
 
 @login_required
-@flaskApp.route('/trade_offer', methods=['POST', 'GET'])
+@main.route('/trade_offer', methods=['POST', 'GET'])
 def trade_offer():
-    sprite_folder = os.path.join(app.static_folder, 'images', 'pokemon_gen4_sprites')
-    try:
-        pokemon_sprites = [f[:-4] for f in os.listdir(sprite_folder) if f.endswith('.png')]  # Removes '.png'
-        app.logger.info(f"Loaded Pokémon sprites: {pokemon_sprites}")
-    except Exception as e:
-        app.logger.error(f"Failed to load Pokémon sprites: {e}")
-        pokemon_sprites = []
-
     # Using SQLAlchemy ORM to fetch Pokémon names owned by the logged-in user
     if current_user.is_authenticated:
+        try:
+            sprite_folder = os.path.join(current_app.static_folder, 'images', 'pokemon_gen4_sprites')
+
+            # Ensure the sprite folder exists
+            if not os.path.exists(sprite_folder):
+                current_app.logger.error(f"Sprite folder does not exist: {sprite_folder}")
+                flash(f"error: Sprite folder does not exist: {sprite_folder}")
+                pokemon_sprites = []
+            else:
+                pokemon_sprites = [f[:-4] for f in os.listdir(sprite_folder) if f.endswith('.png')]  # Removes '.png'
+                # app.logger.info(f"Loaded Pokémon sprites: {pokemon_sprites}")
+        except Exception as e:
+            current_app.logger.error(f"Failed to load Pokémon sprites: {e}")
+            pokemon_sprites = []
         # Fetch the Pokémon IDs for the logged-in user
         inventory_pokemon = current_user.inventory
 
@@ -420,9 +417,9 @@ def trade_offer():
 
         return render_template('trade_offer.html', pokemon_sprites=pokemon_sprites, pokemon_owned=pokemon_names, current_user_id=current_user.id)
     else:
-        return redirect(url_for('login'))
+        return redirect(location=url_for('main.login'))
 
-@flaskApp.route('/post_trade', methods=['POST'])
+@main.route('/post_trade', methods=['POST'])
 @login_required
 def post_trade():
     pokemon_name1 = request.form.get('pokemon_name1')
@@ -463,19 +460,18 @@ def post_trade():
 
         db.session.add(new_trade)
 
-        # When a user posts a trade, they get +3 tokens
-        current_user.tokens += 3
+        # when a user posts a trade, they get +3 coins
+        current_user.coins += 3
         
         db.session.commit()
         flash('Your post is now live!')
         return jsonify({'success': 'Trade posted successfully!'}), 200
+        # return redirect(url_for('main.index'))
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
-
-
-@flaskApp.route('/update_sprite_selection', methods=['POST'])
+@main.route('/update_sprite_selection', methods=['POST'])
 def update_sprite_selection():
     sprite_src = request.form['sprite']
     # Update session or database with the new sprite selection
@@ -483,7 +479,7 @@ def update_sprite_selection():
     return jsonify(success=True)
 
 
-@flaskApp.route('/how_to_play')
+@main.route('/how_to_play')
 def how_to_play():
     return render_template('how_to_play.html')
 
@@ -492,7 +488,7 @@ def top_up():
     return render_template('top_up.html')
 
 # user profile page route
-@flaskApp.route('/user/<username>')
+@main.route('/user/<username>')
 @login_required
 def user(username):
     user = db.first_or_404(sa.select(User).where(User.username == username))
@@ -502,13 +498,13 @@ def user(username):
         ]
     return render_template('user.html', user=user, trades=trades)
 
-@flaskApp.before_request
+@main.before_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.now(timezone.utc)
         db.session.commit()
 
-@flaskApp.route('/edit_profile', methods=['GET', 'POST'])
+@main.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
     form = EditProfileForm(current_user.username)
@@ -517,17 +513,17 @@ def edit_profile():
         current_user.about_me = form.about_me.data
         db.session.commit()
         flash('Your changes have been saved.')
-        return redirect(url_for('user', username=form.username.data))
+        return redirect(location=url_for('main.user', username=form.username.data))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile', form=form)
 
-@flaskApp.errorhandler(404)
+@main.errorhandler(404)
 def not_found_error(error):
     return render_template('404.html'), 404
 
-@flaskApp.errorhandler(500)
+@main.errorhandler(500)
 def internal_error(error):
     db.session.rollback()
     return render_template('500.html'), 500
