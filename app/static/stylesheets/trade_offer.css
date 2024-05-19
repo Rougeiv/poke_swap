@@ -15,6 +15,18 @@
     border-radius: 10px;
 }
 
+.trade-offer-header {
+    font-family: 'Comic Sans MS', sans-serif;
+    text-align: center;
+    font-size: large;
+}
+
+.modal-header,
+.modal-footer {
+    border: none; /* Removes border from header and footer */
+    margin-bottom: -10px;
+}
+
 @media (max-width: 767.98px) {
     .pokemon-image {
         width: 150px;
