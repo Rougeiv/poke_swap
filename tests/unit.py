@@ -342,6 +342,25 @@ class RoutesTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         # self.assertIn(b'Welcome', response.data)
 
+    def test_signup(self):
+        response = self.client.post(url_for('main.signup'), data=dict(
+            username='newuser',
+            email='newuser@example.com',
+            password='password',
+            password2='password'
+        ), follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        # self.assertIn(b'Congratulations, you are now a registered user!', response.data)
+
+    # def test_login_logout(self):
+    #     self.login('testuser', 'password')
+    #     response = self.client.get(url_for('main.index'))
+    #     self.assertIn(b'Logout', response.data)
+
+    #     self.logout()
+    #     response = self.client.get(url_for('main.index'))
+    #     self.assertIn(b'Login', response.data)
+
 if __name__ == '__main__':
     populate_pokemon_table()
     unittest.main(verbosity=2)

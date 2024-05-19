@@ -169,6 +169,6 @@ class SeleniumTestCase(unittest.TestCase):
         # Verify Trade Offer Page
         self.assertIn('http://localhost:5001/trade_offer', self.driver.current_url)
         self.assertIn('Catch Pokemon', self.driver.page_source)
-
+        
 if __name__ == "__main__":
     unittest.main()
