@@ -1,60 +1,61 @@
-/* Specific to trade_offer */
-
-.my-card-border {
-    border-radius: 10px;
+/* Style for the user profile */
+table {
+    width: 100%;
 }
 
-.my-card-color {
-    background: linear-gradient(to bottom, #d1f1f1, #306060);
+table td {
+    padding: 10px;
+    vertical-align: top;
 }
 
-.pokemon-image {
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 10px;
+.user-info {
+    display: flex;
+    align-items: center;
 }
 
+.user-info h1 {
+    margin-bottom: 5px;
+    font-size: 24px;
+}
+
+.user-info p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.user-avatar img {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%; /* Make the avatar round */
+    object-fit: cover; /* Cover the entire area with the image */
+}
+
+.edit-profile-link {
+    margin-top: 10px;
+}
+
+.inventory-heading {
+    margin-top: 20px;
+    font-size: 20px;
+}
+
+/* Responsive adjustments */
 @media (max-width: 767.98px) {
-    .pokemon-image {
-        width: 150px;
-        height: 150px;
+    .user-avatar img {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .user-info h1 {
+        font-size: 20px;
     }
 
-    .modal-lg {
-        max-width: 90%;
+    .user-info p {
+        font-size: 14px;
     }
 
-    .btn {
-        font-size: 0.875rem;
-    }
-
-    .modal-body .row .col-6 {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-
-    .modal-body .row .col-md-3 {
-        flex: 0 0 50%;
-        max-width: 50%;
-    }
-
-    .modal-header h5, .modal-footer .btn {
-        font-size: 1rem;
-    }
-
-    .card-body .row .col {
-        flex: 0 0 100%;
-        max-width: 100%;
-        margin-bottom: 15px;
-    }
-
-    .card-body .row .col .btn {
-        width: 100%;
-    }
-
-    .modal-body .row .col {
-        margin-bottom: 15px;
+    .edit-profile-link {
+        margin-top: 5px;
     }
 }
 
