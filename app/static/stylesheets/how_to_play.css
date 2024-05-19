@@ -1,0 +1,93 @@
+/* Style for the container */
+.container {
+    max-width: 800px;
+    margin: 0 auto; /* Centered horizontally */
+    padding: 20px 20px 0; /* Reduced bottom padding */
+}
+
+/* Style for the title */
+h1 {
+    font-size: 36px;
+    font-weight: bold;
+    color: #ffcb05; /* Pokemon yellow */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 40px; /* Reduced bottom margin */
+    margin-top: -80px;
+}
+
+/* Style for the card */
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: -20px; /* Negative margin to move up */
+}
+
+/* Style for the card body */
+.card-body {
+    padding: 15px; /* Reduced padding */
+    background: linear-gradient(145deg, #3a3a3a, #2d2d2d); /* Dark gradient */
+}
+
+/* Style for the headings inside the card */
+.card-body h3 {
+    font-size: 24px;
+    color: #ffcb05;
+    margin-bottom: 10px; /* Reduced margin */
+}
+
+.card-body h5, .card-body h6 {
+    color: #ffcb05;
+    margin-top: 15px; /* Reduced margin */
+}
+
+/* Style for the paragraphs inside the card */
+.card-body p {
+    font-size: 16px;
+    color: #e0e0e0;
+    margin-bottom: 10px; /* Reduced margin */
+}
+
+/* Link styles */
+.card-body a {
+    color: #ffcb05;
+    text-decoration: underline;
+}
+
+.card-body a:hover {
+    color: #ffab00; /* Lighter yellow on hover */
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .card-body h3 {
+        font-size: 20px;
+    }
+
+    .card-body p {
+        font-size: 14px;
+    }
+}
+
+
+/* Set background image for the body */
+body {
+    background-image: url('https://wallpapercave.com/wp/wp1902707.jpg');
+    background-size: cover; /* Cover the entire background */
+    background-position: center; /* Center the background image */
+    background-position-y: -150px;
+    background-repeat: no-repeat; /* Do not repeat the background image */
+    font-family: 'Arial', sans-serif; /* Your font family */
+}
+
+body {
+    background-color: #7EAC71; /* Green */
+}
