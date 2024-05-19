@@ -278,11 +278,6 @@ class UserModelCase(TestCase):
         self.assertEqual(len(accepted_trades), 2)
         print("Tested user.accepted_trades")
 
-    # def test_get_pokemon_id_by_name(self):
-    #     pokemon_id = Pokemon.get_pokemon_id_by_name('Bulbasaur')
-    #     self.assertIsNotNone(pokemon_id)
-    #     print(f"Retrieved Pokémon ID: {pokemon_id}")
-
     def test_past_trades(self):
         user2 = User(username='testuser2', email='testuser2@example.com')
         self.user.inventory.append(Pokemon(pokedex_num=1, name='Bulbasaur', shiny=False))
@@ -360,6 +355,16 @@ class RoutesTestCase(TestCase):
     #     self.logout()
     #     response = self.client.get(url_for('main.index'))
     #     self.assertIn(b'Login', response.data)
+
+    def test_catch_route_requires_login(self):
+        response = self.client.get(url_for('main.catch'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/login', response.location)
+
+        self.login('testuser', 'password')
+        response = self.client.get(url_for('main.catch'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Catch a Pokemon', response.data)
 
 if __name__ == '__main__':
     populate_pokemon_table()
