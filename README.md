@@ -3,13 +3,10 @@
 ## Team Members
 
 - @AarifLamat (Aarif Lamat) 23628374
-- @Rougeiv (Nicholas Mulyawan)
-- @HeathenH (Harrsion Harun)
+- @Rougeiv (Nicholas Mulyawan) 23044774
+- @HeathenH (Harrsion Harun) 23347644
 - @ricccooo (Enrico Tionandra ) 23732436
 
-Student numbers: 
-23347644
-23044774
 
 ### Frontend
 
