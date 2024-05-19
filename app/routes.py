@@ -3,7 +3,8 @@ from flask import flash, render_template, request, redirect, session, jsonify, u
 from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
-from app.models import User, Pokemon, Trade
+from flask import current_app as app
+from app.models import User, Pokemon, Trade, user_pokemon
 from app.forms import EditProfileForm, LoginForm, SignUpForm
 from sqlalchemy.sql.expression import func
 import sqlalchemy.orm as orm
@@ -16,7 +17,6 @@ from app import db
 
 @main.route('/')
 @main.route('/index')
-# @login_required
 def index():
     page = request.args.get('page', 1, type=int)
     per_page = 4
@@ -94,7 +94,7 @@ def trade(trade_id):
 
     if not trade:
         flash('Trade not found.')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     return render_template('trade.html', trade=trade)
 
@@ -186,6 +186,11 @@ def login():
 
         if expired_count > 0:
             flash(f'{expired_count} expired trade(s) were deleted and Pokémon returned to your inventory.', 'info')
+
+        # Check if the user has captured all 151 Pokémon
+        user_pokemon_count = db.session.query(sa.func.count(user_pokemon.c.pokemon_id)).filter(user_pokemon.c.user_id == user.id).scalar()
+        if user_pokemon_count == 151:
+            flash(f'Congratulations {user.username}, you have captured all 151 Pokémon!', 'success')
 
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
@@ -365,14 +370,14 @@ def delete_trade(trade_id):
         trade = db.session.query(Trade).filter_by(id=trade_id, user_id1=current_user.id, user_id2=None).first()
         if not trade:
             flash('Trade not found or already completed.', 'danger')
-            return redirect(url_for('my_trades'))
+            return redirect(url_for('main.my_trades'))
 
         # Fetch the Pokémon being offered
         offered_pokemon = db.session.query(Pokemon).filter_by(id=trade.pokemon_id1).first()
         
         if not offered_pokemon:
             flash('Offered Pokémon not found.', 'danger')
-            return redirect(url_for('my_trades'))
+            return redirect(url_for('main.my_trades'))
 
         # Check if the user already owns the Pokémon
         if offered_pokemon not in current_user.inventory:
@@ -388,7 +393,7 @@ def delete_trade(trade_id):
         db.session.rollback()
         flash(f'An error occurred: {e}', 'danger')
     
-    return redirect(url_for('my_trades'))
+    return redirect(url_for('main.my_trades'))
 
 
 @login_required

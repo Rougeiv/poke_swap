@@ -39,7 +39,7 @@
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1">{{ trade.trade_id }}</h5>
                     <small>Posted on {{ trade.timestamp }}</small>
-                    <form action="{{ url_for('delete_trade', trade_id=trade.trade_id) }}" method="post" class="ml-auto">
+                    <form action="{{ url_for('main.delete_trade', trade_id=trade.trade_id) }}" method="post" class="ml-auto">
                         <button type="submit" class="btn btn-danger btn-sm">X</button>
                     </form>
                 </div>
@@ -77,13 +77,13 @@
         <nav aria-label="Trade offers pagination">
             <ul class="pagination justify-content-center mt-4">
                 {% if page > 1 %}
-                <li class="page-item"><a class="page-link" href="{{ url_for('my_trades', page=page-1) }}">Previous</a></li>
+                <li class="page-item"><a class="page-link" href="{{ url_for('main.my_trades', page=page-1) }}">Previous</a></li>
                 {% endif %}
                 {% for p in range(1, total_pages + 1) %}
-                <li class="page-item {{ 'active' if p == page else '' }}"><a class="page-link" href="{{ url_for('my_trades', page=p) }}">{{ p }}</a></li>
+                <li class="page-item {{ 'active' if p == page else '' }}"><a class="page-link" href="{{ url_for('main.my_trades', page=p) }}">{{ p }}</a></li>
                 {% endfor %}
                 {% if page < total_pages %}
-                <li class="page-item"><a class="page-link" href="{{ url_for('my_trades', page=page+1) }}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="{{ url_for('main.my_trades', page=page+1) }}">Next</a></li>
                 {% endif %}
             </ul>
         </nav>

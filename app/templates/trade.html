@@ -67,7 +67,7 @@
         Successful trade!
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="window.location.href='{{ url_for('index') }}'">Close</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="window.location.href='{{ url_for(main.index) }}'">Close</button>
       </div>
     </div>
   </div>
@@ -78,7 +78,7 @@
 {{ super() }}
 <script>
     document.getElementById('accept-trade-btn').addEventListener('click', function () {
-        fetch('{{ url_for("accept_trade", trade_id=trade.id) }}', {
+        fetch('{{ url_for("main.accept_trade", trade_id=trade.id) }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
