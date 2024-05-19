@@ -2,28 +2,46 @@
 
     {% block title %}PokeSwap - Log-in{% endblock %}
 
+    {%block extra_head%}
+    <link rel="stylesheet" href="../static/stylesheets/login.css">
+    {%endblock%}
+
     {% block content %}
         <!-- Login Section -->
         <div class="container mt-4">
             <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <div class="card border rounded-lg border-dark" style="background-image: url('https://github.com/Rougeiv/poke_swap/blob/main/app/static/images/sprites1.png?raw=true'); background-size: 100% 100%; background-repeat: no-repeat;">
+                <div class="col-md-6 my-card">
+                    <div class="card border rounded-lg border-dark" style="background-image: url('https://github.com/Rougeiv/poke_swap/blob/main/app/static/images/sprites1.png?raw=true'); background-position: center; background-size: cover; background-repeat: no-repeat;">
                         <div class = "card-header text-center">
                             <div class="card-body text-center">
                                 <h1 class="text-center pb-3 bg-dark text-white border rounded">Log-in</h1>
-                                <div class="text-center" style="padding-top: 24.8rem;">
+                                <div class="text-center my-forms" style="padding-top: 24.8rem;">
                                     <form action="" method="post" novalidate>
                                         {{ form.hidden_tag() }}
+                                        <!-- <div class="mb-3">
+                                            <p style="color: white">
+                                            {{ form.username.label(class='form-label') }}
+                                            {% if autofocus %}
+                                              {{ form.username(size=32, class='form-control' + (' is-invalid' if form.username.errors else ''), autofocus=True) }}
+                                            {% else %}
+                                              {{ form.username(size=32, class='form-control' + (' is-invalid' if form.username.errors else '')) }}
+                                            {% endif %}
+                                            </p>
+                                            {%- for error in form.username.errors %}
+                                            <div class="invalid-feedback">{{ error }}</div>
+                                            {%- endfor %}
+                                        </div> -->
                                         <p style="color:white">
                                             {{ form.username.label }}
                                             {{ form.username(size=32) }}
                                         </p>
+                                        <!-- shouldn't this be class="text-white" ? -->
                                         <p style="color:white">
                                             {{ form.password.label }}
                                             {{ form.password(size=32) }}
                                         </p>
                                         <p style="color:white">{{ form.remember_me() }}  {{ form.remember_me.label }}</p>
-                                        <p class="text-center font-size-1 text-light">Don't have an account? <a href="{{ url_for('signup') }}" class="text-light">Sign up here!</a></p>
+                                        <p class="text-center font-size-1 text-light">Don't have an account? <a href="{{ url_for('main.signup') }}" class="text-light">Sign up here!</a></p>
                                         {{ form.submit() }}
                                     </form>
                                 </div>

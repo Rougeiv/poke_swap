@@ -1,0 +1,45 @@
+/* Specific to edit profile page */
+.error-msg {
+    color: red;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+@media (max-width: 767.98px) {
+    .container {
+        padding: 10px;
+    }
+
+    .form-group label {
+        font-size: 1rem;
+    }
+
+    .form-group .form-control {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .form-group .btn {
+        width: 100%;
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .form-group .error-msg {
+        font-size: 0.9rem;
+    }
+}
+
+/* Set background image for the body */
+body {
+    background-image: url('https://wallpapercave.com/wp/wp1902707.jpg');
+    background-size: cover; /* Cover the entire background */
+    background-position: center; /* Center the background image */
+    background-position-y: -200px;
+    background-repeat: no-repeat; /* Do not repeat the background image */
+    font-family: 'Arial', sans-serif; /* Your font family */
+}

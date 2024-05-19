@@ -1,6 +1,6 @@
 <table>
     <tr valign="top">
-        <td><img src="{{ user.avatar(36) }}"></td>
+        <td><img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + pokemon.name|lower + '.png') }}"></td>
         <td>{{pokemon.pokedex_num}} | {{ pokemon.name }}</td>
     </tr>
 </table>

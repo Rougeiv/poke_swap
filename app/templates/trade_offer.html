@@ -4,17 +4,22 @@
     Trade Offer
 {% endblock title %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/trade_offer.css') }}">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% endblock %}
+
 {% block content %}
 <div class="container mt-5 mb-5">
-    <div class="card" style="border-radius: 10px;">
-        <div class="card-header text-center bg-dark text-white">
-            Trade Offer
+    <div class="card my-card-border text-center bg-dark text-white">
+        <div class="card-header trade-offer-header">
+            <h1> Trade Offer </h1>
         </div>
-        <div class="card-body" style="background: linear-gradient(to bottom, #d1f1f1, #306060);">
+        <div class="card-body my-card-color">
             <div class="row text-center">
                 <div class="col">
-                    <h5>Offering</h5>
-                    <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Offering" class="img-thumbnail">
+                    <h5 class="my-offer">Offering</h5>
+                    <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Offering" class="img-thumbnail pokemon-image" id="offeringPlaceholder">
                     <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#pokemonPCModal">
                         Select Pokémon
                     </button>
@@ -23,7 +28,7 @@
                     <span class="mx-3">⇆</span>
                 </div>
                 <div class="col">
-                    <h5>Requesting</h5>
+                    <h5 class="my-request">Requesting</h5>
                     <img src="{{ url_for('static', filename='images/pikachusil.png') }}" alt="Requesting" class="img-thumbnail pokemon-image" id="requestingPlaceholder">
                     <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#requestPokemonModal">
                         Select Pokémon
@@ -32,14 +37,14 @@
             </div>
             <div class="row mt-3">
                 <div class="col text-center">
-                    <button class="btn btn-dark">Post</button>
+                    <button id="postTradeButton" class="btn btn-dark">Post</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Offer pokemon Modal -->
+<!-- Offer Pokemon Modal -->
 <div class="modal fade" id="pokemonPCModal" tabindex="-1" role="dialog" aria-labelledby="pokemonPCModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -49,23 +54,17 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body pokepc-background">
-                <div class="pokemon-pc page" id="page1">
-                    <div class="row">
-                        <!-- Display Pokémon from the first page -->
+            <div class="modal-body">
+                <div class="row">
+                    {% for sprite in pokemon_owned %}
+                    <div class="col-md-3 col-6 text-center mb-3">
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}"
+                        class="img-thumbnail pokemon-image selectable-sprite"
+                        data-target="#offeringPlaceholder"
+                        data-sprite-name="{{ sprite|capitalize }}">
+                        <p>{{ sprite }}</p>
                     </div>
-                </div>
-                <div class="pokemon-pc page" id="page2" style="display: none;">
-                    <div class="row">
-                        <!-- Display Pokémon from the second page -->
-                    </div>
-                </div>
-                <!-- Add more pages as needed -->
-
-                <!-- Pagination -->
-                <div class="text-center mt-3">
-                    <button type="button" class="btn btn-primary mr-2" id="prevPageBtn" disabled>Previous</button>
-                    <button type="button" class="btn btn-primary" id="nextPageBtn">Next</button>
+                    {% endfor %}
                 </div>
             </div>
             <div class="modal-footer">
@@ -82,93 +81,118 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="requestPokemonModalLabel">Select Requested Pokémon</h5>
-                <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="row">
                     {% for sprite in pokemon_sprites %}
-                    <div class="col-md-3 text-center">
-                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}" 
-                             alt="{{ sprite }}" class="img-thumbnail pokemon-image selectable-sprite" 
-                             data-sprite="{{ sprite }}">
-                        <p>{{ sprite.capitalize().replace('_', ' ') }}</p>
+                    <div class="col-md-3 col-6 text-center mb-3">
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}"
+                        class="img-thumbnail pokemon-image selectable-sprite"
+                        data-target="#requestingPlaceholder"
+                        data-sprite-name="{{ sprite|capitalize }}">
+                        <p>{{ sprite }}</p>
                     </div>
                     {% endfor %}
                 </div>                
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary">Select</button>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Success!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+                <div class="modal-body">
+                    Your trade has been posted successfully.
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class ="modal fade" id="errorModal" role="dialog" aria-labelledby="error" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                    <div class="modal-body">
+                        You have exceeded your maximum trade offer limit!
+                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+
 <script>
     $(document).ready(function() {
-        // Initialize page index
-        let currentPage = 1;
-        const maxPages = 3; // Set maximum number of pages
+        let selectedPokemonName1 = null;
+        let selectedPokemonName2 = null;
 
         $('.selectable-sprite').on('click', function() {
-            const selectedSpriteSrc = $(this).attr('src');
-            $('#requestingPlaceholder').attr('src', selectedSpriteSrc); // Update src
-            // No need to update the class because it's already set correctly
-            $('#requestPokemonModal').modal('hide'); // Assuming this is the ID of your modal
-        });
+            console.log('Selected Pokemon:', $(this).data('sprite-name'));
+            const targetPlaceholder = $(this).data('target');
+            $(targetPlaceholder).attr('src', $(this).attr('src'));
 
-        // Save selection (if needed)
-        $('#saveSelection').on('click', function() {
-            const selectedSrc = $('#requestingPlaceholder').attr('src');
-            // Optionally send this information back to the server or handle it further
-        });
-
-        // Function to show/hide pages based on currentPage
-        function showPage(pageNumber) {
-            $(".page").hide();
-            $(`#page${pageNumber}`).show();
-
-            // Disable/Enable Previous/Next buttons based on currentPage
-            $("#prevPageBtn").prop("disabled", pageNumber === 1);
-            $("#nextPageBtn").prop("disabled", pageNumber === maxPages);
-        }
-
-        // Show initial page
-        showPage(currentPage);
-
-        // Previous page button click event
-        $("#prevPageBtn").click(function() {
-            if (currentPage > 1) {
-                currentPage--;
-                showPage(currentPage);
+            if ($(this).data('target') === "#offeringPlaceholder") {
+                selectedPokemonName1 = $(this).data('sprite-name');
+            } else if ($(this).data('target') === "#requestingPlaceholder") {
+                selectedPokemonName2 = $(this).data('sprite-name');
             }
+
+            $(this).closest('.modal').modal('hide'); // Close the modal
         });
 
-        // Next page button click event
-        $("#nextPageBtn").click(function() {
-            if (currentPage < maxPages) {
-                currentPage++;
-                showPage(currentPage);
-            }
+        $('#postTradeButton').on('click', function() {
+            $.ajax({
+                url: '/post_trade',
+                type: 'POST',
+                data: {
+                    pokemon_name1: selectedPokemonName1,
+                    pokemon_name2: selectedPokemonName2
+                },
+                success: function(response) {
+                    if (response.error) {
+                        // Show pop-up for maximum active trades
+                        alert(response.error); 
+                    } else {
+                        console.log(response.success);
+                        $('#successModal').modal('show'); // Show success modal
+                        console.log(response.success);
+                        $('#successModal').modal('show'); // Show success modal
+                        console.log(response.success);
+                        return redirect(url_for('main.index'))
+                        // Optionally reset or refresh page here
+                    }
+                },
+                error: function(xhr) {
+                    $('#errorModal').modal('show');
+                }
+            });
         });
     });
 </script>
-
-<style>
-    .pokemon-image {
-        width: 200px; /* Adjust this width as needed to match the pikachusil.png */
-        height: 200px; /* Adjust this height as needed */
-        object-fit: cover; /* This will cover the area without distorting the ratio */
-        border-radius: 10px; /* Optional, for rounded corners */
-    }
-    
-    .pokepc-background {
-        background-image: url("{{ url_for('static', filename='images/pikachubg.png') }}");
-        background-size: cover; /* Cover the entire container, maintaining aspect ratio */
-        background-position: center;
-    }
-</style>
-
 {% endblock content %}

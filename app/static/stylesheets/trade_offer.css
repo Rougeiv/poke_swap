@@ -1,0 +1,82 @@
+/* Specific to trade_offer */
+
+.my-card-border {
+    border-radius: 10px;
+}
+
+.my-card-color {
+    background: linear-gradient(to bottom, #d1f1f1, #306060);
+}
+
+.pokemon-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.trade-offer-header {
+    font-family: 'Comic Sans MS', sans-serif;
+    text-align: center;
+    font-size: large;
+}
+
+.modal-header,
+.modal-footer {
+    border: none; /* Removes border from header and footer */
+    margin-bottom: -10px;
+}
+
+@media (max-width: 767.98px) {
+    .pokemon-image {
+        width: 150px;
+        height: 150px;
+    }
+
+    .modal-lg {
+        max-width: 90%;
+    }
+
+    .btn {
+        font-size: 0.875rem;
+    }
+
+    .modal-body .row .col-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .modal-body .row .col-md-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .modal-header h5, .modal-footer .btn {
+        font-size: 1rem;
+    }
+
+    .card-body .row .col {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .card-body .row .col .btn {
+        width: 100%;
+    }
+
+    .modal-body .row .col {
+        margin-bottom: 15px;
+    }
+}
+
+
+/* Set background image for the body */
+body {
+    background-image: url('https://wallpapercave.com/wp/wp1902707.jpg');
+    background-size: cover; /* Cover the entire background */
+    background-position: center; /* Center the background image */
+    background-position-y: -150px;
+    background-repeat: no-repeat; /* Do not repeat the background image */
+    font-family: 'Arial', sans-serif; /* Your font family */
+}

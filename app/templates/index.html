@@ -3,23 +3,8 @@
 {% block title %}PokeSwap - Home{% endblock %}
 
 {% block extra_head %}
-<style>
-    /* Custom styles specific to the Home page */
-    .gotta-catch, .trade-offer {
-        font-family: 'Comic Sans MS', cursive;
-        color: lightslategray;
-        text-align: center;
-        margin-top: 20px;
-    }
-    .card-title, .text-center.h2 {
-        font-family: 'Comic Sans MS', cursive;
-        color: lightblue;
-    }
-    .pagination a {
-        font-family: 'Comic Sans MS', cursive;
-
-    }
-</style>
+<link rel="stylesheet" href="../static/stylesheets/index.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 {% endblock %}
 
 {% block content %}
@@ -27,152 +12,103 @@
     {% if current_user.is_anonymous %}
     <h1>Welcome to Pokeswap</h1>
     {% else %}
-    <h1>Hi, {{ current_user.username }}!</h1>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h1>Hi, {{ current_user.username }}!</h1>
+                        <h3>Are you ready to catch 'em all?!</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>   
     {% endif %}
-    <h2 class="gotta-catch">Gotta catch 'em all!</h2>
     <div class="row mt-4">
-        <div class="col-6">
+        <div class="col-md-6 col-12 mb-3">
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Catch Pokemon</h5>
-                    <a href="{{ url_for('catch') }}" class="btn btn-custom" style="background-color: transparent;">
+                    <a href="{{ url_for('main.catch') }}" class="btn btn-custom" style="background-color: transparent;">
                         <img src="{{ url_for('static', filename='images/tallgrass.png') }}" width="100" height="100" alt="Catch Pokemon">
                     </a>
                 </div>
             </div>
         </div>
-        <div class="col-6">
+        <div class="col-md-6 col-12 mb-3">
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Make a trade offer</h5>
-                    <a href="{{ url_for('trade_offer') }}" class="btn btn-secondary">
+                    <a href="{{ url_for('main.trade_offer') }}" class="btn btn-secondary">
                         <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball">
                         ⇆
-                        <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball">
+                        <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball" class="custom-image">
                     </a>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Trade Offers Section -->
-    <div class="container mt-5">
-        <h2 class="trade-offer">Trade offers</h2>
-        <div id="tradeOffersPage1" class="list-group mt-3">
-            <!-- Dynamically generated trade offers could be listed here -->
-            <!-- This is a placeholder for demonstration -->
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Trade #0001</h5>
-                    <small>Expires in 2 days</small>
-                </div>
-                <p class="mb-1">
-                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
-                    ⇆
-                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
-                </p>
-            </a>
-            <!-- Mock trade offer 2 -->
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Trade #0002</h5>
-                    <small>Expires in 2 days</small>
-                </div>
-                <p class="mb-1">
-                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
-                    ⇆
-                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
-                </p>
-            </a>
-            <!-- Mock trade offer 3 -->
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Trade #0003</h5>
-                    <small>Expires in 2 days</small>
-                </div>
-                <p class="mb-1">
-                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
-                    ⇆
-                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
-                </p>
-            </a>
-            <!-- Mock trade offer 4 -->
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Trade #0004</h5>
-                    <small>Expires in 2 days</small>
-                </div>
-                <p class="mb-1">
-                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
-                    ⇆
-                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
-                </p>
-            </a>
-            <!-- ... -->
+    <div class="container text-center mt-5 trade-offers-container">
+        <h1>Active Trade Offers</h1>
+        <!-- Filter Form -->
+        <form method="GET" action="{{ url_for('index') }}" class="form-inline justify-content-center mb-4">
+            <input type="text" name="filter" class="form-control mr-2" placeholder="Filter Pokemon">
+            <button type="submit" class="btn btn-primary">Confirm</button>
+        </form>
+        <div class="row mt-4">
+            <!-- {% if trade_offers %} -->
+                {% for offer in trade_offers %}
+                <a href="{{ url_for('main.trade', trade_id=offer.trade_id) }}" class="col-12 trade-offer-card mb-3">
+                    <div class="card bg-dark text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Trade #{{ offer.trade_id }}</h5>
+                            <p class="card-text"><small>Posted on {{ offer.timestamp }}</small></p>
+                            <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon1_name ~ '.png') }}" alt="Pokemon 1" class="custom-image">
+                            ⇆
+                            <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon2_name ~ '.png') }}" alt="Pokemon 2" class="custom-image">
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            <!-- {% else %}
+                <div class="col-12 trade-offer-card mb-3">
+                    <div class="card bg-dark text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">No Trades found...</h5>
+                            <p class="card-text">Post a trade offer!</p>
+                    </div>
+                </a>
+            {% endif %} -->
         </div>
-        
-        <!-- Second Page Trade Offers (hidden by default) -->
-        <div id="tradeOffersPage2" class="list-group mt-3 d-none">
-            <!-- Mock trade offer 5 -->
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Trade #0005</h5>
-                    <small>Expires in 3 days</small>
-                </div>
-                <p class="mb-1">
-                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 5">
-                    ⇆
-                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 6">
-                </p>
-            </a>
-            <!-- Mock trade offer 6 -->
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Trade #0006</h5>
-                    <small>Expires in 2 days</small>
-                </div>
-                <p class="mb-1">
-                    <img src="{{ url_for('static', filename='images/ditto.png') }}" alt="Pokemon 1">
-                    ⇆
-                    <img src="{{ url_for('static', filename='images/blaziken.png') }}" alt="Pokemon 2">
-                </p>
-            </a>
-            <!-- ... -->
-        </div>
-
-        <!-- Pagination for Trade Offers -->
-        <nav aria-label="Trade offers pagination">
-            <ul class="pagination justify-content-center mt-4">
-                <li class="page-item"><a class="page-link" href="#tradeOffersPage1">Previous</a></li>
-                <li class="page-item active"><a class="page-link" href="#tradeOffersPage1">1</a></li>
-                <li class="page-item"><a class="page-link" href="#tradeOffersPage2">2</a></li>
-                <li class="page-item"><a class="page-link" href="#tradeOffersPage2">Next</a></li>
-            </ul>
-        </nav>
     </div>
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page > 1 %}
+            <li class="page-item"><a class="page-link" href="{{ url_for('main.index', page=page-1) }}">Previous</a></li>
+            {% endif %}
+            {% for p in range(1, total_pages + 1) %}
+            <li class="page-item {{ 'active' if p == page else '' }}"><a class="page-link" href="{{ url_for('main.index', page=p) }}">{{ p }}</a></li>
+            {% endfor %}
+            {% if page < total_pages %}
+            <li class="page-item"><a class="page-link" href="{{ url_for('main.index', page=page+1) }}">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
 </div>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
 <script>
-    // Script for managing pagination or any additional functionality
     document.addEventListener('DOMContentLoaded', function () {
-        const paginate = (page) => {
-            document.querySelectorAll('.list-group').forEach(group => {
-                group.classList.add('d-none');
-            });
-            document.querySelector(page).classList.remove('d-none');
-        };
-
         document.querySelectorAll('.pagination a.page-link').forEach(link => {
             link.addEventListener('click', function (e) {
                 e.preventDefault();
-                paginate(this.getAttribute('href'));
+                const newPage = this.getAttribute('href');
+                window.location.href = newPage; // Redirect to the new URL with the correct page parameter
             });
         });
-
-        // Initialize the first page
-        paginate('#tradeOffersPage1');
     });
 </script>
 {% endblock %}

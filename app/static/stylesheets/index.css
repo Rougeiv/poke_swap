@@ -1,0 +1,72 @@
+/* Custom styles specific to the Home page */
+.gotta-catch, .trade-offer {
+    font-family: 'Comic Sans MS', sans-serif;
+    color: lightslategray;
+    text-align: center;
+    margin-top: 20px;
+}
+.card-title, .text-center.h2 {
+    font-family: 'Comic Sans MS', sans-serif;
+    color: lightblue;
+}
+.pagination a {
+    font-family: 'Comic Sans MS', sans-serif;
+}
+.my-button {
+    background-color: transparent;
+}
+
+/* Custom styles specific to the Home page */
+.gotta-catch, .trade-offer {
+    font-family: 'Comic Sans MS', sans-serif;
+    color: lightslategray;
+    text-align: center;
+    margin-top: 20px;
+}
+.card-title, .text-center.h2 {
+    font-family: 'Comic Sans MS', sans-serif;
+    color: lightblue;
+}
+.pagination a {
+    font-family: 'Comic Sans MS', sans-serif;
+}
+/* Maintain desktop image sizes */
+.custom-image {
+    width: 100px;
+    height: 100px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .card-title {
+        font-size: 1.2rem;
+    }
+    .pagination {
+        font-size: 0.8rem;
+    }
+    .trade-offer-card {
+        margin-bottom: 20px;
+    }
+    /* Make images responsive on mobile */
+    .custom-image {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+
+/* Hover effect for tall grass image */
+.custom-image:hover {
+    transform: scale(1.1);
+}
+
+
+/* Set background image for the body */
+body {
+    background-image: url('https://wallpapercave.com/wp/wp1902707.jpg');
+    background-size: cover; /* Cover the entire background */
+    background-position: center; /* Center the background image */
+    background-position-y: -150px;
+    background-repeat: no-repeat; /* Do not repeat the background image */
+    font-family: 'Arial', sans-serif; /* Your font family */
+}

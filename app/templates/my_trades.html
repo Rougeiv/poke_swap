@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}
+    My Trades
+{% endblock title %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/my_trades.css') }}">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">My Trades</h1>
+    
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container mt-4">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    
+    <!-- Active Trade Offers Section -->
+    <div class="container mt-5 active-trades">
+        <h2 class="text-center">Active Trade Offers</h2>
+        <div class="list-group mt-3">
+            <!-- Dynamically generated active trade offers -->
+            {% for trade in active_trades %}
+            <div class="list-group-item flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ trade.trade_id }}</h5>
+                    <small>Posted on {{ trade.timestamp }}</small>
+                    <form action="{{ url_for('delete_trade', trade_id=trade.trade_id) }}" method="post" class="ml-auto">
+                        <button type="submit" class="btn btn-danger btn-sm">X</button>
+                    </form>
+                </div>
+                <p class="mb-1">
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon1_name ~ '.png') }}" alt="Pokemon 1">
+                    ⇆
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon2_name ~ '.png') }}" alt="Pokemon 2">
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Past Trade Offers Section -->
+    <div class="container mt-5 past-trades">
+        <h2 class="text-center">Past Trade Offers</h2>
+        <div class="list-group mt-3">
+            <!-- Dynamically generated past trade offers -->
+            {% for trade in past_trades %}
+            <div class="list-group-item flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ trade.trade_id }}</h5>
+                    <small>Completed on {{ trade.timestamp }}</small>
+                </div>
+                <p class="mb-1">
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon1_name ~ '.png') }}" alt="Pokemon 1">
+                    ⇆
+                    <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ trade.pokemon2_name ~ '.png') }}" alt="Pokemon 2">
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination for Past Trade Offers -->
+        <nav aria-label="Trade offers pagination">
+            <ul class="pagination justify-content-center mt-4">
+                {% if page > 1 %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('my_trades', page=page-1) }}">Previous</a></li>
+                {% endif %}
+                {% for p in range(1, total_pages + 1) %}
+                <li class="page-item {{ 'active' if p == page else '' }}"><a class="page-link" href="{{ url_for('my_trades', page=p) }}">{{ p }}</a></li>
+                {% endfor %}
+                {% if page < total_pages %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('my_trades', page=page+1) }}">Next</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock content %}

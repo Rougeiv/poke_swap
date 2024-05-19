@@ -28,24 +28,45 @@ class User(UserMixin, db.Model):
     about_me: so.Mapped[Optional[str]] = so.mapped_column(sa.String(140))
     last_seen: so.Mapped[Optional[datetime]] = so.mapped_column(
         default=lambda: datetime.now(timezone.utc))
-    
+
+    coins: so.Mapped[int] = so.mapped_column(sa.Integer, nullable=False, default=10)
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
-    
-    def get_trades(self):   
-        return Trade.query.filter((Trade.user_id1 == self.id) | (Trade.user_id2 == self.id)).all()
-    
-    def avatar(self, size):
-        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
-        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
-            digest, size)
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+    def all_trades(self):   
+        return Trade.query.filter((Trade.user_id1 == self.id) | (Trade.user_id2 == self.id)).all()
+    
+    def requested_trades(self):   
+        return Trade.query.filter((Trade.user_id1 == self.id)).all()
+    
+    def accepted_trades(self):   
+        return Trade.query.filter((Trade.user_id2 == self.id)).all()
 
+    def active_trades(self):
+        return Trade.query.filter(Trade.user_id1 == self.id, Trade.user_id2 == None).all()
+    
+    # def past_trades(self):
+    #     return Trade.query.filter((Trade.user_id1 == self.id) | (Trade.user_id2 == self.id)).filter(Trade.user_id1 != None and Trade.user_id2 != None).all()
+    
+    def past_trades(self):
+        return Trade.query.filter(
+            (Trade.user_id1 == self.id) | (Trade.user_id2 == self.id)
+        ).filter(
+            Trade.user_id1.isnot(None), Trade.user_id2.isnot(None)
+        ).all()
+
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
+            digest, size)
+    
 @login.user_loader
 def load_user(id):
     return db.session.get(User, int(id))
@@ -56,9 +77,16 @@ class Pokemon(db.Model):
     name: so.Mapped[str] = so.mapped_column(sa.String(32), index=True,
                                                 unique=True)
     shiny: so.Mapped[bool] = so.mapped_column(sa.Boolean)
+    sprite_path: so.Mapped[Optional[str]] = so.mapped_column(sa.String(200), index=True)
     owners = so.relationship('User', secondary='user_pokemon', back_populates='inventory', lazy=True)
     def __repr__(self):
         return '<Pokemon {} {}>'.format(self.pokedex_num, self.name)
+    
+    def get_pokemon_id_by_name(pokemon_name):
+        pokemon = db.session.query(Pokemon).filter_by(name=pokemon_name).first()
+        if pokemon:
+            return pokemon.id
+        return None
 
 # association table to track which pokemon belong to which users
 user_pokemon: so.Mapped[sa.Table] = db.Table('user_pokemon',
