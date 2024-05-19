@@ -40,6 +40,8 @@ Once in the virtual environment run: $ pip install requirements.txt
 
 Create the database using: flask db upgrade
 
+Create a .env file that contains SECRET_KEY=example-secret-key
+
 ### Setting up the Database
 For the application to function the db requires a little set up.
 
