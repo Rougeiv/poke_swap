@@ -1,0 +1,68 @@
+/* Style for main container to ensure maximum width control */
+.container {
+    max-width: 800px;
+    margin: auto; /* centered */
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Specific background colors for trade sections */
+.active-trades {
+    background-color: darkgrey;
+}
+
+.past-trades {
+    background-color: darkslategray;
+}
+
+/* Padding for the last item in each trade offer list */
+.list-group-item:last-child {
+    margin-bottom: 20px; /* Adds space below the last item */
+}
+
+/* Margin for the pagination to create space below */
+.pagination {
+    margin-bottom: 20px; /* Adds space below the pagination */
+}
+
+/* Additional padding inside the containers for overall spacing */
+.active-trades, .past-trades {
+    padding-bottom: 20px; /* Adds space inside the container at the bottom */
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .container {
+        padding: 10px;
+    }
+
+    .list-group-item {
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .list-group-item .d-flex {
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .list-group-item h5 {
+        font-size: 1.2rem;
+    }
+
+    .list-group-item small {
+        font-size: 0.9rem;
+    }
+
+    .trade-images img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .pagination .page-link {
+        font-size: 0.9rem;
+        padding: 5px;
+    }
+}

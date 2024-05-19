@@ -3,47 +3,11 @@
 {% block title %}PokeSwap - Home{% endblock %}
 
 {% block extra_head %}
-<style>
-    /* Custom styles specific to the Home page */
-    .gotta-catch, .trade-offer {
-        font-family: 'Comic Sans MS', sans-serif;
-        color: lightslategray;
-        text-align: center;
-        margin-top: 20px;
-    }
-    .card-title, .text-center.h2 {
-        font-family: 'Comic Sans MS', sans-serif;
-        color: lightblue;
-    }
-    .pagination a {
-        font-family: 'Comic Sans MS', sans-serif;
-    }
-    .card {
-        margin-bottom: 30px; /* Spacing between cards */
-    }
-    .card-body img {
-        width: 150px; /* Larger image size */
-        height: 150px;
-    }
-    .pagination {
-        justify-content: center; /* Center pagination controls */
-    }
-    .trade-offers-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .trade-offer-card {
-        width: 100%; /* Adjust width as needed */
-        max-width: 600px; /* Limit max width */
-        margin: auto; /* Centering the card horizontally */
-    }
-    .row {
-        justify-content: center; /* Ensure that the row itself is also centered */
-    }
-</style>
-{% endblock %}
 
+<link rel="stylesheet" href="../static/stylesheets/index.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+{% endblock %}
 
 {% block content %}
 <div class="container text-center mt-5">
@@ -54,7 +18,7 @@
     {% endif %}
     <h2 class="gotta-catch">Gotta catch 'em all!</h2>
     <div class="row mt-4">
-        <div class="col-6">
+        <div class="col-md-6 col-12 mb-3">
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Catch Pokemon</h5>
@@ -64,14 +28,14 @@
                 </div>
             </div>
         </div>
-        <div class="col-6">
+        <div class="col-md-6 col-12 mb-3">
             <div class="card bg-dark text-white">
                 <div class="card-body">
                     <h5 class="card-title">Make a trade offer</h5>
                     <a href="{{ url_for('main.trade_offer') }}" class="btn btn-secondary">
                         <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball">
                         ⇆
-                        <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball">
+                        <img src="{{ url_for('static', filename='images/pokeball.png') }}" width="100" height="100" alt="Pokeball" class="custom-image">
                     </a>
                 </div>
             </div>
@@ -81,22 +45,22 @@
         <h1>Active Trade Offers</h1>
         <div class="row mt-4">
             {% for offer in trade_offers %}
-            <div class="col-12 trade-offer-card">
+            <a href="{{ url_for('trade', trade_id=offer.trade_id) }}" class="col-12 trade-offer-card mb-3">
                 <div class="card bg-dark text-white">
                     <div class="card-body">
                         <h5 class="card-title">Trade #{{ offer.trade_id }}</h5>
                         <p class="card-text"><small>Posted on {{ offer.timestamp }}</small></p>
-                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon1_name ~ '.png') }}" alt="Pokemon 1">
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon1_name ~ '.png') }}" alt="Pokemon 1" class="custom-image">
                         ⇆
-                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon2_name ~ '.png') }}" alt="Pokemon 2">
+                        <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' ~ offer.pokemon2_name ~ '.png') }}" alt="Pokemon 2" class="custom-image">
                     </div>
                 </div>
-            </div>
+            </a>
             {% endfor %}
         </div>
     </div>
     <nav aria-label="Page navigation" class="mt-4">
-        <ul class="pagination">
+        <ul class="pagination justify-content-center">
             {% if page > 1 %}
             <li class="page-item"><a class="page-link" href="{{ url_for('main.index', page=page-1) }}">Previous</a></li>
             {% endif %}

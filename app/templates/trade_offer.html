@@ -4,13 +4,18 @@
     Trade Offer
 {% endblock title %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/trade_offer.css') }}">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% endblock %}
+
 {% block content %}
 <div class="container mt-5 mb-5">
-    <div class="card" style="border-radius: 10px;">
+    <div class="card my-card-border">
         <div class="card-header text-center bg-dark text-white">
             Trade Offer
         </div>
-        <div class="card-body" style="background: linear-gradient(to bottom, #d1f1f1, #306060);">
+        <div class="card-body my-card-color">
             <div class="row text-center">
                 <div class="col">
                     <h5>Offering</h5>
@@ -34,7 +39,6 @@
                 <div class="col text-center">
                     <button id="postTradeButton" class="btn btn-dark">Post</button>
                 </div>
-                
             </div>
         </div>
     </div>
@@ -50,10 +54,10 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body pokepc-background">
+            <div class="modal-body">
                 <div class="row">
                     {% for sprite in pokemon_owned %}
-                    <div class="col-md-3 text-center">
+                    <div class="col-md-3 col-6 text-center mb-3">
                         <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}"
                         class="img-thumbnail pokemon-image selectable-sprite"
                         data-target="#offeringPlaceholder"
@@ -77,14 +81,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="requestPokemonModalLabel">Select Requested Pokémon</h5>
-                <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="row">
                     {% for sprite in pokemon_sprites %}
-                    <div class="col-md-3 text-center">
+                    <div class="col-md-3 col-6 text-center mb-3">
                         <img src="{{ url_for('static', filename='images/pokemon_gen4_sprites/' + sprite + '.png') }}"
                         class="img-thumbnail pokemon-image selectable-sprite"
                         data-target="#requestingPlaceholder"
@@ -95,34 +99,32 @@
                 </div>                
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-close" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary">Select</button>
             </div>
         </div>
     </div>
 </div>
 
-
 <script>
     $(document).ready(function() {
         let selectedPokemonName1 = null;
         let selectedPokemonName2 = null;
-    
-        
+
         $('.selectable-sprite').on('click', function() {
             console.log('Selected Pokemon:', $(this).data('sprite-name'));
             const targetPlaceholder = $(this).data('target');
             $(targetPlaceholder).attr('src', $(this).attr('src'));
-            
+
             if ($(this).data('target') === "#offeringPlaceholder") {
                 selectedPokemonName1 = $(this).data('sprite-name');
             } else if ($(this).data('target') === "#requestingPlaceholder") {
                 selectedPokemonName2 = $(this).data('sprite-name');
             }
-    
+
             $(this).closest('.modal').modal('hide'); // Close the modal
         });
-    
+
         $('#postTradeButton').on('click', function() {
             $.ajax({
                 url: '/post_trade',
@@ -132,8 +134,12 @@
                     pokemon_name2: selectedPokemonName2
                 },
                 success: function(response) {
-                    alert(response.success);
-                    // Optionally reset or refresh page here
+                    if (response.error) {
+                        alert(response.error); // Show pop-up for maximum active trades
+                    } else {
+                        console.log(response.success);
+                        // Optionally reset or refresh page here
+                    }
                 },
                 error: function(xhr) {
                     alert("Error: " + xhr.responseText);
@@ -141,24 +147,5 @@
             });
         });
     });
-    </script>
-    
-    
-    
-
-<style>
-    .pokemon-image {
-        width: 200px; /* Adjust this width as needed to match the pikachusil.png */
-        height: 200px; /* Adjust this height as needed */
-        object-fit: cover; /* This will cover the area without distorting the ratio */
-        border-radius: 10px; /* Optional, for rounded corners */
-    }
-    
-    .pokepc-background {
-        background-image: url("{{ url_for('static', filename='images/pikachubg.png') }}");
-        background-size: cover; /* Cover the entire container, maintaining aspect ratio */
-        background-position: center;
-    }
-</style>
-
+</script>
 {% endblock content %}
