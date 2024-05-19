@@ -6,7 +6,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 import sqlalchemy as sa
 from datetime import datetime, timezone
 from flask import current_app as app
-from app.models import User, Pokemon, Trade
+from app.models import User, Pokemon, Trade, user_pokemon
 from app.forms import EditProfileForm, LoginForm, SignUpForm
 import random
 from sqlalchemy.sql.expression import func
@@ -190,6 +190,11 @@ def login():
 
         if expired_count > 0:
             flash(f'{expired_count} expired trade(s) were deleted and Pokémon returned to your inventory.', 'info')
+
+        # Check if the user has captured all 151 Pokémon
+        user_pokemon_count = db.session.query(sa.func.count(user_pokemon.c.pokemon_id)).filter(user_pokemon.c.user_id == user.id).scalar()
+        if user_pokemon_count == 151:
+            flash(f'Congratulations {user.username}, you have captured all 151 Pokémon!', 'success')
 
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
