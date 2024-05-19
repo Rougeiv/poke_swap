@@ -6,24 +6,39 @@ from flask_migrate import Migrate
 import logging
 from logging.handlers import RotatingFileHandler
 import os
+from flask_moment import Moment
 
-flaskApp = Flask(__name__)
-flaskApp.config.from_object(Config)
-db = SQLAlchemy(flaskApp)
-migrate = Migrate(flaskApp, db)
-login = LoginManager(flaskApp)
-login.login_view = 'login'
+db = SQLAlchemy()
+migrate = Migrate()
+login = LoginManager()
+login.login_view = 'auth.login'
+login.login_message = ('Please log in to access this page.')
+moment = Moment()
 
-if not flaskApp.debug:
-    if not os.path.exists('logs'):
-        os.mkdir('logs')
-    file_handler = RotatingFileHandler('logs/poke_swap.log', maxBytes=10240, backupCount=10)
-    file_handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
-    file_handler.setLevel(logging.DEBUG)
-    flaskApp.logger.addHandler(file_handler)
+def create_app(config):
+    flaskApp = Flask(__name__)
+    flaskApp.config.from_object(config)
+    
+    from app.blueprints import main
+    flaskApp.register_blueprint(main)
+    db.init_app(flaskApp)
+    migrate.init_app(flaskApp, db)
+    login.init_app(flaskApp)
+    moment.init_app(flaskApp)
 
-    flaskApp.logger.setLevel(logging.DEBUG)
-    flaskApp.logger.info('PokeSwap startup')
 
-from app import routes, models
+    if not flaskApp.debug and not flaskApp.testing:
+        if not os.path.exists('logs'):
+            os.mkdir('logs')
+        file_handler = RotatingFileHandler('logs/poke_swap.log', maxBytes=10240, backupCount=10)
+        file_handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+        file_handler.setLevel(logging.DEBUG)
+        flaskApp.logger.addHandler(file_handler)
+
+        flaskApp.logger.setLevel(logging.DEBUG)
+        flaskApp.logger.info('PokeSwap startup')
+    return flaskApp
+
+from app import models
+
