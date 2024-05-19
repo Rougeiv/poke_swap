@@ -328,14 +328,19 @@ class RoutesTestCase(TestCase):
         self.app_context.pop()
 
     def login(self, username, password):
-        print("testing login...")
         return self.client.post(url_for('main.login'), data=dict(
             username=username,
             password=password
         ), follow_redirects=True)
     
     def logout(self):
-        return self.client.get(url_for('main.index'), follow_redirects=True)
+        return self.client.get(url_for('main.logout'), follow_redirects=True)
+
+    def test_index_page(self):
+        print("testing index page...")
+        response = self.client.get(url_for('main.index'))
+        self.assertEqual(response.status_code, 200)
+        # self.assertIn(b'Welcome', response.data)
 
 if __name__ == '__main__':
     populate_pokemon_table()

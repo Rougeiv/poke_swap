@@ -14,3 +14,4 @@ class DeploymentConfig(Config):
 class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
     TESTING = True
+    SERVER_NAME = 'localhost.localdomain'
