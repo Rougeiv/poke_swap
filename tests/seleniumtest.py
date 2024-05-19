@@ -42,7 +42,7 @@
 #     def test_login_success(self):
 #         self.create_user('testuser', 'test@example.com', 'password')
 #         self.driver.get('http://localhost:5000/login')
-#         time.sleep(1)
+#         sleep(1)
 
 #         username_input = self.driver.find_element(webdriver.common.By.ID, "username")
 #         password_input = self.driver.find_element(webdriver.common.By.ID, "password")
@@ -53,12 +53,12 @@
 #         login_button.click()
 
         
-#         time.sleep(1)
+#         sleep(1)
 #         self.assertIn('http://localhost:5000/', self.driver.current_url)
 
 
 #     def test_login_missing_user(self):
-#         time.sleep(1)
+#         sleep(1)
 
 #         username_input = self.driver.find_element(webdriver.common.By.ID, "username")
 #         password_input = self.driver.find_element(webdriver.common.By.ID, "password")
@@ -69,13 +69,17 @@
 #         login_button.click()
 
 #         # messages = self.driver.find_elements(webdriver.common.By.ID, "")
-#         time.sleep(1)
+#         sleep(1)
 #         # self.assertIn('http://localhost:5000/', self.driver.current_url)
+from selenium import webdriver
+from selenium.webdriver.edge.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from time import sleep
+import os
 import unittest
 import multiprocessing
-import time
-from selenium import webdriver
-from selenium.webdriver.common.by import By
 from app import create_app, db
 from config import TestConfig
 from app.models import User
@@ -91,7 +95,7 @@ class SeleniumTestCase(unittest.TestCase):
 
         self.server_process = multiprocessing.Process(target=self.run_server)
         self.server_process.start()
-        time.sleep(1)  # give the server some time to start
+        sleep(1)  # give the server some time to start
 
         self.driver = webdriver.Chrome()
 
@@ -112,25 +116,37 @@ class SeleniumTestCase(unittest.TestCase):
         db.session.commit()
 
     def test_login(self):
-        self.create_user('testuser', 'test@example.com', 'password')
+        #self.create_user('testuser', 'test@example.com', 'password')
         self.driver.get('http://localhost:5000/login')
-        time.sleep(1)
+        sleep(1)
         
-        username_input = self.driver.find_element(By.ID, 'username')
-        password_input = self.driver.find_element(By.ID, 'password')
-        login_button = self.driver.find_element(By.ID, 'submit')
+        self.driver.maximize_window()
 
-        username_input.send_keys('testuser')
-        password_input.send_keys('password')
-        login_button.click()
+        # Add a sleep to ensure the page loads completely (if necessary)
+        sleep(5)
+
+
+        element = self.driver.find_element(By.XPATH, "/html/body/nav/div/ul/li[5]/a")
+        element.click()
+
+        # Wait for the username input element and enter the username
+        username_element = self.driver.find_element(By.XPATH, "/html/body/div/div/div/div/div/div/div/div/form/p[1]/input")
+        username_element.send_keys("Mythicrif")
         
-        time.sleep(1)
+        # Sleep for 2 seconds
+        sleep(2)
+
+        # Wait for the password input element and enter the password
+        password_element = self.driver.find_element(By.XPATH, "/html/body/div/div/div/div/div/div/div/div/form/p[2]/input")
+        password_element.send_keys("SuperCoolPassword!!")
+        
+        sleep(1)
         self.assertIn('http://localhost:5000/', self.driver.current_url)
 
     def test_navigation(self):
         self.create_user('testuser', 'test@example.com', 'password')
         self.driver.get('http://localhost:5000/login')
-        time.sleep(1)
+        sleep(1)
 
         username_input = self.driver.find_element(By.ID, "username")
         password_input = self.driver.find_element(By.ID, "password")        
@@ -140,18 +156,18 @@ class SeleniumTestCase(unittest.TestCase):
         password_input.send_keys('password')
         login_button.click()
         
-        time.sleep(1)
+        sleep(1)
         
         # Navigate to Trade Offer
         self.driver.find_element(By.LINK_TEXT, 'Trade').click()
         username_input = self.driver.find_element(By.ID, "username")
-        time.sleep(1)
+        sleep(1)
         self.assertIn('http://localhost:5000/trade_offer', self.driver.current_url)
 
     def test_trade_offer_page(self):
         self.create_user('testuser', 'test@example.com', 'password')
         self.driver.get('http://localhost:5000/login')
-        time.sleep(1)
+        sleep(1)
 
         username_input = self.driver.find_element(By.ID,'username')
         password_input = self.driver.find_element(By.ID, 'password')
@@ -161,11 +177,11 @@ class SeleniumTestCase(unittest.TestCase):
         password_input.send_keys('password')
         login_button.click()
         
-        time.sleep(1)
+        sleep(1)
 
         # Navigate to Trade Offer
         self.driver.find_element(By.LINK_TEXT, 'Trade').click()
-        time.sleep(1)
+        sleep(1)
         
         # Verify Trade Offer Page
         self.assertIn('http://localhost:5000/trade_offer', self.driver.current_url)

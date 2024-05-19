@@ -17,7 +17,6 @@ from app import db
 
 @main.route('/')
 @main.route('/index')
-# @login_required
 def index():
     page = request.args.get('page', 1, type=int)
     per_page = 4
@@ -95,7 +94,7 @@ def trade(trade_id):
 
     if not trade:
         flash('Trade not found.')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     return render_template('trade.html', trade=trade)
 
@@ -371,14 +370,14 @@ def delete_trade(trade_id):
         trade = db.session.query(Trade).filter_by(id=trade_id, user_id1=current_user.id, user_id2=None).first()
         if not trade:
             flash('Trade not found or already completed.', 'danger')
-            return redirect(url_for('my_trades'))
+            return redirect(url_for('main.my_trades'))
 
         # Fetch the Pokémon being offered
         offered_pokemon = db.session.query(Pokemon).filter_by(id=trade.pokemon_id1).first()
         
         if not offered_pokemon:
             flash('Offered Pokémon not found.', 'danger')
-            return redirect(url_for('my_trades'))
+            return redirect(url_for('main.my_trades'))
 
         # Check if the user already owns the Pokémon
         if offered_pokemon not in current_user.inventory:
@@ -394,7 +393,7 @@ def delete_trade(trade_id):
         db.session.rollback()
         flash(f'An error occurred: {e}', 'danger')
     
-    return redirect(url_for('my_trades'))
+    return redirect(url_for('main.my_trades'))
 
 
 @login_required
