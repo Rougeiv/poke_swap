@@ -302,19 +302,18 @@ class RoutesTestCase(TestCase):
     def setUp(self):
         # Create a Flask test client
         self.app = create_app(TestConfig)
-        self.client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.app_context.push()
-        
+        self.client = self.app.test_client()
         # Create the database and tables
         db.create_all()
         print("\nSetting up for a Routes test...")
 
 
         # Create a test user
-        self.user = User(username='testuser', email='test@example.com')
-        self.user.set_password('password')
-        db.session.add(self.user)
+        user = User(username='testuser', email='test@example.com')
+        user.set_password('password')
+        db.session.add(user)
         db.session.commit()
 
     def tearDown(self):
@@ -347,24 +346,26 @@ class RoutesTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         # self.assertIn(b'Congratulations, you are now a registered user!', response.data)
 
-    # def test_login_logout(self):
-    #     self.login('testuser', 'password')
-    #     response = self.client.get(url_for('main.index'))
-    #     self.assertIn(b'Logout', response.data)
-
-    #     self.logout()
-    #     response = self.client.get(url_for('main.index'))
-    #     self.assertIn(b'Login', response.data)
-
-    def test_catch_route_requires_login(self):
-        response = self.client.get(url_for('main.catch'))
-        self.assertEqual(response.status_code, 302)
-        self.assertIn('/login', response.location)
-
+    def test_login_logout(self):
         self.login('testuser', 'password')
-        response = self.client.get(url_for('main.catch'))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Catch a Pokemon', response.data)
+        response = self.client.get(url_for('main.index'))
+        self.assertIn(b'Logout', response.data)
+
+        self.logout()
+        response = self.client.get(url_for('main.index'))
+        self.assertIn(b'Login', response.data)
+
+    # def test_catch_route_requires_login(self):
+    #     # Test access without login
+    #     response = self.client.get(url_for('main.catch'))
+    #     self.assertEqual(response.status_code, 302)
+    #     self.assertIn('/login', response.location)
+
+    #     # Test access with login
+    #     self.login('testuser', 'password')
+    #     response = self.client.get(url_for('main.catch'))
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertIn(b'Catch a Pokemon', response.data)
 
 if __name__ == '__main__':
     populate_pokemon_table()

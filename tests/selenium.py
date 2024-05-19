@@ -87,6 +87,7 @@ class SeleniumTestCase(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
+        self.client = self.app.test_client()
 
         self.server_process = multiprocessing.Process(target=self.run_server)
         self.server_process.start()
@@ -112,7 +113,7 @@ class SeleniumTestCase(unittest.TestCase):
 
     def test_login(self):
         self.create_user('testuser', 'test@example.com', 'password')
-        self.driver.get('http://localhost:5001/login')
+        self.driver.get('http://localhost:5000/login')
         time.sleep(1)
         
         username_input = self.driver.find_element(By.ID, 'username')
@@ -124,11 +125,11 @@ class SeleniumTestCase(unittest.TestCase):
         login_button.click()
         
         time.sleep(1)
-        self.assertIn('http://localhost:5001/', self.driver.current_url)
+        self.assertIn('http://localhost:5000/', self.driver.current_url)
 
     def test_navigation(self):
         self.create_user('testuser', 'test@example.com', 'password')
-        self.driver.get('http://localhost:5001/login')
+        self.driver.get('http://localhost:5000/login')
         time.sleep(1)
 
         username_input = self.driver.find_element(By.ID, "username")
@@ -145,11 +146,11 @@ class SeleniumTestCase(unittest.TestCase):
         self.driver.find_element(By.LINK_TEXT, 'Trade').click()
         username_input = self.driver.find_element(By.ID, "username")
         time.sleep(1)
-        self.assertIn('http://localhost:5001/trade_offer', self.driver.current_url)
+        self.assertIn('http://localhost:5000/trade_offer', self.driver.current_url)
 
     def test_trade_offer_page(self):
         self.create_user('testuser', 'test@example.com', 'password')
-        self.driver.get('http://localhost:5001/login')
+        self.driver.get('http://localhost:5000/login')
         time.sleep(1)
 
         username_input = self.driver.find_element(By.ID,'username')
@@ -167,8 +168,8 @@ class SeleniumTestCase(unittest.TestCase):
         time.sleep(1)
         
         # Verify Trade Offer Page
-        self.assertIn('http://localhost:5001/trade_offer', self.driver.current_url)
+        self.assertIn('http://localhost:5000/trade_offer', self.driver.current_url)
         self.assertIn('Catch Pokemon', self.driver.page_source)
-        
+
 if __name__ == "__main__":
     unittest.main()

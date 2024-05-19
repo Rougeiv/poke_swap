@@ -187,7 +187,6 @@ def logout():
     logout_user()
     return redirect(location=url_for('main.index'))
 
-# Add a new route for the game page
 @main.route('/catch')
 def catch():
     # Check if user is logged in
