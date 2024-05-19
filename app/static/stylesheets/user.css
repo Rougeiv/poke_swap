@@ -1,0 +1,70 @@
+/* Style for the user profile */
+table {
+    width: 100%;
+}
+
+table td {
+    padding: 10px;
+    vertical-align: top;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-info h1 {
+    margin-bottom: 5px;
+    font-size: 24px;
+}
+
+.user-info p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.user-avatar img {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%; /* Make the avatar round */
+    object-fit: cover; /* Cover the entire area with the image */
+}
+
+.edit-profile-link {
+    margin-top: 10px;
+}
+
+.inventory-heading {
+    margin-top: 20px;
+    font-size: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .user-avatar img {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .user-info h1 {
+        font-size: 20px;
+    }
+
+    .user-info p {
+        font-size: 14px;
+    }
+
+    .edit-profile-link {
+        margin-top: 5px;
+    }
+}
+
+/* Set background image for the body */
+body {
+    background-image: url('https://wallpapercave.com/wp/wp1902707.jpg');
+    background-size: cover; /* Cover the entire background */
+    background-position: center; /* Center the background image */
+    background-position-y: -150px;
+    background-repeat: no-repeat; /* Do not repeat the background image */
+    font-family: 'Arial', sans-serif; /* Your font family */
+}

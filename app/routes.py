@@ -22,11 +22,18 @@ def index():
     per_page = 4
     offset = (page - 1) * per_page
 
-    # Aliases for Pokemon to use in joins
+    filter_pokemon = request.args.get('filter', '').strip()
+    filter_pokemon_id = None
+
+    if filter_pokemon:
+        filter_pokemon_capitalized = filter_pokemon.capitalize()
+        filter_pokemon_obj = db.session.query(Pokemon).filter_by(name=filter_pokemon_capitalized).first()
+        if filter_pokemon_obj:
+            filter_pokemon_id = filter_pokemon_obj.id
+
     Pokemon1 = orm.aliased(Pokemon)
     Pokemon2 = orm.aliased(Pokemon)
 
-    # Query for trading data with proper joins, now with ascending order
     trades_query = db.session.query(
         Trade.id,
         Trade.timestamp,
@@ -40,7 +47,11 @@ def index():
         Trade.user_id2 == None
     ).order_by(Trade.timestamp.asc())
 
-    # Manual pagination handling
+    if filter_pokemon_id:
+        trades_query = trades_query.filter(
+            (Trade.pokemon_id1 == filter_pokemon_id) | (Trade.pokemon_id2 == filter_pokemon_id)
+        )
+
     total_count = trades_query.count()
     trades = trades_query.offset(offset).limit(per_page).all()
     total_pages = (total_count + per_page - 1) // per_page
@@ -53,6 +64,7 @@ def index():
     } for trade in trades]
 
     return render_template('index.html', trade_offers=trade_offers, page=page, total_pages=total_pages)
+
 
 
 

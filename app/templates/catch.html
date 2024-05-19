@@ -9,9 +9,13 @@
 
 {% block content %}
 <div class="container text-center mt-5">
-    <h1>Catch Pokemon</h1>
-    <div id="coin-box">
-        <p class="coin-count">₽ x{{ current_user.coins }}</p>
+    <div class ="card text-white bg-dark">
+        <div class ="card-body">
+            <h1>Catch Pokemons!</h1>
+        </div>
+        <div id="token-box">
+            <p class="token-count">You currently have <span class="token-amount">₽{{ current_user.tokens }}</span> tokens!</p>
+        </div>
     </div>
     <div id="error-message" class="alert alert-danger" style="display:none"><a id="broke-hint" style="display:none">How to get Poke coins?</a></div>
     <img id="pokeball-img" class="closed" src="{{ url_for('static', filename='images/pokeball-pixel-closed.png') }}" alt="pokeball-button" width="200">
@@ -30,7 +34,9 @@
         <h2>Pokemon x10</h2>
         <p>₽ x10</p>
     </button>
-    <p>Note: you can only own one of each pokemon at a time. If you pull a pokemon you already own, you will lose one Poke coin</p>
+    <div class="card bg-dark text-white">
+        <p class="card-body my-note">Note: you can only own one of each pokemon at a time. If you pull a pokemon you already own, you <strong> WILL LOSE</strong> one Poke Token</p>
+    </div>
 </div>
 
 {% endblock %}
