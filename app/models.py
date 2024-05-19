@@ -50,7 +50,10 @@ class User(UserMixin, db.Model):
         return Trade.query.filter((Trade.user_id2 == self.id)).all()
 
     def active_trades(self):
-        return Trade.query.filter(Trade.user_id1 == self.id, Trade.user_id2 == None)
+        return Trade.query.filter(Trade.user_id1 == self.id, Trade.user_id2 == None).all()
+    
+    def past_trades(self):
+        return Trade.query.filter((Trade.user_id1 == self.id) | (Trade.user_id2 == self.id)).filter(Trade.user_id1 != None and Trade.user_id2 != None).all()
     
     def avatar(self, size):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
@@ -71,6 +74,12 @@ class Pokemon(db.Model):
     owners = so.relationship('User', secondary='user_pokemon', back_populates='inventory', lazy=True)
     def __repr__(self):
         return '<Pokemon {} {}>'.format(self.pokedex_num, self.name)
+    
+    def get_pokemon_id_by_name(pokemon_name):
+        pokemon = db.session.query(Pokemon).filter_by(name=pokemon_name).first()
+        if pokemon:
+            return pokemon.id
+        return None
 
 # association table to track which pokemon belong to which users
 user_pokemon: so.Mapped[sa.Table] = db.Table('user_pokemon',
