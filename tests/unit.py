@@ -3,6 +3,8 @@
 
 # from datetime import datetime, timezone, timedelta
 import unittest
+
+from flask import url_for
 from app import create_app, db
 from config import TestConfig
 from app.models import Pokemon, Trade, User
@@ -180,6 +182,7 @@ class PokemonModelTestCase(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
+        print("\nSetting up for a Pokemon test...")
 
         # Add a test Pokémon to the database
         test_pokemon = Pokemon(pokedex_num=1, name='Bulbasaur', shiny=False, sprite_path='path/to/sprite')
@@ -194,6 +197,7 @@ class PokemonModelTestCase(unittest.TestCase):
     def test_get_pokemon_id_by_name(self):
         pokemon_id = Pokemon.get_pokemon_id_by_name('Bulbasaur')
         self.assertIsNotNone(pokemon_id)
+        print("Tested get_pokemon_id_by_name")
         print(f"Retrieved Pokémon ID: {pokemon_id}")
 
 class UserModelCase(TestCase):
@@ -203,8 +207,7 @@ class UserModelCase(TestCase):
         self.app_context.push()
         
         db.create_all()
-        # add_test_data_to_db()
-        print("\nSetting up for a test...")
+        print("\nSetting up for a User test...")
 
         # Create a user for testing
         self.user = User(username='testuser', email='testuser@example.com')
@@ -299,6 +302,40 @@ class UserModelCase(TestCase):
         db.session.commit()
         self.assertEqual(len(self.user.past_trades()), 1)
         self.assertEqual(len(user2.past_trades()), 1)
+
+class RoutesTestCase(TestCase):
+    def setUp(self):
+        # Create a Flask test client
+        self.app = create_app(TestConfig)
+        self.client = self.app.test_client()
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        
+        # Create the database and tables
+        db.create_all()
+        print("\nSetting up for a Routes test...")
+
+
+        # Create a test user
+        self.user = User(username='testuser', email='test@example.com')
+        self.user.set_password('password')
+        db.session.add(self.user)
+        db.session.commit()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+
+    def login(self, username, password):
+        print("testing login...")
+        return self.client.post(url_for('main.login'), data=dict(
+            username=username,
+            password=password
+        ), follow_redirects=True)
+    
+    def logout(self):
+        return self.client.get(url_for('main.index'), follow_redirects=True)
 
 if __name__ == '__main__':
     populate_pokemon_table()
