@@ -67,3 +67,158 @@
         height: 150px;
     }
 }
+
+/* Custom styles specific to catch page */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+
+h1 {
+    font-family: 'Comic Sans MS', cursive;
+    color: #ff6347; /* Tomato color */
+    margin-bottom: -5px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.token-count {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.token-amount {
+    color: #4caf50; /* Green color */
+}
+
+.alert-danger {
+    display: none;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+#pokeball-img {
+    margin-top: 20px;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+#pokeball-img:hover {
+    transform: scale(1.1);
+}
+
+#textbox-container {
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+}
+
+#textbox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('../images/pokemon_emerald_textbox.png');
+    width: 95%;
+    max-width: 600px;
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+#textbox-txt {
+    font-size: 1.2rem;
+    color: black;
+    text-align: center;
+    margin: 0;
+}
+
+button {
+    background-color: #ffcc00; /* Pikachu yellow */
+    border: none;
+    color: #333;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 10px 0;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #ffbf00;
+}
+
+button h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+button p {
+    margin: 5px 0 0;
+    font-size: 1rem;
+}
+
+#pull-result {
+    margin-top: 20px;
+}
+
+.pokemon-img-container {
+    display: inline-block;
+    margin: 10px;
+}
+
+.custom-image {
+    width: 150px;
+    height: 150px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.custom-image:hover {
+    transform: scale(1.1);
+}
+
+.my-note {
+    margin-bottom: -5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+    #textbox {
+        width: 90%;
+        height: auto;
+    }
+    #textbox-txt {
+        font-size: 1rem;
+    }
+    .custom-image {
+        width: 120px;
+        height: 120px;
+    }
+    button {
+        font-size: 1rem;
+        padding: 10px 20px;
+    }
+}
+
+/* Set background image for the body */
+body {
+    background-image: url('https://wallpapercave.com/wp/wp1902707.jpg');
+    background-size: cover; /* Cover the entire background */
+    background-position: center; /* Center the background image */
+    background-position-y: 40px;
+    background-repeat: no-repeat; /* Do not repeat the background image */
+    font-family: 'Arial', sans-serif; /* Your font family */
+}

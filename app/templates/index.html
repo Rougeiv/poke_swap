@@ -3,10 +3,8 @@
 {% block title %}PokeSwap - Home{% endblock %}
 
 {% block extra_head %}
-
 <link rel="stylesheet" href="../static/stylesheets/index.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-
 {% endblock %}
 
 {% block content %}
@@ -14,9 +12,19 @@
     {% if current_user.is_anonymous %}
     <h1>Welcome to Pokeswap</h1>
     {% else %}
-    <h1>Hi, {{ current_user.username }}!</h1>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h1>Hi, {{ current_user.username }}!</h1>
+                        <h3>Are you ready to catch 'em all?!</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>   
     {% endif %}
-    <h2 class="gotta-catch">Gotta catch 'em all!</h2>
     <div class="row mt-4">
         <div class="col-md-6 col-12 mb-3">
             <div class="card bg-dark text-white">
@@ -43,6 +51,11 @@
     </div>
     <div class="container text-center mt-5 trade-offers-container">
         <h1>Active Trade Offers</h1>
+        <!-- Filter Form -->
+        <form method="GET" action="{{ url_for('index') }}" class="form-inline justify-content-center mb-4">
+            <input type="text" name="filter" class="form-control mr-2" placeholder="Filter Pokemon">
+            <button type="submit" class="btn btn-primary">Confirm</button>
+        </form>
         <div class="row mt-4">
             {% for offer in trade_offers %}
             <a href="{{ url_for('trade', trade_id=offer.trade_id) }}" class="col-12 trade-offer-card mb-3">
