@@ -13,8 +13,8 @@
         <div class ="card-body">
             <h1>Catch Pokemons!</h1>
         </div>
-        <div id="token-box">
-            <p class="token-count">You currently have <span class="token-amount">₽{{ current_user.tokens }}</span> tokens!</p>
+        <div id="coin-box">
+            <p class="coin-count">You currently have <span class="coin-amount">₽{{ current_user.coins }}</span> coins!</p>
         </div>
     </div>
     <div id="error-message" class="alert alert-danger" style="display:none"><a id="broke-hint" style="display:none">How to get Poke coins?</a></div>
@@ -35,7 +35,7 @@
         <p>₽ x10</p>
     </button>
     <div class="card bg-dark text-white">
-        <p class="card-body my-note">Note: you can only own one of each pokemon at a time. If you pull a pokemon you already own, you <strong> WILL LOSE</strong> one Poke Token</p>
+        <p class="card-body my-note">Note: you can only own one of each pokemon at a time. If you pull a pokemon you already own, you <strong> WILL LOSE</strong> one Poke Coin</p>
     </div>
 </div>
 
@@ -55,8 +55,8 @@
             if (response.ok) {
                 return response.json();
             } else if (response.status === 403) {
-                // If the user has insufficient tokens (status code 403), handle the error
-                return Promise.reject('Insufficient tokens. GET YO MONEY UP!!');
+                // If the user has insufficient coins (status code 403), handle the error
+                return Promise.reject('Insufficient coins. GET YO MONEY UP!!');
             } else {
                 return Promise.reject('An error occurred');
             }
@@ -125,8 +125,8 @@
                 return response.json();
             } else if (response.status === 403) {
                 // location.reload();
-                // If the user has insufficient tokens (status code 403), handle the error
-                return Promise.reject('Insufficient tokens. GET YO MONEY UP!!');
+                // If the user has insufficient coins (status code 403), handle the error
+                return Promise.reject('Insufficient coins. GET YO MONEY UP!!');
             } else {
                 return Promise.reject('An error occurred');
             }

@@ -5,11 +5,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from time import sleep
 import os
-import unittest
-import multiprocessing
-from app import create_app, db
-from config import TestConfig
-from app.models import User
 
 # Get the directory of the current script
 script_dir = os.path.dirname(__file__)
