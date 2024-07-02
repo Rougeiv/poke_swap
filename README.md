@@ -21,32 +21,45 @@
 
 - To generate a migration run `flask db migrate -m "<message>"`.
 - To initialise and apply migrations to the database run `flask db upgrade`.
-- To seed the database run `python -m scripts.seed_db`
 
 ## How To Run
 
-Create a virtual environment using $ python3 -m venv poke-venv
+Create a virtual environment using 
+``` 
+python3 -m venv poke-venv
+ ```
 
 Activate the virtual environment using the following command depending on your OS
 
-Linux: $ source venv/bin/activate
-Windows cmd: $ venv\Scripts\activate
-Windows POwerShell: $ venv\Scripts\Activate.ps1
+Linux: 
+``` source venv/bin/activate ```
+Windows cmd: 
+``` venv\Scripts\activate ```
+Windows PowerShell: 
+``` venv\Scripts\Activate.ps1 ```
 
-Once in the virtual environment run: $ pip install requirements.txt
+Once in the virtual environment run: 
+``` 
+pip install -r requirements.txt
+ ```
 
-Create the database using: flask db upgrade
+Create the database using: 
+``` 
+flask db upgrade
+ ```
 
-Create a .env file that contains SECRET_KEY=example-secret-key
+Create a .env file that contains 
+``` SECRET_KEY=example-secret-key ```
 
 ### Setting up the Database
 For the application to function the db requires a little set up.
 
 run:
-$ flask shell
+``` $ flask shell ```
 
 once in the shell run the following:
->>> original_pokemon_data = [
+```
+ original_pokemon_data = [
     {"pokedex_num": 1, "name": "Bulbasaur", "shiny": False, "sprite_path": "path_to_bulbasaur_sprite.png"},
     {"pokedex_num": 2, "name": "Ivysaur", "shiny": False, "sprite_path": "path_to_ivysaur_sprite.png"},
     {"pokedex_num": 3, "name": "Venusaur", "shiny": False, "sprite_path": "path_to_venusaur_sprite.png"},
@@ -199,15 +212,25 @@ once in the shell run the following:
     {"pokedex_num": 150, "name": "Mewtwo", "shiny": False, "sprite_path": "path_to_mewtwo_sprite.png"},
     {"pokedex_num": 151, "name": "Mew", "shiny": False, "sprite_path": "path_to_mew_sprite.png"}
 ]
- 
->>> for pokemon_data in original_pokemon_data:
-...    pokemon = Pokemon(
-...        pokedex_num=pokemon_data['pokedex_num'],
-...        name=pokemon_data['name'],
-...        shiny=pokemon_data['shiny'],
-...        sprite_path=pokemon_data['sprite_path']
-...    )
-...    db.session.add(pokemon)
->>> db.session.commit()
+```
+```
+for pokemon_data in original_pokemon_data:
+    pokemon = Pokemon(
+        pokedex_num=pokemon_data['pokedex_num'],
+        name=pokemon_data['name'],
+        shiny=pokemon_data['shiny'],
+        sprite_path=pokemon_data['sprite_path']
+    )
+    db.session.add(pokemon)
+db.session.commit()
+```
 
-
+## Running tests
+for unit tests:
+```
+python tests/unit.py
+```
+for selenium tests:
+```
+python test.py`
+```
