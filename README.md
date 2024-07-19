@@ -32,11 +32,11 @@ python3 -m venv poke-venv
 Activate the virtual environment using the following command depending on your OS
 
 Linux: 
-``` source venv/bin/activate ```
+``` source poke-venv/bin/activate ```
 Windows cmd: 
-``` venv\Scripts\activate ```
+``` poke-venv\Scripts\activate ```
 Windows PowerShell: 
-``` venv\Scripts\Activate.ps1 ```
+``` poke-venv\Scripts\Activate.ps1 ```
 
 Once in the virtual environment run: 
 ``` 
