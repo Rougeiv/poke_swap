@@ -59,7 +59,7 @@ run:
 
 once in the shell run the following:
 ```
- original_pokemon_data = [
+original_pokemon_data = [
     {"pokedex_num": 1, "name": "Bulbasaur", "shiny": False, "sprite_path": "path_to_bulbasaur_sprite.png"},
     {"pokedex_num": 2, "name": "Ivysaur", "shiny": False, "sprite_path": "path_to_ivysaur_sprite.png"},
     {"pokedex_num": 3, "name": "Venusaur", "shiny": False, "sprite_path": "path_to_venusaur_sprite.png"},
