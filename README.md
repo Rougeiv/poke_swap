@@ -1,11 +1,17 @@
 # CITS3403 Project
 
+Welcome to Pokeswap, a Pokémon gacha and trading game where you can relive some childhood magic of stepping into the world of Pokémon and embarking on a journey to catch 'em all! To get started, simply create an account, 'catch' (pull for) some Pokémon and start trading! For each trade you post or accept from other users you are awarded Pokecoins. Keep catching (gambling) and trading until you've caught 'em all!
+
+<sub><sup>Note: features for daily login rewards and credit card transactions may or may not be coming in future updates :)<sup><sub>
+
 ## Team Members
 
-- @AarifLamat (Aarif Lamat) 23628374
-- @Rougeiv (Nicholas Mulyawan) 23044774
-- @HeathenH (Harrsion Harun) 23347644
-- @ricccooo (Enrico Tionandra ) 23732436
+| Name      | Student ID | Github Username |
+| ----------- | ----------- | ----------- |
+| Aarif Lamat | 23628374 | AarifLanat |
+| Nicholas Mulyawan | 23044774 | Rougeiv |
+| Harrsion Harun | 23347644 | HeathenH |
+| Enrico Tionandra | 23732436 | ricccooo |
 
 
 ### Frontend
