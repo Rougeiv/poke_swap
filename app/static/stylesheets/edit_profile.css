@@ -36,10 +36,15 @@
 
 /* Set background image for the body */
 body {
+    background-color: #7EAC71 !important; /* Green background */
     background-image: url('https://wallpapercave.com/wp/wp1902707.jpg');
     background-size: cover; /* Cover the entire background */
     background-position: center; /* Center the background image */
     background-position-y: -200px;
     background-repeat: no-repeat; /* Do not repeat the background image */
     font-family: 'Arial', sans-serif; /* Your font family */
+}
+
+body {
+    background-color: #7EAC71; /* Green */
 }
